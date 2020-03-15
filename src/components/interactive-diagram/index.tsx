@@ -7,7 +7,7 @@ export default() => {
         options={
             {antialias: true}
     }>
-        <Graphics draw={
+        {/* <Graphics draw={
             g => {
                 g.beginFill(0xff23FF)
                 g.lineStyle(4, 0xffd900, 1)
@@ -32,9 +32,10 @@ export default() => {
                 g.drawCircle(470, 90, 60)
                 g.endFill()
             }
-        }/>
+        }/> */}
         <Entity
-            position={{x: 20, y:50}}
-        />>
+            position={{x: 200, y: 50}}
+            text="test text "
+        />
     </Stage>)
 }
