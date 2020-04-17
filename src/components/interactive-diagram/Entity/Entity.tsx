@@ -15,9 +15,9 @@ type PropTypes = {
 }
 
 export default (props: IDiagramElement) => {
-    const { position, text } = props;
-    const width = 100;
-    const height = 100;
+    const { position, text ,width, height } = props;
+    // const width = 100;
+    // const height = 100;
     const fontSize = 9;
     return (
         <Graphics 

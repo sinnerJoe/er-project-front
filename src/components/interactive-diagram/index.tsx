@@ -42,10 +42,10 @@ const InteractiveDiagram = (props: any = {diagramData: defaultState} ) => {
     const diagramData = defaultState;
     const changeCursor = useContext(CursorDispatch)
     const [entities, setEntities] = useState<DiagramState>(diagramData);
-        console.log(entities)
+        // console.log(entities)
     const createOnSelect = (id:number) => () => {
         Object.keys(entities.elements).forEach((key: unknown) => {
-            console.log(id, key);
+            // console.log(id, key);
             entities.elements[key as number].selected = key as number === id;
         })
         entities.elements[id].selected = true;
@@ -56,7 +56,8 @@ const InteractiveDiagram = (props: any = {diagramData: defaultState} ) => {
 
     const dispatchAction = (action: Action) => {
         changeDispatcher.current.applyAction(action);
-        setEntities({...entities});
+        // setEntities({...entities});
+        forceUpdate();
     }
 
     return (

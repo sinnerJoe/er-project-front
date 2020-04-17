@@ -11,7 +11,7 @@ export interface DiagramState {
   elements: { [id: number]: IDiagramElement }
 }
 
-class ElementStore {
+export class ElementStore {
   state: DiagramState
   constructor(state: DiagramState) {
     this.state = state;
@@ -53,23 +53,20 @@ interface ActionPrototype {
   elementId: number,
   elementType: ElementType,
   type: ActionType,
-  oldData: unknown,
   data: unknown
 }
 
-interface MoveAction extends ActionPrototype{
+export interface MoveAction extends ActionPrototype{
   type: ActionType.Move;
   data: Point;
-  oldData: Point;
 };
 
-interface ResizeAction extends ActionPrototype{
+export interface ResizeAction extends ActionPrototype{
   type: ActionType.Resize;
   data: {width: number, height: number};
-  oldData: { width: number, height: number };
 };
 
-export type Action = MoveAction | ResizeAction
+export type Action = (MoveAction | ResizeAction) 
 
 export class ChangeDispatcher {
   
@@ -82,14 +79,24 @@ export class ChangeDispatcher {
   applyAction(action: Action) {
     switch(action.type) {
       case ActionType.Move: {
-        console.log(action)
+        // console.log(action)
         const element = this.store.getElement(action.elementId);
         element.position.x = action.data.x;
         element.position.y = action.data.y;
         break;  
       }
+      case ActionType.Resize: {
+        // console.log("RESIZING")
+        const element = this.store.getElement(action.elementId);
+        element.width = action.data.width;
+        element.height = action.data.height;
+      }
       default: return;
     }
+  }
+
+  getStore() {
+    return this.store;
   }
 
   get state() {

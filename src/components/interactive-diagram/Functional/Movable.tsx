@@ -2,13 +2,13 @@
 import { Stage, Text, Graphics, PixiComponent, useApp, Container,  } from '@inlet/react-pixi';
 
 import { Point, Rectangle, interaction, utils } from 'pixi.js';
-import React, { useState, useContext, useEffect, useMemo, memo, useCallback, useReducer } from 'react';
+import React, { useState, useContext, useEffect, useMemo, memo, useCallback, useReducer, useRef } from 'react';
 import IMovable from '../../../shared/interfaces/IMovable';
 import IDiagramElement from '../../../shared/interfaces/IDiagramElement';
 import { DrawableRectangle } from '../GraphicalElements/DrawableRectangle';
 import { CursorDispatch, CursorType } from '../../CursorManager';
 import { substractAbs } from '../utils';
-import { ActionContext, ElementType, ActionType } from '../actions';
+import { ActionContext, ElementType, ActionType, ResizeAction } from '../actions';
 
 const CONTAINER_PADDING = 20;
 const DOT_WIDTH = 5;
@@ -50,7 +50,7 @@ enum ResizeKind {
   Both
 };
 
-type ResizeEvent = (xCoefficient: Number, yCoefficient:number) => void
+type ResizeEvent = (xCoefficient: number, yCoefficient:number) => void
 
 interface NoResize {
     kind: ResizeKind.None;
@@ -60,12 +60,22 @@ interface ResizingState {
     kind: Omit<ResizeKind, ResizeKind.None>;
     distance: Point;
     initialDistance: Point;
+    initialWidth: number,
+    initialHeight: number,
 }
 
 type ResizeState = NoResize | ResizingState;
 
+type MoverEdgesProps = { 
+  position: Point, 
+  width: number, 
+  height: number, 
+  onResize: ResizeEvent,
+  onResizeStop: ResizeEvent,
+  onResizeStart: ResizeEvent,
+};
 
-const MoverEdges = (props: { position: Point, width: number, height: number, onResize: ResizeEvent} ) => {
+const MoverEdges = (props: MoverEdgesProps ) => {
   
   const edgeThickness = 2
   const { position, width, height, onResize } = props;
@@ -86,6 +96,7 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
   const paddedWidth = east.x - west.x;
   const paddedHeight = south.y - north.y;
   const setCursorStyle = useContext(CursorDispatch);
+
   const unhover = () => setCursorStyle('inherit');
   const verticalResizeStyle = () => setCursorStyle('e-resize');
   const horizontalResizeStyle = () => setCursorStyle('s-resize');
@@ -103,36 +114,45 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
       const initialDistance = substractAbs(position, pointerLocation)
       setResizeData({
         initialDistance,
+        initialWidth: width,
+        initialHeight: height,
         distance: initialDistance,
         kind: resizeKind
       });
   }, [app, position, resizeData]);
+  
 
-  const stopResize = useCallback(() => {setResizeData({kind: ResizeKind.None})}, [])
+  
+
+  const stopResize = useCallback(() => { unhover(); console.log("STOP RESIZE"); setResizeData({kind: ResizeKind.None})}, [])
+
+  const reduceResize = (n: number) => 1 + (n - 1) / 1000;
 
   const pointerMoveResize = useCallback((event: interaction.InteractionEvent) => {
-    if(resizeData.kind !== ResizeKind.None) console.log(resizeData)
+    // if(resizeData.kind !== ResizeKind.None) console.log(resizeData)
     // event.stopPropagation();
     switch(resizeData.kind) {
       case ResizeKind.Vertical: {
         const pointerLocation = event.data.getLocalPosition(app.stage);
         const currentDistance = substractAbs(position, pointerLocation);
-        onResize(1, currentDistance.y / (resizeData as ResizingState).initialDistance.y);
+        onResize(1, reduceResize(currentDistance.y / (resizeData as ResizingState).initialDistance.y / 100));
         break;
       }
-      case ResizeKind.Horizontal: {
+      case ResizeKind.Horizontal: {  
         const pointerLocation = event.data.getLocalPosition(app.stage);
         const currentDistance = substractAbs(position, pointerLocation);
-        onResize(currentDistance.x / (resizeData as ResizingState).initialDistance.x, 1);
+        onResize(reduceResize(currentDistance.x / (resizeData as ResizingState).initialDistance.x), 1);
         break;
       }
       case ResizeKind.Both: {
         const pointerLocation = event.data.getLocalPosition(app.stage);
         const currentDistance = substractAbs(position, pointerLocation);
         onResize(
-          currentDistance.x / (resizeData as ResizingState).initialDistance.x,
-          currentDistance.y / (resizeData as ResizingState).initialDistance.y
+          reduceResize(currentDistance.x / (resizeData as ResizingState).initialDistance.x),
+          reduceResize(currentDistance.y / (resizeData as ResizingState).initialDistance.y)
         );
+        (resizeData as ResizingState).initialDistance = currentDistance
+        setResizeData(resizeData)
         break;
       }
       default: return;
@@ -142,6 +162,8 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
   const startHorizontalResize = useCallback(startResize(ResizeKind.Horizontal), [startResize]);
   const startVerticalResize = useCallback(startResize(ResizeKind.Vertical), [startResize]);
   const startCombinedResize = useCallback(startResize(ResizeKind.Both), [startResize]);
+
+  
 
   const HorizontalEdge = (props: { position: Point }) => {
     const { position } = props;
@@ -155,8 +177,8 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
       pointerout={unhover}
       pointerdown={startVerticalResize}
       pointermove={pointerMoveResize}
-      pointerup={stopResize}
-      pointerupoutside={stopResize}
+      // pointerup={stopResize}
+      // pointerupoutside={stopResize}
       interactive={true}
       hitArea = {new Rectangle(
         position.x - paddedWidth / 2, 
@@ -178,8 +200,8 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
       pointerout={unhover}
       pointerdown={startHorizontalResize}
       pointermove={pointerMoveResize}
-      pointerup={stopResize}
-      pointerupoutside={stopResize}
+      // pointerup={stopResize}
+      // pointerupoutside={stopResize}
       interactive={true}
       hitArea={new Rectangle(
         position.x - edgeThickness,
@@ -202,8 +224,8 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
       position={position}
       pointerover={() => setCursorStyle(cursorStyle)}
       pointerout={unhover}
-      pointerup={stopResize}
-      pointerupoutside={stopResize}
+      // pointerup={stopResize}
+      // pointerupoutside={stopResize}
       pointermove={pointerMoveResize}
       pointerdown={startResize}
       hitArea = {new Rectangle(
@@ -216,7 +238,12 @@ const MoverEdges = (props: { position: Point, width: number, height: number, onR
   }
 
   return (
-    <Container interactiveChildren={true}>
+    <Container 
+      interactiveChildren={true}
+      interactive={true}
+      pointerup={stopResize}
+      pointerupoutside={stopResize}
+      >
       <VerticalEdge position={ east }/>
       <VerticalEdge position={ west }/>
       <HorizontalEdge position={ north }/>
@@ -274,6 +301,16 @@ const withMovalbe = (WrappedComponent:any) =>
 
     const app = useApp();
 
+  const resizeAction = useRef<ResizeAction>({
+    data: {
+      height: 0,
+      width: 0,
+    },
+    elementId: id,
+    elementType: ElementType.Element,
+    type: ActionType.Resize
+  });
+
     // const [position, setPosition] = useState(propPosition);
     const [offset, setOffset] = useState({x: 0, y: 0});
     const [dragged, setDragged] = useState(false);
@@ -300,11 +337,9 @@ const withMovalbe = (WrappedComponent:any) =>
   const onDrag = ((event:interaction.InteractionEvent) => {
     if (dragged) {
       const newPosition = event.data.getLocalPosition(app.stage)
-      // setPosition(new Point(newPosition.x - offset.x, newPosition.y - offset.y))
       dispatchAction({ 
         elementId: id, 
         data: new Point(newPosition.x - offset.x, newPosition.y - offset.y),
-        oldData: position,
         elementType: ElementType.Element,
         type: ActionType.Move
       })
@@ -343,7 +378,14 @@ const withMovalbe = (WrappedComponent:any) =>
           position={position} 
           width={width} 
           height={height} 
-          onResize={(x, y) => {console.log(`x:${x} y:${y}`)}}
+          onResize={(x: number, y: number) => {
+              resizeAction.current.elementId = id;
+              resizeAction.current.data.width = width * x;
+              resizeAction.current.data.height = height *  y;
+              dispatchAction(resizeAction.current)
+            }}
+          onResizeStop={() => {console.log('stopResizing')}}
+          onResizeStart={() => {console.log('startResizing')}}
           />
         }
 
