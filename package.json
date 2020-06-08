@@ -13,6 +13,7 @@
     "@types/react-dom": "^16.9.0",
     "gojs-react": "^1.0.5",
     "measure-font": "^1.0.0",
+    "mxgraph": "^4.1.1",
     "pixi.js": "^5.2.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -39,5 +40,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ts-mxgraph": "^1.0.0"
   }
 }
