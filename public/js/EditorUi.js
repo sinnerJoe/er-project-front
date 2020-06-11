@@ -3893,7 +3893,9 @@ EditorUi.prototype.save = function(name)
 			this.editor.graph.stopEditing();
 		}
 		
-		var xml = mxUtils.getXml(this.editor.getGraphXml());
+		const rawData = this.editor.getGraphXml();
+		// TODO: here it takes the DATA, extract this data into react
+		var xml = mxUtils.getXml(rawData);
 		
 		try
 		{
