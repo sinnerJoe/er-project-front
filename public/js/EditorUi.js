@@ -3401,42 +3401,11 @@ EditorUi.prototype.createUi = function()
 	
 	if(!this.editor.chromeless) {
 		var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
-		this.tabViewBar = new TabViewBar(this, tabBarContainer);
-		const tabData = [
-			{
-				label: 'ER Diagram 1',
-				id: 0,
-				focused: true,
-			},
-			{
-				label: 'ER Diagram 2',
-				id: 1,
-				focused: false,
-			},
-		]
+		this.tabManager = new TabManager(this, tabBarContainer);
+		this.tabManager.init();
+		this.container.appendChild(tabBarContainer);
 		// this.tabViewBar.addTab('ER Diagram', 0, true);
 		// this.tabViewBar.addTab('ER Diagram', 1);
-		this.tabViewBar.renderTabs(tabData)
-		this.tabViewBar.addListener(mxConstants.SELECT_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
-			for(var i in tabData) 
-				tabData[i].focused = tabData[i].id === evt.getProperty('id');
-			this.tabViewBar.renderTabs(tabData);
-		}));
-		this.tabViewBar.addListener(mxConstants.CLOSE_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
-			for(var i in tabData) 
-				if (tabData[i].id === evt.getProperty('id')) {
-					if(tabData[i].focused) {
-						const focusedIndex = i == 0 ? 1 : 0;
-						tabData[focusedIndex].focused = true;
-					}
-					tabData.splice(i, 1);
-
-					break;
-				}
-			this.tabViewBar.renderTabs(tabData);
-		}));
-
-
 	}
 
 	if (this.menubar != null)
