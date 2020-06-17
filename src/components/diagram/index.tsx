@@ -16,7 +16,7 @@ declare var RESOURCE_BASE: any;
 declare var STYLE_PATH: any;
 declare var mxLanguage: any;
 
-function initDiagram(element: any, cb: any) {
+function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) => void }) {
   var editorUiInit = EditorUi.prototype.init;
 
   EditorUi.prototype.init = function () {
@@ -63,7 +63,9 @@ function initDiagram(element: any, cb: any) {
       const editor = new EditorUi(
         // eslint-disable-next-line eqeqeq
         new Editor(urlParams["chrome"] == "0", themes),
-        element
+        element,
+        undefined,
+        config,
       );
       cb(editor);
     },
@@ -83,7 +85,11 @@ export default function Diagram(props:any) {
     console.log("DADAD")
 
     useLayoutEffect(() => {
-        initDiagram(wrapperRef.current, () => {});
+        initDiagram(wrapperRef.current, () => {}, { 
+          onSave: (xmlData) => {
+            console.log(xmlData);
+          } 
+        });
     }, [])
 
     const wrapperDiv = useMemo(() => (

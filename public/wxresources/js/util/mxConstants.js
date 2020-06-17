@@ -2332,5 +2332,5 @@
 	 * Name of the triangle perimeter. Can be used as a string value
 	 * for the STYLE_PERIMETER style.
 	 */
-	PERIMETER_TRIANGLE: 'trianglePerimeter'
+
 };

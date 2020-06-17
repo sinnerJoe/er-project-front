@@ -16,7 +16,7 @@ function App() {
       </div>
       <div style={{position: 'relative', display: 'block', height: '100vh'}}>
 
-      {show && <Diagram/>}
+      {<Diagram/>}
       </div>
     </div>
   );

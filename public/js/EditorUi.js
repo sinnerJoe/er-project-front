@@ -4,10 +4,14 @@
 /**
  * Constructs a new graph editor
  */
-EditorUi = function(editor, container, lightbox)
+EditorUi = function(editor, container, lightbox, config = {
+	onSave: () => {}
+})
+
 {
 	mxEventSource.call(this);
 	
+	this.config = config;
 	this.destroyFunctions = [];
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
@@ -981,6 +985,8 @@ EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 :
  * Specifies the height of the menubar. Default is 30.
  */
 EditorUi.prototype.menubarHeight = 30;
+
+EditorUi.prototype.tabBarHeight = 30;
 
 /**
  * Specifies the width of the format panel should be enabled. Default is true.
@@ -3226,12 +3232,12 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	if (this.menubar != null)
 	{
 		this.menubarContainer.style.height = this.menubarHeight + 'px';
-		tmp += this.menubarHeight;
+		tmp += this.menubarHeight + this.tabBarHeight;
 	}
 	
 	if (this.toolbar != null)
 	{
-		this.toolbarContainer.style.top = this.menubarHeight + 'px';
+		this.toolbarContainer.style.top = this.menubarHeight + this.tabBarHeight + 'px';
 		this.toolbarContainer.style.height = this.toolbarHeight + 'px';
 		tmp += this.toolbarHeight;
 	}
@@ -3278,12 +3284,12 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	{
 		this.menubarContainer.style.width = w + 'px';
 		this.toolbarContainer.style.width = this.menubarContainer.style.width;
-		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
+		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.tabBarHeight - this.toolbarHeight);
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
 		this.formatContainer.style.height = sidebarHeight + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
-		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
+		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.tabBarHeight - this.toolbarHeight);
 		
 		if (this.tabContainer != null)
 		{
@@ -3393,6 +3399,46 @@ EditorUi.prototype.createUi = function()
 	// Creates menubar
 	this.menubar = (this.editor.chromeless) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
+	if(!this.editor.chromeless) {
+		var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
+		this.tabViewBar = new TabViewBar(this, tabBarContainer);
+		const tabData = [
+			{
+				label: 'ER Diagram 1',
+				id: 0,
+				focused: true,
+			},
+			{
+				label: 'ER Diagram 2',
+				id: 1,
+				focused: false,
+			},
+		]
+		// this.tabViewBar.addTab('ER Diagram', 0, true);
+		// this.tabViewBar.addTab('ER Diagram', 1);
+		this.tabViewBar.renderTabs(tabData)
+		this.tabViewBar.addListener(mxConstants.SELECT_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
+			for(var i in tabData) 
+				tabData[i].focused = tabData[i].id === evt.getProperty('id');
+			this.tabViewBar.renderTabs(tabData);
+		}));
+		this.tabViewBar.addListener(mxConstants.CLOSE_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
+			for(var i in tabData) 
+				if (tabData[i].id === evt.getProperty('id')) {
+					if(tabData[i].focused) {
+						const focusedIndex = i == 0 ? 1 : 0;
+						tabData[focusedIndex].focused = true;
+					}
+					tabData.splice(i, 1);
+
+					break;
+				}
+			this.tabViewBar.renderTabs(tabData);
+		}));
+
+
+	}
+
 	if (this.menubar != null)
 	{
 		this.menubarContainer.appendChild(this.menubar.container);
@@ -3414,6 +3460,9 @@ EditorUi.prototype.createUi = function()
 		
 		// Inserts into DOM
 		this.container.appendChild(this.menubarContainer);
+		if(this.tabViewBar) {
+			this.container.appendChild(this.tabViewBar.container);
+		}
 	}
 
 	// Creates the sidebar
@@ -3895,45 +3944,46 @@ EditorUi.prototype.save = function(name)
 		
 		const rawData = this.editor.getGraphXml();
 		// TODO: here it takes the DATA, extract this data into react
+		this.config.onSave(rawData);
 		var xml = mxUtils.getXml(rawData);
-		
-		try
-		{
-			if (Editor.useLocalStorage)
-			{
-				if (localStorage.getItem(name) != null &&
-					!mxUtils.confirm(mxResources.get('replaceIt', [name])))
-				{
-					return;
-				}
+		console.log(xml)
+		// try
+		// {
+		// 	if (Editor.useLocalStorage)
+		// 	{
+		// 		if (localStorage.getItem(name) != null &&
+		// 			!mxUtils.confirm(mxResources.get('replaceIt', [name])))
+		// 		{
+		// 			return;
+		// 		}
 
-				localStorage.setItem(name, xml);
-				this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('saved')) + ' ' + new Date());
-			}
-			else
-			{
-				if (xml.length < MAX_REQUEST_SIZE)
-				{
-					new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(name) +
-						'&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
-				}
-				else
-				{
-					mxUtils.alert(mxResources.get('drawingTooLarge'));
-					mxUtils.popup(xml);
+		// 		localStorage.setItem(name, xml);
+		// 		this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('saved')) + ' ' + new Date());
+		// 	}
+		// 	else
+		// 	{
+		// 		if (xml.length < MAX_REQUEST_SIZE)
+		// 		{
+		// 			new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(name) +
+		// 				'&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
+		// 		}
+		// 		else
+		// 		{
+		// 			mxUtils.alert(mxResources.get('drawingTooLarge'));
+		// 			mxUtils.popup(xml);
 					
-					return;
-				}
-			}
+		// 			return;
+		// 		}
+		// 	}
 
-			this.editor.setModified(false);
-			this.editor.setFilename(name);
-			this.updateDocumentTitle();
-		}
-		catch (e)
-		{
-			this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('errorSavingFile')));
-		}
+		// 	this.editor.setModified(false);
+		// 	this.editor.setFilename(name);
+		// 	this.updateDocumentTitle();
+		// }
+		// catch (e)
+		// {
+		// 	this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('errorSavingFile')));
+		// }
 	}
 };
 

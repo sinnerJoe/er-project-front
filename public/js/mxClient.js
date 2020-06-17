@@ -6701,6 +6701,13 @@ var mxUtils =
  */
  var mxConstants =
  {
+	TAB_CLASS : 'geTab',
+	TAB_FOCUSED_CLASS : 'geTabFocused',
+	SELECTED_TAB_CLASS : 'geTabSelected',
+	SELECT_TAB_EVENT : 'selectTab',
+	TAB_BAR_CLASS : 'geTabBar',
+	CLOSE_BUTTON_CLASS : 'geTabClose',
+	CLOSE_TAB_EVENT : 'closeTab',
 	/**
 	 * Class: mxConstants
 	 * 
