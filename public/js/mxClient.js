@@ -6708,6 +6708,8 @@ var mxUtils =
 	TAB_BAR_CLASS : 'geTabBar',
 	CLOSE_BUTTON_CLASS : 'geTabClose',
 	CLOSE_TAB_EVENT : 'closeTab',
+	UML_DIAGRAM: 'uml',
+	ER_DIAGRAM: 'er', 
 	/**
 	 * Class: mxConstants
 	 * 

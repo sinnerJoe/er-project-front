@@ -28,7 +28,7 @@ function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) =
       setTimeout(
         mxUtils.bind(this, function (this: any) {
           var enabled = true;
-          this.actions.get("open").setEnabled(enabled || Graph.fileSupport);
+          // this.actions.get("open").setEnabled(enabled || Graph.fileSupport);
           this.actions.get("import").setEnabled(enabled || Graph.fileSupport);
           this.actions.get("save").setEnabled(enabled);
           this.actions.get("saveAs").setEnabled(enabled);

@@ -3872,6 +3872,16 @@ EditorUi.prototype.isCompatibleString = function(data)
 /**
  * Adds the label menu items to the given menu and parent.
  */
+function validateName(name) {
+    if (name != null && name.length > 0) {
+        return true;
+    }
+
+    mxUtils.confirm(mxResources.get('invalidName'));
+
+    return false;
+}
+
 EditorUi.prototype.saveFile = function(forceDialog)
 {
 	if (!forceDialog && this.editor.filename != null)
@@ -3883,21 +3893,23 @@ EditorUi.prototype.saveFile = function(forceDialog)
 		var dlg = new FilenameDialog(this, this.editor.getOrCreateFilename(), mxResources.get('save'), mxUtils.bind(this, function(name)
 		{
 			this.save(name);
-		}), null, mxUtils.bind(this, function(name)
-		{
-			if (name != null && name.length > 0)
-			{
-				return true;
-			}
-			
-			mxUtils.confirm(mxResources.get('invalidName'));
-			
-			return false;
-		}));
+		}), null, mxUtils.bind(this, validateName));
 		this.showDialog(dlg.container, 300, 100, true, true);
 		dlg.init();
 	}
 };
+
+EditorUi.prototype.changeLabelName = function (oldLabel, onChange) {
+	var dlg = new FilenameDialog(
+		this, 
+		oldLabel, 
+		mxResources.get('create'), 
+		onChange, 
+		'Diagram name', 
+		mxUtils.bind(this, validateName));
+	this.showDialog(dlg.container, 300, 100, true, true);
+	dlg.init()
+}
 
 /**
  * Saves the current graph under the given filename.

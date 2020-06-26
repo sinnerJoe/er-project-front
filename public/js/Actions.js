@@ -24,15 +24,29 @@ Actions.prototype.init = function()
 		return Action.prototype.isEnabled.apply(this, arguments) && graph.isEnabled();
 	};
 
+	function generateCloneLabel() {
+		var startingLabel = ui.tabManager.getFocusedTab().label
+		var label = startingLabel + ' (1)';
+		var index = 1;
+		while (ui.tabManager.tabData.find(function (t) { return t.label === label })) {
+			index++;
+			label = startingLabel + '(' + index + ')';
+		}
+		return label;
+	}
+
 	// File actions
-	this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
-	this.addAction('open...', function()
-	{
-		window.openNew = true;
-		window.openKey = 'open';
-		
-		ui.openFile();
+	this.addAction('duplicateTab...', function() {
+		ui.changeLabelName(generateCloneLabel(), function (name) {
+			ui.tabManager.cloneSelectedTab(name)
+		})
 	});
+	this.addAction('convertToUml...', function()
+	{
+		ui.changeLabelName(generateCloneLabel(), function (name) {
+			ui.tabManager.convertToUml(name)
+		})
+	}, true);
 	this.addAction('import...', function()
 	{
 		window.openNew = false;

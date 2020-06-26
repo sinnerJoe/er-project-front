@@ -4421,7 +4421,6 @@ Graph.prototype.getActualStartSize = function(swimlane, ignoreState)
  */
 Graph.prototype.tableResized = function(table)
 {
-	console.log('tableLayout.tableResized', table);
 	var model = this.getModel();
 	var rowCount = model.getChildCount(table);
 	var tableGeo = this.getCellGeometry(table);

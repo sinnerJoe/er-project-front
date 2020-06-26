@@ -322,3 +322,5 @@ writingDirection=Writing Direction
 zoom=Zoom
 zoomIn=Zoom In
 zoomOut=Zoom Out
+duplicateTab=Duplicate Diagram
+convertToUml=Convert To UML

@@ -1,6 +1,5 @@
 
-function TabViewBar(editorUi, container) {
-    this.editorUi = editorUi;
+function TabViewBar(container) {
     this.container = container;
 }
 
@@ -23,8 +22,7 @@ TabViewBar.prototype.renderDeleteButton = function (parentElement) {
     var closeTabButton = document.createElement('img');
     closeTabButton.setAttribute('src', Dialog.prototype.closeImage);
     closeTabButton.setAttribute('title', mxResources.get('close'));
-    console.log(mxConstants)
-    closeTabButton.className = mxConstants.CLOSE_BUTTON_CLASS; // TODO: copy geDialogClose css without absolute positioning
+    closeTabButton.className = mxConstants.CLOSE_BUTTON_CLASS; 
     parentElement.appendChild(closeTabButton);
     return closeTabButton;
 }
