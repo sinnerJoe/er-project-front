@@ -6856,6 +6856,8 @@ if (typeof mxVertexHandler != 'undefined')
 			this.getModel().beginUpdate();
 			try
 			{
+				console.log("Natural label", label, state.cell)
+				// TODO: Maybe don't run addCells when state.cell is null
 				this.addCells([label], (state != null) ? state.cell : null);
 				this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));
 				

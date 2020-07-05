@@ -77,19 +77,15 @@ TabManager.prototype.saveCurrentTabState = function () {
     focusedTab.modelState = this.copyModelState()
 }
 
-TabManager.prototype.loadTabState = function ({ undoManagerState, modelState, diagramType }) {
+TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) {
     var undoMgr = this.getUndoManager();
     var model = this.getModel()
     var graph = this.editorUi.editor.graph;
-    graph.stopEditing();
+    // graph.stopEditing();
     model.beginUpdate();
     if(modelState.importCells) {
-        var root = new mxCell(); 
-        var mainLayer = new mxCell();
-        root.insert(mainLayer);
-        model.setRoot(root);
-        graph.importCells(modelState.importCells.filter(v =>v), 0, 0, mainLayer);
-
+        modelState.importCells(graph, model);
+        // graph.addCells(modelState.importCells.filter(v => v), mainLayer)
         delete modelState.importCells;
     } else {
         console.log(modelState)
@@ -97,7 +93,7 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState, di
         model.nextId = modelState.nextId
     }
     model.endUpdate()
-    setTimeout(() => console.log(graph.model.cells) || graph.startEditing(), 0);
+    // setTimeout(() => console.log(graph.model.cells) || graph.startEditing(), 0);
     
     undoMgr.history = undoManagerState.history;
     undoMgr.indexOfNextAdd = undoManagerState.indexOfNextAdd;
