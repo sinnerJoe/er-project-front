@@ -123,8 +123,13 @@ UMLConverter.prototype.addUMLEntityToAssociation = function (entity, association
     } else {
         if (associatedTables.every(({id}) => id !== entity.id)) {
             associatedTables[association.id].push({edge, id: entity.id});
-        } else 
-            associatedTables[association.id].recursive = true;
+        } else {
+            var entry = associatedTables[association.id];
+            entry.recursive = true;
+            if(!Array.isArray(entry.edge)) {
+                entry.edge = [entry.edge, edge];
+            }
+        }
     }
 }
 
@@ -178,7 +183,8 @@ UMLConverter.prototype.registerAssociations = function () {
 }
 
 UMLConverter.prototype.createUMLTable = function(tableID, usedAttributes) {
-    var attributes = Array.from(usedAttributes || this.umlTables[tableID] || ['(No columns)']);
+    var attributes = Array.from(usedAttributes || this.umlTables[tableID]);
+    if(!attributes.length) attributes = [{value: '(No columns)'}];
     var entityCell = this.cells[tableID];
     var entityGeometry = entityCell.getGeometry();
     var tableBuilder = new TableBuilder();
@@ -255,16 +261,20 @@ UMLConverter.prototype.createTwoWayUMLAssociation = function(associationID, rend
 
 }
 
-UMLConverter.prototype.createMultiAssociation = function (associationID, renderMiddleLabel) {
+UMLConverter.prototype.createMultiAssociation = function (associationID, associationTableCell) {
     var associatedTables = this.umlAssociations.tables[associationID];
     var connectionArray = Array.from(associatedTables);
     var tableArray = connectionArray.map(conn => this.convertedUMLTables[conn.id])
+    var positions = tableArray.map(t => t.geometry);
+    if(associationTableCell) positions.push(associationTableCell.geometry)
+    const { x, y } = averagePosition(positions);
+    var renderMiddleLabel = !associationTableCell
+
     var cell = new mxCell(
         renderMiddleLabel ? this.cells[associationID].value : '', 
-        new mxGeometry(0, 0, 100, 100), 
+        new mxGeometry(x, y, 100, 100), 
         "rhombus;whiteSpace=wrap;html=1;");
     cell.vertex = true;
-    
     var rendered = [{
         cell: cell, 
         labels: [],
@@ -280,6 +290,27 @@ UMLConverter.prototype.createMultiAssociation = function (associationID, renderM
     return rendered;
 }
 
+UMLConverter.prototype.createRecursiveUMLAssociation = function(associationID, renderMiddleLabel) {
+    var {edge, id} = this.umlAssociations.tables[associationID][0];
+    var umlTable = this.convertedUMLTables[id];
+    var label = this.cells[associationID].value
+
+    // var label = (this.childrenOfEdge(edge) || []).map(l => l.value).join(' ');
+
+    var edgeBuilder = new EdgeBuilder(umlTable, umlTable)
+    if(label && renderMiddleLabel) edgeBuilder.setCenterText(label);
+
+    if(edge[0].children && edge[0].children.length) {
+        edgeBuilder.setBeginText(edge[0].children[0].value);
+    }
+    if(edge[1].children && edge[1].children.length) {
+        edgeBuilder.setBeginText(edge[1].children[1].value);
+    }
+
+    return [ edgeBuilder.render() ];
+
+}
+
 UMLConverter.prototype.createUMLAssociation = function(associationID) {
     var associatedAttributes = Array.from(this.umlAssociations.attributes[associationID] || []);
 
@@ -289,12 +320,12 @@ UMLConverter.prototype.createUMLAssociation = function(associationID) {
 
     var generatedCells = [];
     if(associatedTables.length === 2) {
-        generatedCells = [this.createTwoWayUMLAssociation(associationID, !associatedAttributes.length)];
+        generatedCells = [this.createTwoWayUMLAssociation(associationID, !associationTableCell)];
     } else if(associatedTables.length > 2) {
-        generatedCells = this.createMultiAssociation(associationID, !associatedAttributes.length);
+        generatedCells = this.createMultiAssociation(associationID, associationTableCell);
+    } else if(associatedTables.length === 1 && associatedTables[0].recursive) {
+        generatedCells = this.createRecursiveUMLAssociation(associationID, !associationTableCell);
     }
-
-    console.log("ASSOCIATION CELL", associationTableCell)
 
     if(associationTableCell) {
         generatedCells[0].table = associationTableCell;
@@ -324,11 +355,9 @@ UMLConverter.prototype.convertAssociations = function() {
 UMLConverter.prototype.convert = function() {
     this.registerTables();
     this.registerAssociations();
-    // console.log("TABLES", this)
 
     this.convertedUMLTables = this.convertTables();
     this.convertedUMLAssociations = this.convertAssociations();
-    // console.log('assoc', this.convertedUMLAssociations, 'rhombus', this.associations, 'intermediate', this.umlAssociations)
 
     return mxUtils.bind(this, function (graph, model) {
         var tableCells = Object.values(this.convertedUMLTables)
