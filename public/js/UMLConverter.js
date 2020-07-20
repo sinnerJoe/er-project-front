@@ -6,8 +6,36 @@ function matchBeginning (regex) {
     }
 }
 
+function matchValue (regex) {
+    return function (cell) {
+        return cell.value && cell.value.match(regex);
+    }
+}
+
+function conjunction(...matchers) {
+    return function(cell) {
+        return Array.from(matchers).every(matcher => matcher(cell));
+    }
+}
+ 
+function typeIs(str) {
+    return function (cell) {
+        return cell.type === str;
+    }
+}
+
+function not(matcher) {
+    return function(cell) {
+        return !matcher(cell);
+    }
+}
+
 function matchEdge(cell) {
     return cell.edge;
+}
+
+function darkenText(text) {
+    return text.replace(/color: *#fafafa/g, "color: #000000")
 }
 
 function sortCellsByPosition(table1, table2) {
@@ -50,17 +78,28 @@ function averagePosition(positions) {
 
 var UMLConverter = function(graph, cells) {
     this.cells = this.mapIds(cells);
+    
     this.entities = this.selectElementsByCondition(matchBeginning(/^rounded/));
     this.entitySet = new Set(this.entities);
+    
     this.attributes = this.selectElementsByCondition(matchBeginning(/^ellipse/));
     this.attributeSet = new Set(this.attributes);
-    this.associations = this.selectElementsByCondition(matchBeginning(/^rhombus;/));
+    
+    this.associations = this.selectElementsByCondition(conjunction(not(matchValue(mxConstants.IS_A_VALUE)), matchBeginning(/^rhombus;/)));
     this.associationSet = new Set(this.associations)
+
     this.edgeTextBoxes = this.selectElementsByCondition(matchBeginning(/^text;/));
     this.edgeTextBoxSet = new Set(this.edgeTextBoxes);
+
+    this.specializations = this.selectElementsByCondition(conjunction(matchValue(mxConstants.IS_A_VALUE), matchBeginning(/^rhombus;/)));
+    this.specializationSet = new Set(this.specializations);
+
     this.edges = this.selectElementsByCondition(matchEdge);
     this.umlTables = [];
     this.umlAssociations = { tables: [], attributes: [] };
+
+    this.umlSpecializations = [];
+
     this.converted = {
         tables: null,
     }
@@ -82,6 +121,10 @@ UMLConverter.prototype.isAssociation = function(cell) {
 
 UMLConverter.prototype.isEdgeTextBox = function(cell) {
     return this.edgeTextBoxSet.has(cell);
+}
+
+UMLConverter.prototype.isSpecialization = function(cell) {
+    return this.specializationSet.has(cell);
 }
 
 UMLConverter.prototype.childrenOfEdge = function(edge) {
@@ -143,6 +186,17 @@ UMLConverter.prototype.addUMLAttributeToAssociation = function (attribute, assoc
     }
 }
 
+UMLConverter.prototype.addUMLEntityToSpecialization = function(entity, specialization, edge) {
+    let associatedEntities = this.umlSpecializations[specialization.id]
+
+    if(associatedEntities && !associatedEntities.find((v) => v.entity === entity)) {
+        associatedEntities.push({entity, edge})
+    } else if(!associatedEntities) {
+        this.umlSpecializations[specialization.id] = [{ entity, edge}];
+
+    }
+}
+
 
 UMLConverter.prototype.walkConnections = function (isFirstType, isSecondType, callback) {
     for (var i in this.edges) {
@@ -172,6 +226,13 @@ UMLConverter.prototype.registerTables = function() {
     this.walkConnections(isEntity, isAttribute, cb);
 }
 
+UMLConverter.prototype.registerSpecializations = function () {
+    var cb = mxUtils.bind(this, this.addUMLEntityToSpecialization);
+    var isEntity = mxUtils.bind(this, this.isEntity);
+    var isSpecialization = mxUtils.bind(this, this.isSpecialization);
+    this.walkConnections(isEntity, isSpecialization, cb);
+}
+
 UMLConverter.prototype.registerAssociations = function () {
     var addEntityToAssoc = mxUtils.bind(this, this.addUMLEntityToAssociation);
     var addAttributeToAssoc = mxUtils.bind(this, this.addUMLAttributeToAssociation);
@@ -191,17 +252,17 @@ UMLConverter.prototype.createUMLTable = function(tableID, usedAttributes) {
     var keyStyle = {
         style: 'width: 20px;'
     }
-    tableBuilder.createHeaderRow().addCell('key', keyStyle).addCell('name');
+    // tableBuilder.createHeaderRow().addCell('key', keyStyle).addCell('name');
     var header = renderHTMLTag(
         'div', 
-        { style : "box-sizing:border-box;width:100%;background:#e4e4e4;text-align:center;font-weight:bold;font-size:18pt;border-radius: 5px 5px 0 0;"},
-        entityCell.value
+        { style : "box-sizing:border-box;width:100%;background:#e4e4e4;text-align:center;font-weight:bold;font-size:14pt;border-radius: 5px 5px 0 0;"},
+        darkenText(entityCell.value)
     );
 
 
 
     attributes.forEach(function (v) { 
-        tableBuilder.createRow().addCell('', keyStyle).addCell(v.value);
+        tableBuilder.createRow().addCell(v.value, { style: 'text-align: center;'});
     });
     var cell = new mxCell(
         header + tableBuilder.renderHTML(),
@@ -271,7 +332,7 @@ UMLConverter.prototype.createMultiAssociation = function (associationID, associa
     var renderMiddleLabel = !associationTableCell
 
     var cell = new mxCell(
-        renderMiddleLabel ? this.cells[associationID].value : '', 
+        renderMiddleLabel ? darkenText(this.cells[associationID].value) : '', 
         new mxGeometry(x, y, 100, 100), 
         "rhombus;whiteSpace=wrap;html=1;");
     cell.vertex = true;
@@ -312,7 +373,6 @@ UMLConverter.prototype.createRecursiveUMLAssociation = function(associationID, r
 }
 
 UMLConverter.prototype.createUMLAssociation = function(associationID) {
-    var associatedAttributes = Array.from(this.umlAssociations.attributes[associationID] || []);
 
     var associatedTables = Array.from(this.umlAssociations.tables[associationID] || [])
 
@@ -338,6 +398,33 @@ UMLConverter.prototype.createUMLAssociation = function(associationID) {
 
 }
 
+UMLConverter.prototype.createUMLSubclass = function(specializationID) {
+    var associatedTables = this.umlSpecializations[specializationID] || [];
+    console.log("TABLES", associatedTables)
+    if(associatedTables.length < 2) return null;
+
+    let subclass = associatedTables[1].entity;
+    let parentClass = associatedTables[0].entity;
+    
+    // table1 is the subclass
+    if(associatedTables[0].edge.source === associatedTables[0].entity) {
+        const aux = subclass;
+        subclass = parentClass;
+        parentClass = aux;
+
+    }
+
+    console.log("SUBCLASS", subclass, "parentClass", parentClass)
+
+    const edgeBuilder = new EdgeBuilder(this.convertedUMLTables[subclass.id], this.convertedUMLTables[parentClass.id]).makeSubclass();
+
+    const subclassEdge = edgeBuilder.render().cell;
+    subclassEdge.value = ' ';
+
+    return subclassEdge
+
+}  
+
 
 
 UMLConverter.prototype.convertTables = function() {
@@ -350,14 +437,21 @@ UMLConverter.prototype.convertAssociations = function() {
            .reduce((acc, arr) => acc.concat(arr), []);
 }
 
+UMLConverter.prototype.convertSubclasses = function () {
+    return this.umlSpecializations.map((_, index) => this.createUMLSubclass(index)).filter(v => !!v);
+}
+
 
 
 UMLConverter.prototype.convert = function() {
     this.registerTables();
     this.registerAssociations();
+    this.registerSpecializations();
 
     this.convertedUMLTables = this.convertTables();
     this.convertedUMLAssociations = this.convertAssociations();
+    this.convertedUMLSubclasses = this.convertSubclasses();
+    console.log(this.convertedUMLSubclasses)
 
     return mxUtils.bind(this, function (graph, model) {
         var tableCells = Object.values(this.convertedUMLTables)
@@ -373,18 +467,19 @@ UMLConverter.prototype.convert = function() {
         model.setRoot(root);
         graph.addCells(tableCells.concat(associationEdges));
         graph.addCells(associationTables)
+        graph.addCells(this.convertedUMLSubclasses);
 
 
-            for(const { cell, labels } of this.convertedUMLAssociations) {
-                if(labels.length) {
-                    graph.addCells(labels, cell);
-                    graph.fireEvent(new mxEventObject('textInserted', 'cells', labels));
-                    labels.forEach((v) => graph.autoSizeCell(v));
-                }
-                // if(table) {
-                //     graph.addCells([table, tableEdge])
-                // }
+        for(const { cell, labels } of this.convertedUMLAssociations) {
+            if(labels.length) {
+                graph.addCells(labels, cell);
+                graph.fireEvent(new mxEventObject('textInserted', 'cells', labels));
+                labels.forEach((v) => graph.autoSizeCell(v));
             }
+            // if(table) {
+            //     graph.addCells([table, tableEdge])
+            // }
+        }
     })
 }
 
@@ -505,7 +600,7 @@ EdgeBuilder.prototype.renderLabel = function(text, offset) {
     geometry.offset = new mxPoint(0,0);
     geometry.relative = true;
     var cell = new mxCell();
-    cell.value = text;
+    cell.value = darkenText(text);
     cell.geometry = geometry;
     cell.style = "text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;"
     cell.vertex = true;
@@ -514,9 +609,14 @@ EdgeBuilder.prototype.renderLabel = function(text, offset) {
 }
 
 EdgeBuilder.prototype.makeDashed = function () {
-    this.style = 'endArrow=none;dashed=1;html=1;';
+    this.style = 'endArrow=none;dashed=1;html=1;edgeStyle=orthogonalEdgeStyle;';
     return this;
-}   
+}
+
+EdgeBuilder.prototype.makeSubclass = function () {
+    this.style = 'endArrow=block;endSize=16;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;';
+    return this;
+}
 
 EdgeBuilder.prototype.render = function () {
     var geometry = new mxGeometry();
@@ -535,6 +635,7 @@ EdgeBuilder.prototype.render = function () {
     if(this.endText && this.endText.trim()) {
         result.labels.push(this.renderLabel(this.endText, 1 - TEXT_MARGIN_OFFSET))
     }
+
     if(this.centerText && this.centerText.trim()) {
         result.labels.push(this.renderLabel(this.centerText, 0 - TEXT_MARGIN_OFFSET  * 2))
     }

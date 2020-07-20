@@ -6701,6 +6701,7 @@ var mxUtils =
  */
  var mxConstants =
  {
+	IS_A_VALUE: '<font style="font-size: 14px"><b>IS A</b></font>',
 	TAB_CLASS : 'geTab',
 	TAB_FOCUSED_CLASS : 'geTabFocused',
 	SELECTED_TAB_CLASS : 'geTabSelected',

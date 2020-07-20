@@ -205,6 +205,7 @@ TabManager.prototype.listenCloseTab = function() {
                 break;
             }
         this.loadTabState(this.getFocusedTab())
+        this.updatePalletes();
         this.tabViewBar.renderTabs(this.tabData);
     }));
 }
