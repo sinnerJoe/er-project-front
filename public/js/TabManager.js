@@ -8,29 +8,51 @@ TabManager = function (editorUi, container, tabData) {
     var root = new mxCell();
     var subRoot = new mxCell();
     root.insert(subRoot);
-    this.tabData = tabData || [
-        {
-            label: 'ER Diagram 1',
-            id: 0,
-            diagramType: mxConstants.ER_DIAGRAM,
-            focused: true,
-            importCells: false,
-        }, {
-            label: 'ER Diagram 2',
-            id: 1,
-            diagramType: mxConstants.ER_DIAGRAM,
-            focused: false,
-            importCells : false,
-            undoManagerState: this.copyUndoManagerState(),
-            modelState: { 
-                cells: {
-                    0: root,
-                    1: subRoot,
-                },
-                nextId: 2
+    const editor = editorUi.editor;
+    if(tabData && tabData.length) {
+        const initialSchema = tabData[0].schema;
+        setTimeout(() => {
+            editor.graph.model.beginUpdate();
+            this.createImportXmlCallback(initialSchema)()
+            editor.graph.model.endUpdate();
+        }, 0);
+        this.tabData = tabData.map((tabElement, index) => ({
+                label: tabElement.label,
+                id: index,
+                focused: index == 0,
+                diagramType: mxConstants.ER_DIAGRAM,
+                undoManagerState: this.copyUndoManagerState(),  
+            modelState: {
+                importCells: index !== 0 ? this.createImportXmlCallback(tabElement.schema) : null,
+                cells: index === 0 ? [tabElement.schema] : null,
             }
-        },
-    ];
+        }));
+    } else {
+        this.tabData = [
+            {
+                label: 'ER Diagram 1',
+                id: 0,
+                diagramType: mxConstants.ER_DIAGRAM,
+                focused: true,
+            }, {
+                label: 'ER Diagram 2',
+                id: 1,
+                diagramType: mxConstants.ER_DIAGRAM,
+                focused: false,
+                undoManagerState: this.copyUndoManagerState(),
+                modelState: { 
+                    cells: {
+                        0: root,
+                        1: subRoot,
+                    },
+                    nextId: 2
+                }
+            },
+        ];
+    }
+
+
+    console.log(this.tabData);
 
     this.focusedTabIndex = 0;
 
@@ -41,6 +63,16 @@ TabManager = function (editorUi, container, tabData) {
     setTimeout(mxUtils.bind(this, this.updatePalletes), 0)
 
     
+}
+
+TabManager.prototype.createImportXmlCallback = function(xmlSchema) {
+    const editor = this.editorUi.editor;
+
+    return () => {
+        editor.setGraphXml(xmlSchema);
+        editor.setModified(false);
+        editor.undoManager.clear();
+    }
 }
 
 TabManager.prototype.getModel = function() {
@@ -85,7 +117,6 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
     model.beginUpdate();
     if(modelState.importCells) {
         modelState.importCells(graph, model);
-        // graph.addCells(modelState.importCells.filter(v => v), mainLayer)
         delete modelState.importCells;
     } else {
         console.log(modelState)
@@ -93,7 +124,6 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
         model.nextId = modelState.nextId
     }
     model.endUpdate()
-    // setTimeout(() => console.log(graph.model.cells) || graph.startEditing(), 0);
     
     undoMgr.history = undoManagerState.history;
     undoMgr.indexOfNextAdd = undoManagerState.indexOfNextAdd;

@@ -4504,7 +4504,6 @@ Graph.prototype.setRowHeight = function(row, height)
  */
 Graph.prototype.tableRowResized = function(row, bounds, prev)
 {
-	console.log('tableLayout.tableRowResized', row);
 	var model = this.getModel();
 	var rowGeo = this.getCellGeometry(row);
 	var cellCount = model.getChildCount(row);
@@ -4572,7 +4571,6 @@ Graph.prototype.tableRowResized = function(row, bounds, prev)
  */
 Graph.prototype.tableCellResized = function(cell, bounds, prev)
 {
-	console.log('tableLayout.tableCellResized', cell, bounds, prev);
 	var geo = this.getCellGeometry(cell);
 	
 	if (geo != null)
@@ -4699,7 +4697,6 @@ TableLayout.prototype.execute = function(table)
 	var maxX = 0;
 	var x = 0;
 	
-	console.log('tableLayout.execute', table, off);
 	
 	for (var i = 0; i < model.getChildCount(table); i++)
 	{
@@ -6856,7 +6853,6 @@ if (typeof mxVertexHandler != 'undefined')
 			this.getModel().beginUpdate();
 			try
 			{
-				console.log("Natural label", label, state.cell)
 				// TODO: Maybe don't run addCells when state.cell is null
 				this.addCells([label], (state != null) ? state.cell : null);
 				this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));

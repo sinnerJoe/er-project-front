@@ -16,7 +16,7 @@ declare var RESOURCE_BASE: any;
 declare var STYLE_PATH: any;
 declare var mxLanguage: any;
 
-function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) => void }) {
+function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {
   var editorUiInit = EditorUi.prototype.init;
 
   EditorUi.prototype.init = function () {
@@ -38,7 +38,6 @@ function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) =
       );
     }
   };
-
   // Adds required resources (disables loading of fallback properties, this can only
   // be used if we know that all keys are defined in the language specific file)
   mxResources.loadDefaultBundle = false;
@@ -58,16 +57,21 @@ function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) =
       const themes = {
         [themeIndex]: xhr[1].getDocumentElement(),
       };
-      console.log(themes);
-      // Main
-      const editor = new EditorUi(
+      console.log(config.defaultSetup);
+      const defaultSetup = config.defaultSetup.map(({schema, label})=> 
+              ({label,schema: mxUtils.parseXml(schema).documentElement }));
+
+      const editor = new Editor(urlParams["chrome"] == "0", themes)
+      
+
+      const editorUi = new EditorUi(
         // eslint-disable-next-line eqeqeq
-        new Editor(urlParams["chrome"] == "0", themes),
+        editor,
         element,
         undefined,
-        config,
+        { ...config, defaultSetup },
       );
-      cb(editor);
+      cb(editorUi);
     },
     function () {
       // document.body.innerHTML =
@@ -76,16 +80,15 @@ function initDiagram(element: any, cb: any, config: { onSave: (graphData: any) =
   );
 }
 
-export default function Diagram(props:any) {
+export default function Diagram({defaultSetup}:{defaultSetup: any}) {
 
     const wrapperRef = useRef<Element | null>((null as unknown) as HTMLElement);
 
     const graph = useRef<mxgraph.mxGraph | null>(null);
 
-    console.log("DADAD")
-
     useLayoutEffect(() => {
-        initDiagram(wrapperRef.current, () => {}, { 
+        initDiagram(wrapperRef.current, () => {}, {
+          defaultSetup,
           onSave: (xmlData) => {
             console.log(xmlData);
           } 

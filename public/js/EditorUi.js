@@ -5,7 +5,8 @@
  * Constructs a new graph editor
  */
 EditorUi = function(editor, container, lightbox, config = {
-	onSave: () => {}
+	onSave: () => {},
+	defaultSetup: null,
 })
 
 {
@@ -3401,7 +3402,8 @@ EditorUi.prototype.createUi = function()
 	
 	if(!this.editor.chromeless) {
 		var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
-		this.tabManager = new TabManager(this, tabBarContainer);
+		let tabData = !this.config.defaultSetup || !this.config.defaultSetup.length ? null : this.config.defaultSetup; 
+		this.tabManager = new TabManager(this, tabBarContainer, tabData);
 		this.tabManager.init();
 		this.container.appendChild(tabBarContainer);
 		// this.tabViewBar.addTab('ER Diagram', 0, true);
