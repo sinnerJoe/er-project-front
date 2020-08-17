@@ -59,7 +59,7 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
       };
       console.log(config.defaultSetup);
       const defaultSetup = config.defaultSetup.map(({schema, label})=> 
-              ({label,schema: mxUtils.parseXml(schema).documentElement }));
+              ({label, textSchema: schema, schema: mxUtils.parseXml(schema).documentElement, }));
 
       const editor = new Editor(urlParams["chrome"] == "0", themes)
       

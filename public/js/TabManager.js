@@ -17,14 +17,15 @@ TabManager = function (editorUi, container, tabData) {
             editor.graph.model.endUpdate();
         }, 0);
         this.tabData = tabData.map((tabElement, index) => ({
-                label: tabElement.label,
-                id: index,
-                focused: index == 0,
-                diagramType: mxConstants.ER_DIAGRAM,
-                undoManagerState: this.copyUndoManagerState(),  
+            label: tabElement.label,
+            id: index,
+            focused: index == 0,
+            diagramType: mxConstants.ER_DIAGRAM,
+            undoManagerState: this.copyUndoManagerState(),  
+            textSchema: tabElement.textSchema, //delete onload
             modelState: {
                 importCells: index !== 0 ? this.createImportXmlCallback(tabElement.schema) : null,
-                cells: index === 0 ? [tabElement.schema] : null,
+                cells: [tabElement.schema],
             }
         }));
     } else {
@@ -65,6 +66,29 @@ TabManager = function (editorUi, container, tabData) {
     
 }
 
+TabManager.prototype.serializeTabs = function() {
+   return this.tabData.map((tab, index) => {
+       const encoder = new mxCodec();
+       let node = null;
+       console.log(this.focusedTabIndex)
+       if(index === this.focusedTabIndex) {
+           node = encoder.encode(this.getModel());
+       } else if(tab.textSchema) {
+           console.log("FOUND TEXT SCHEMA")
+           return {
+               schema: tab.textSchema,
+               label: tab.label
+           }
+       } else {
+           node = encoder.encode(tab.modelState);
+        }
+        return {
+            schema: mxUtils.getPrettyXml(node),
+            label: tab.label,
+        }
+   }) 
+}
+
 TabManager.prototype.createImportXmlCallback = function(xmlSchema) {
     const editor = this.editorUi.editor;
 
@@ -76,7 +100,7 @@ TabManager.prototype.createImportXmlCallback = function(xmlSchema) {
 }
 
 TabManager.prototype.getModel = function() {
-    return this.editorUi.editor.graph.model;
+    return this.editorUi.editor.graph.getModel();
 }
 
 TabManager.prototype.getUndoManager = function () {
@@ -85,10 +109,9 @@ TabManager.prototype.getUndoManager = function () {
 
 TabManager.prototype.copyModelState = function () {
     var model = this.getModel();
-    return {
-        cells: model.cells,
-        nextId: model.nextId,
-    }
+    const obj = { ...model }
+    Object.setPrototypeOf(obj, Object.getPrototypeOf(model));
+    return obj;
 }
 
 TabManager.prototype.copyUndoManagerState = function() {
@@ -123,6 +146,8 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
         model.setRoot(modelState.cells[0]);
         model.nextId = modelState.nextId
     }
+    const tab = this.tabData[this.focusedTabIndex];
+    if(tab.textSchema) delete tab.textSchema;
     model.endUpdate()
     
     undoMgr.history = undoManagerState.history;
@@ -156,8 +181,9 @@ TabManager.prototype.cloneSelectedTab = function(label) {
     }
     console.log(clone.modelState)
     this.tabData.push(clone);
+    this.selectTab(this.nextTabId)
     this.nextTabId++;
-    this.tabViewBar.renderTabs(this.tabData);
+    // this.tabViewBar.renderTabs(this.tabData);
 } 
 
 TabManager.prototype.convertToUml = function(label) {
@@ -182,28 +208,36 @@ TabManager.prototype.convertToUml = function(label) {
     }
     console.log(clone.modelState)
     this.tabData.push(clone);
+    this.selectTab(this.nextTabId);
     this.nextTabId++;
-    this.tabViewBar.renderTabs(this.tabData);
+
+
+        // this.tabViewBar.renderTabs(this.tabData);
+
 } 
+
+TabManager.prototype.selectTab = function(id) {
+    this.saveCurrentTabState();
+    var chosenTabIndex = null;
+    for (var i in this.tabData) {
+        if (this.tabData[i].id === id) {
+            chosenTabIndex = i;
+        }
+        this.tabData[i].focused = this.tabData[i].id === id;
+    }
+    if(chosenTabIndex != this.focusedTabIndex) {
+        this.focusedTabIndex = chosenTabIndex;
+        this.loadTabState(this.getFocusedTab());
+        this.tabViewBar.renderTabs(this.tabData);
+        this.updatePalletes();
+        this.affectMenuBar(this.getFocusedTab().diagramType)
+    }
+    console.log(this.tabData, this.getModel())
+}
 
 TabManager.prototype.listenSelectTab = function () {
     this.tabViewBar.addListener(mxConstants.SELECT_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
-        this.saveCurrentTabState();
-        var chosenTabIndex = null;
-        for (var i in this.tabData) {
-            if (this.tabData[i].id === evt.getProperty('id')) {
-                chosenTabIndex = i;
-            }
-            this.tabData[i].focused = this.tabData[i].id === evt.getProperty('id');
-        }
-        if(chosenTabIndex != this.focusedTabIndex) {
-            this.focusedTabIndex = chosenTabIndex;
-            this.loadTabState(this.getFocusedTab());
-            this.tabViewBar.renderTabs(this.tabData);
-            this.updatePalletes();
-            this.affectMenuBar(this.getFocusedTab().diagramType)
-        }
-        console.log(this.getFocusedTab().modelState)
+        this.selectTab(evt.getProperty('id'))
     }));
 }
 
