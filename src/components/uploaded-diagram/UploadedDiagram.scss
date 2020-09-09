@@ -1,0 +1,13 @@
+.uploaded-diagram {
+    border-left: 8px solid gray;
+    .meta-info {
+        padding-left: 2em;
+    }
+    .image {
+        object-fit: fill;
+        max-height: 300px;;
+    }
+    .standard-button {
+        width: 120px;
+    }
+}

@@ -18,7 +18,7 @@ declare var mxLanguage: any;
 
 function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {
   var editorUiInit = EditorUi.prototype.init;
-
+  console.log(config.defaultSetup, "DEFAULT SETUP")
   EditorUi.prototype.init = function () {
     editorUiInit.apply(this, arguments);
     this.actions.get("export").setEnabled(false);
@@ -80,19 +80,32 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
   );
 }
 
-export default function Diagram({defaultSetup}:{defaultSetup: any}) {
+type Props = {
+  defaultSetup: any,
+  onSave: (xmlData: any[]) => void
+}
+
+export default function Diagram({defaultSetup, onSave}: Props) {
 
     const wrapperRef = useRef<Element | null>((null as unknown) as HTMLElement);
-
+    const editorUi = useRef<any>(null);
     const graph = useRef<mxgraph.mxGraph | null>(null);
+    console.log("default setup func", defaultSetup)
 
     useLayoutEffect(() => {
-        initDiagram(wrapperRef.current, () => {}, {
-          defaultSetup,
+        initDiagram(wrapperRef.current, (editor:any) => {editorUi.current = editor}, {
+          defaultSetup: defaultSetup.map((({title, diagramXml}: any) => ({label: title, schema: diagramXml}))),
           onSave: (xmlData) => {
             console.log(xmlData);
+            onSave(xmlData);
           } 
         });
+        return () => {
+          if(editorUi.current) {
+            editorUi.current.editor.modified = false;
+            delete (document as any).onbeforeunload;
+          }
+        }
     }, [])
 
     const wrapperDiv = useMemo(() => (
@@ -100,4 +113,8 @@ export default function Diagram({defaultSetup}:{defaultSetup: any}) {
     </div>), [])
 
     return wrapperDiv;
+}
+
+Diagram.defaultProps = {
+  onSave: () => {}
 }

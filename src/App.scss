@@ -1,0 +1,40 @@
+@import "style/variables.scss";
+
+.margin-left-auto {
+    margin-left: auto;
+}
+
+.margin-right-auto {
+    margin-right: auto;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+$types: (p: padding, m: margin);
+
+@for $i from 1 through 10 {
+    @each $short, $long in $types {
+        .#{$short}t-#{$i} {
+            #{$long}-top: #{$i * 4}px;
+        }
+        .#{$short}pb-#{$i} {
+            #{$long}-bottom: #{$i * 4}px;
+        }
+        .#{$short}l-#{$i} {
+            #{$long}-left: #{$i * 4}px;
+        }
+        .#{$short}r-#{$i} {
+            #{$long}-right: #{$i * 4}px;
+        }
+    }
+}
+
+.underline {
+    text-decoration:underline;
+}
+
+.full-width {
+    width: 100%;
+}
