@@ -38,3 +38,10 @@ $types: (p: padding, m: margin);
 .full-width {
     width: 100%;
 }
+
+.geEditor, .geDialog {
+    box-sizing: content-box!important;
+    *, ::before, ::after {
+        box-sizing: inherit;
+    }
+}
