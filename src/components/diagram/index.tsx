@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import { mxgraph, mxgraphFactory } from "ts-mxgraph";
-
+import canvg from 'canvg';
+import domtoimage from 'dom-to-image'
 const { mxGraph, mxGraphModel, mxCell, mxGeometry, mxPoint } = mxgraphFactory({
   mxLoadResources: false,
   mxLoadStylesheets: false,
@@ -16,9 +17,20 @@ declare var RESOURCE_BASE: any;
 declare var STYLE_PATH: any;
 declare var mxLanguage: any;
 
+const CANVAS_ID = 'capture_canvas';
+
+function capturePoster() {
+  const diagramSvg = document.querySelector('.geDiagramContainer > svg') as HTMLElement
+  const canvas = document.getElementById(CANVAS_ID) as any;
+  return (domtoimage as any).toPng(diagramSvg);
+  // canvg.fromString(canvas.getContext('2d'), '<svg>' + diagramSvg.innerHTML + '</svg>');
+
+  // return canvas.toDataURL('image/png');
+  
+}
+
 function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {
   var editorUiInit = EditorUi.prototype.init;
-  console.log(config.defaultSetup, "DEFAULT SETUP")
   EditorUi.prototype.init = function () {
     editorUiInit.apply(this, arguments);
     this.actions.get("export").setEnabled(false);
@@ -57,9 +69,9 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
       const themes = {
         [themeIndex]: xhr[1].getDocumentElement(),
       };
-      console.log(config.defaultSetup);
+      // console.log(config.defaultSetup);
       const defaultSetup = config.defaultSetup.map(({schema, label})=> 
-              ({label, textSchema: schema, schema: mxUtils.parseXml(schema).documentElement, }));
+              ({label, textSchema: schema }));
 
       const editor = new Editor(urlParams["chrome"] == "0", themes)
       
@@ -69,7 +81,11 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
         editor,
         element,
         undefined,
-        { ...config, defaultSetup },
+        { 
+          ...config, 
+          defaultSetup,
+          capturePoster
+        },
       );
       cb(editorUi);
     },
@@ -109,8 +125,10 @@ export default function Diagram({defaultSetup, onSave}: Props) {
     }, [])
 
     const wrapperDiv = useMemo(() => (
-    <div ref={wrapperRef as any} className='geEditor'> 
-    </div>), [])
+    <>
+    <canvas id={CANVAS_ID}/>
+    <div ref={wrapperRef as any} className='geEditor'/> 
+    </>), [])
 
     return wrapperDiv;
 }

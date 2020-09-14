@@ -5,12 +5,14 @@ var DEFAULT_UNDO_MANAGER_STATE = {
 
 TabManager = function (editorUi, container, tabData) {
     this.editorUi = editorUi;
+    this.capturePoster = editorUi.config.capturePoster;
     var root = new mxCell();
     var subRoot = new mxCell();
     root.insert(subRoot);
     const editor = editorUi.editor;
-    if(tabData && tabData.length) {
-        const initialSchema = tabData[0].schema;
+    if (tabData && tabData.length) {
+        console.log("TAB ELEMENTS IN", tabData)
+        const initialSchema = tabData[0].textSchema;
         setTimeout(() => {
             editor.graph.model.beginUpdate();
             this.createImportXmlCallback(initialSchema)()
@@ -20,35 +22,22 @@ TabManager = function (editorUi, container, tabData) {
             label: tabElement.label,
             id: index,
             focused: index == 0,
-            diagramType: mxConstants.ER_DIAGRAM,
-            undoManagerState: this.copyUndoManagerState(),  
+            diagramType: mxConstants.ER_DIAGRAM, // TODO: add diagramType to TabData model
+            undoManagerState: this.copyUndoManagerState(),
             textSchema: tabElement.textSchema, //delete onload
             modelState: {
-                importCells: index !== 0 ? this.createImportXmlCallback(tabElement.schema) : null,
+                importCells: index !== 0 ? this.createImportXmlCallback(tabElement.textSchema) : null,
                 cells: [tabElement.schema],
             }
         }));
     } else {
         this.tabData = [
             {
-                label: 'ER Diagram 1',
+                label: 'Main',
                 id: 0,
                 diagramType: mxConstants.ER_DIAGRAM,
                 focused: true,
-            }, {
-                label: 'ER Diagram 2',
-                id: 1,
-                diagramType: mxConstants.ER_DIAGRAM,
-                focused: false,
-                undoManagerState: this.copyUndoManagerState(),
-                modelState: { 
-                    cells: {
-                        0: root,
-                        1: subRoot,
-                    },
-                    nextId: 2
-                }
-            },
+            }, 
         ];
     }
 
@@ -60,46 +49,51 @@ TabManager = function (editorUi, container, tabData) {
     this.nextTabId = this.tabData.reduce(function (m, tab) { return Math.max(m, tab.id) }, 0) + 1;
 
     this.tabViewBar = new TabViewBar(container);
-    
+
     setTimeout(mxUtils.bind(this, this.updatePalletes), 0)
 
-    
+
 }
 
-TabManager.prototype.serializeTabs = function() {
-   return this.tabData.map((tab, index) => {
-       const encoder = new mxCodec();
-       let node = null;
-       console.log(this.focusedTabIndex)
-       if(index === this.focusedTabIndex) {
-           node = encoder.encode(this.getModel());
-       } else if(tab.textSchema) {
-           console.log("FOUND TEXT SCHEMA")
-           return {
-               schema: tab.textSchema,
-               label: tab.label
-           }
-       } else {
-           node = encoder.encode(tab.modelState);
+TabManager.prototype.serializeTabs = function () {
+    return this.saveCurrentTabState().then(() => Promise.all(this.tabData.map((tab, index) => {
+        const encoder = new mxCodec();
+        let node = null;
+        let currentPoster = Promise.resolve(tab.poster);
+        if (index === this.focusedTabIndex) {
+            node = encoder.encode(this.getModel());
+            currentPoster = this.capturePoster();
+        } else if (tab.textSchema) {
+            return Promise.resolve({
+                schema: tab.textSchema,
+                poster: tab.poster,
+                title: tab.label
+            })
+        } else {
+            node = encoder.encode(tab.modelState);
         }
-        return {
-            schema: mxUtils.getPrettyXml(node),
-            label: tab.label,
-        }
-   }) 
+        return currentPoster.then((poster) => (
+            {
+                schema: mxUtils.getPrettyXml(node),
+                poster: poster,
+                title: tab.label,
+            }
+        ));
+    }))
+    );
 }
 
-TabManager.prototype.createImportXmlCallback = function(xmlSchema) {
+TabManager.prototype.createImportXmlCallback = function (xmlSchema) {
     const editor = this.editorUi.editor;
-
+    const schema = mxUtils.parseXml(xmlSchema).documentElement
     return () => {
-        editor.setGraphXml(xmlSchema);
+        editor.setGraphXml(schema);
         editor.setModified(false);
         editor.undoManager.clear();
     }
 }
 
-TabManager.prototype.getModel = function() {
+TabManager.prototype.getModel = function () {
     return this.editorUi.editor.graph.getModel();
 }
 
@@ -114,7 +108,7 @@ TabManager.prototype.copyModelState = function () {
     return obj;
 }
 
-TabManager.prototype.copyUndoManagerState = function() {
+TabManager.prototype.copyUndoManagerState = function () {
     var undoMgr = this.getUndoManager();
     return {
         history: undoMgr.history.slice(0),
@@ -122,7 +116,7 @@ TabManager.prototype.copyUndoManagerState = function() {
     };
 }
 
-TabManager.prototype.getFocusedTab = function() {
+TabManager.prototype.getFocusedTab = function () {
     return this.tabData[this.focusedTabIndex];
 }
 
@@ -130,6 +124,7 @@ TabManager.prototype.saveCurrentTabState = function () {
     var focusedTab = this.getFocusedTab();
     focusedTab.undoManagerState = this.copyUndoManagerState();
     focusedTab.modelState = this.copyModelState()
+    return this.capturePoster().then((poster) => focusedTab.poster = poster);
 }
 
 TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) {
@@ -138,7 +133,8 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
     var graph = this.editorUi.editor.graph;
     // graph.stopEditing();
     model.beginUpdate();
-    if(modelState.importCells) {
+    if (modelState.importCells) {
+        console.log("IMPORT CELLS")
         modelState.importCells(graph, model);
         delete modelState.importCells;
     } else {
@@ -147,9 +143,9 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
         model.nextId = modelState.nextId
     }
     const tab = this.tabData[this.focusedTabIndex];
-    if(tab.textSchema) delete tab.textSchema;
+    if (tab.textSchema) delete tab.textSchema;
     model.endUpdate()
-    
+    // graph.startEditing();
     undoMgr.history = undoManagerState.history;
     undoMgr.indexOfNextAdd = undoManagerState.indexOfNextAdd;
 }
@@ -159,9 +155,12 @@ TabManager.prototype.init = function () {
     this.tabViewBar.renderTabs(this.tabData);
     this.listenSelectTab();
     this.listenCloseTab();
+    this.listenStartLabelEdit();
+    this.listenStopLabelEdit();
+    this.listenSaveLabelEdit();
 }
 
-TabManager.prototype.cloneSelectedTab = function(label) {
+TabManager.prototype.cloneSelectedTab = function (label) {
     this.saveCurrentTabState();
     var focusedTab = this.getFocusedTab();
     var modelState = focusedTab.modelState;
@@ -184,9 +183,9 @@ TabManager.prototype.cloneSelectedTab = function(label) {
     this.selectTab(this.nextTabId)
     this.nextTabId++;
     // this.tabViewBar.renderTabs(this.tabData);
-} 
+}
 
-TabManager.prototype.convertToUml = function(label) {
+TabManager.prototype.convertToUml = function (label) {
     this.saveCurrentTabState();
     var modelState = this.getFocusedTab().modelState;
     var converter = new UMLConverter(this.editorUi.editor.graph, modelState.cells);
@@ -212,11 +211,11 @@ TabManager.prototype.convertToUml = function(label) {
     this.nextTabId++;
 
 
-        // this.tabViewBar.renderTabs(this.tabData);
+    // this.tabViewBar.renderTabs(this.tabData);
 
-} 
+}
 
-TabManager.prototype.selectTab = function(id) {
+TabManager.prototype.selectTab = function (id) {
     this.saveCurrentTabState();
     var chosenTabIndex = null;
     for (var i in this.tabData) {
@@ -224,8 +223,9 @@ TabManager.prototype.selectTab = function(id) {
             chosenTabIndex = i;
         }
         this.tabData[i].focused = this.tabData[i].id === id;
+        this.tabData[i].editingLabel = false;
     }
-    if(chosenTabIndex != this.focusedTabIndex) {
+    if (chosenTabIndex != this.focusedTabIndex) {
         this.focusedTabIndex = chosenTabIndex;
         this.loadTabState(this.getFocusedTab());
         this.tabViewBar.renderTabs(this.tabData);
@@ -241,9 +241,9 @@ TabManager.prototype.listenSelectTab = function () {
     }));
 }
 
-TabManager.prototype.updatePalletes = function() {
+TabManager.prototype.updatePalletes = function () {
     var actions = {
-        [mxConstants.UML_DIAGRAM] : mxUtils.bind(this, function () {
+        [mxConstants.UML_DIAGRAM]: mxUtils.bind(this, function () {
             this.editorUi.sidebar.hidePalette('general');
             this.editorUi.sidebar.showPalette('uml');
         }),
@@ -255,9 +255,9 @@ TabManager.prototype.updatePalletes = function() {
     actions[this.getFocusedTab().diagramType]();
 }
 
-TabManager.prototype.listenCloseTab = function() {
+TabManager.prototype.listenCloseTab = function () {
     this.tabViewBar.addListener(mxConstants.CLOSE_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
-        for (var i in this.tabData) 
+        for (var i in this.tabData)
             if (this.tabData[i].id === evt.getProperty('id')) {
                 if (this.tabData[i].focused) {
                     const focusedIndex = i == 0 ? 1 : 0;
@@ -274,20 +274,48 @@ TabManager.prototype.listenCloseTab = function() {
     }));
 }
 
-TabManager.prototype.blockConvertEntry = function() {
+TabManager.prototype.blockConvertEntry = function () {
     console.log(this.editorUi.actions.get('convertToUml'))
 
     this.editorUi.actions.get('convertToUml').setEnabled(false);
 }
-TabManager.prototype.unblockConvertEntry = function() {
+TabManager.prototype.unblockConvertEntry = function () {
     this.editorUi.actions.get('convertToUml').setEnabled(true);
 }
 
-TabManager.prototype.affectMenuBar = function(diagramType) {
+TabManager.prototype.affectMenuBar = function (diagramType) {
     if (diagramType === mxConstants.UML_DIAGRAM) {
         this.blockConvertEntry();
     } else {
         this.unblockConvertEntry();
     }
 
+}
+
+TabManager.prototype.listenStartLabelEdit = function () {
+    this.tabViewBar.addListener(mxConstants.START_RENAME_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
+        var id = evt.getProperty('id');
+        if (!this.tabData[id].editingLabel) {
+            this.tabData[id].editingLabel = true;
+        }
+        this.tabViewBar.renderTabs(this.tabData);
+    }))
+}
+
+TabManager.prototype.listenStopLabelEdit = function () {
+    this.tabViewBar.addListener(mxConstants.STOP_RENAME_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
+        var id = evt.getProperty('id');
+        this.tabData[id].editingLabel = false;
+        this.tabViewBar.renderTabs(this.tabData);
+    }));
+}
+
+TabManager.prototype.listenSaveLabelEdit = function () {
+    this.tabViewBar.addListener(mxConstants.SAVE_RENAME_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
+        var id = evt.getProperty('id');
+        var label = evt.getProperty('label');
+        this.tabData[id].editingLabel = false;
+        this.tabData[id].label = label;
+        this.tabViewBar.renderTabs(this.tabData);
+    }));
 }

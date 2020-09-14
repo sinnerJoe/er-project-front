@@ -243,7 +243,7 @@ td.mxPopupMenuIcon {
 
 
 
-.geTab>div {
+.geTab>div, .geTab>input {
     /* flex-grow: 1; */
     flex-basis: max-content;
     flex: 1 0;
@@ -251,6 +251,14 @@ td.mxPopupMenuIcon {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.geTab > input {
+    border: none;
+    border-left: 4px solid #1ca2fb;
+    margin-right: 10px;
+    /* border-top: 1px solid #1ca2fb; */
+    /* border-right: 1px solid #1ca2fb; */
 
 }
 

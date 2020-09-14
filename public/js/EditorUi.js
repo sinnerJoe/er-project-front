@@ -3925,11 +3925,11 @@ EditorUi.prototype.save = function(name)
 			this.editor.graph.stopEditing();
 		}
 		
-		const rawData = this.editor.getGraphXml();
+		const rawData = this.editor.getXml();
 		// TODO: here it takes the DATA, extract this data into react
-		this.config.onSave(rawData);
 		var xml = mxUtils.getXml(rawData);
 		console.log(xml)
+		this.config.onSave(rawData);
 		// try
 		// {
 		// 	if (Editor.useLocalStorage)

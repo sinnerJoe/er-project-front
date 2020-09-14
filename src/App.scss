@@ -19,7 +19,7 @@ $types: (p: padding, m: margin);
         .#{$short}t-#{$i} {
             #{$long}-top: #{$i * 4}px;
         }
-        .#{$short}pb-#{$i} {
+        .#{$short}b-#{$i} {
             #{$long}-bottom: #{$i * 4}px;
         }
         .#{$short}l-#{$i} {

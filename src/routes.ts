@@ -10,7 +10,7 @@ export default [
     {
         path: paths.NEW_DIAGRAM,
         component: CreateDiagram,
-        disableHeader: false,
+        disableHeader: true,
     },
     {
         path: paths.EDIT_DIAGRAM,

@@ -64,6 +64,9 @@ export default function UploadedDiagram({onDelete=() => {}, tabs=testTabs, updat
                             <AttachmentLink label={assignment.title} />
                         </Link>
                     ))}
+                    {
+                        !assignments.length && <i>Nothing</i>
+                    }
                 </InfoLabel>
             </Col>
             <Col>

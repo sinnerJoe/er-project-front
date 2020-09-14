@@ -16,7 +16,6 @@ export default function EditDiagramPage(props:any) {
     const [solution, setSolution] = useState<Solution>();
     const solutionId = new URLSearchParams(location.search).get('solId')
     useEffect(() => {
-        console.log('get')
         getSolution(solutionId).then((data: any) => setSolution(data))
     }, [solutionId]);
 
@@ -31,11 +30,11 @@ export default function EditDiagramPage(props:any) {
                 if(solution) {
                     saveSolution({
                         ...(solution as any), 
-                        tabs: xmlData.map(({label, schema}, index) => ({
-                            title: label, 
+                        tabs: xmlData.map(({title, poster=diagramImage, schema}, index) => ({
                             id: index,
                             diagramXml: schema, 
-                            poster: diagramImage
+                            title,
+                            poster,
                         })) as any,
                     }).then(() => {
                         history.push(paths.MY_DIAGRAM);

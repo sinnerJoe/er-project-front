@@ -70,3 +70,15 @@ export const deleteDiagram = (diagramId:any) => {
     return fakeGet({status: 'OK'});
 }
 
+export const createSolution = (tabs: any) => {
+    const solution: Solution = {
+        id: Object.values(diagrams).reduce((acc, v) => Math.max(acc, v.id), 0) + 1,
+        assignments: [],
+        tabs,
+        updatedOn: new Date().toISOString()
+    };
+
+    diagrams[solution.id] = solution;
+
+    return fakeGet({status: 'OK'});
+}
