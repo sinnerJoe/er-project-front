@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import { mxgraph, mxgraphFactory } from "ts-mxgraph";
-import canvg from 'canvg';
 import domtoimage from 'dom-to-image'
+import {Image} from 'image-js';
 const { mxGraph, mxGraphModel, mxCell, mxGeometry, mxPoint } = mxgraphFactory({
   mxLoadResources: false,
   mxLoadStylesheets: false,
@@ -21,12 +21,10 @@ const CANVAS_ID = 'capture_canvas';
 
 function capturePoster() {
   const diagramSvg = document.querySelector('.geDiagramContainer > svg') as HTMLElement
-  const canvas = document.getElementById(CANVAS_ID) as any;
-  return (domtoimage as any).toPng(diagramSvg);
-  // canvg.fromString(canvas.getContext('2d'), '<svg>' + diagramSvg.innerHTML + '</svg>');
-
-  // return canvas.toDataURL('image/png');
-  
+  const fullImage = (domtoimage as any).toPng(diagramSvg);
+  // const imageHandler = Image.load(fullImage);
+  // console.log(imageHandler.getMatrix())
+  return fullImage
 }
 
 function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {

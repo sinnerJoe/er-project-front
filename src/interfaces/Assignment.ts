@@ -1,7 +1,12 @@
 import { Solution } from "./Solution";
 
-export type Assignment = {
+export type AssignmentModel = {
     title: string,
+    description: string,
     id: number,
-    submittedSolutions: Partial<Solution>
+    submittedSolution?: Partial<Solution>,
+    submittedSolutions?: Partial<Solution>[]
+    submittedAt?: string,
+    start: string,
+    end: string
 }

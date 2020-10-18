@@ -12,36 +12,62 @@
     display: inline-block;
 }
 
-$types: (p: padding, m: margin);
+$types: (
+    p: padding,
+    m: margin
+);
+$directions: (
+    r:right, l:left, t:top, b:bottom
+);
+$sizes: (
+    0: 0,
+    1: 4px,
+    2: 8px,
+    3: 12px,
+    4: 16px,
+    5: 20px,
+    6: 24px,
+    7: 28px,
+    8: 32px,
+    9: 36px,
+    10: 40px,
+    auto: auto
+);
 
-@for $i from 1 through 10 {
-    @each $short, $long in $types {
-        .#{$short}t-#{$i} {
-            #{$long}-top: #{$i * 4}px;
-        }
-        .#{$short}b-#{$i} {
-            #{$long}-bottom: #{$i * 4}px;
-        }
-        .#{$short}l-#{$i} {
-            #{$long}-left: #{$i * 4}px;
-        }
-        .#{$short}r-#{$i} {
-            #{$long}-right: #{$i * 4}px;
+
+@each $sizeLabel, $size in $sizes {
+    @each $shortDir, $longDir in $directions {
+        @each $short, $long in $types {
+            .#{$short}#{$shortDir}-#{$sizeLabel} {
+                #{$long}-#{$longDir}: $size;
+            }
         }
     }
 }
 
 .underline {
-    text-decoration:underline;
+    text-decoration: underline;
 }
 
 .full-width {
     width: 100%;
 }
 
-.geEditor, .geDialog {
-    box-sizing: content-box!important;
-    *, ::before, ::after {
+.geEditor,
+.geDialog {
+    box-sizing: content-box !important;
+    *,
+    ::before,
+    ::after {
         box-sizing: inherit;
     }
+}
+
+
+.pointer {
+    cursor: pointer;
+}
+
+.invisible {
+    visibility: hidden;
 }

@@ -57,13 +57,16 @@ TabViewBar.prototype.addTab = function (label, id, focused, editingLabel) {
     }));
 
 
-    mxEvent.addListener(tabElement, 'click', mxUtils.bind(this, function (evt) {
-        this.focusTab(id);
-    }))
-
-    mxEvent.addListener(tabElement, 'dblclick', mxUtils.bind(this, function(evt) {
-        this.startRenaming(id);
-    }))
+    if(!editingLabel) {
+        // TODO: add check for focus
+        mxEvent.addListener(tabElement, 'click', mxUtils.bind(this, function (evt) {
+            this.focusTab(id);
+        }))
+    
+        mxEvent.addListener(tabElement, 'dblclick', mxUtils.bind(this, function(evt) {
+            this.startRenaming(id);
+        }))
+    }
 }
 
 TabViewBar.prototype.renderRenameInput = function(label, id) {
@@ -92,7 +95,6 @@ TabViewBar.prototype.focusTab = function (id) {
 }
 
 TabViewBar.prototype.startRenaming = function(id) {
-    console.log("START RENAMING")
     const eventObject = new mxEventObject(mxConstants.START_RENAME_TAB_EVENT, 'id', id);
     this.fireEvent(eventObject)
 }

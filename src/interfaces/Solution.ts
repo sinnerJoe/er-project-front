@@ -1,4 +1,5 @@
-import { Assignment } from "./Assignment";
+import { AssignmentModel } from "./Assignment";
+import { Mark } from "./Mark";
 
 export type SolutionTab = {
     title: string,
@@ -8,7 +9,9 @@ export type SolutionTab = {
 
 export type Solution = {
     tabs: Partial<SolutionTab>[],
+    title: string,
     updatedOn: string,
     id: number,
-    assignments: Partial<Assignment>[]
+    assignments: Partial<AssignmentModel>[],
+    mark?: Mark
 };

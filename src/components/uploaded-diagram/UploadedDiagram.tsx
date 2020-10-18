@@ -8,18 +8,12 @@ import InfoLabel from 'components/info-label/InfoLabel';
 import { Solution, SolutionTab } from 'interfaces/Solution';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Assignment } from 'interfaces/Assignment';
+import { AssignmentModel } from 'interfaces/Assignment';
 import { deleteDiagram } from 'actions/diagram';
+import AttachmentLink from 'components/attachment-link/AttachmentLink';
 
 
 
-function AttachmentLink({label}: {label: ReactNode}) {
-    return (
-        <>
-            <LinkOutlined /> <span className="underline">{label}</span>
-        </>
-    )
-}
 
 type Props = { onDelete: Function} & Partial<Solution> 
 
@@ -38,7 +32,7 @@ const testTabs: Partial<SolutionTab>[] = [
     },
 ];
 
-const testAssignments: Partial<Assignment>[] = [
+const testAssignments: Partial<AssignmentModel>[] = [
     {
         title:"Create the schema for UAIC DB."
     }
@@ -61,7 +55,9 @@ export default function UploadedDiagram({onDelete=() => {}, tabs=testTabs, updat
                 <InfoLabel text="Submitted to">
                     {assignments.map((assignment, key) => (
                         <Link key={key} to={`${paths.EDIT_DIAGRAM}?`}>
-                            <AttachmentLink label={assignment.title} />
+                            <AttachmentLink> 
+                                {assignment.title}
+                            </AttachmentLink>
                         </Link>
                     ))}
                     {

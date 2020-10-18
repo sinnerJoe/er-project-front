@@ -16,7 +16,7 @@ export default function EditDiagramPage(props:any) {
     const [solution, setSolution] = useState<Solution>();
     const solutionId = new URLSearchParams(location.search).get('solId')
     useEffect(() => {
-        getSolution(solutionId).then((data: any) => setSolution(data))
+        getSolution(Number(solutionId)).then((data: any) => setSolution(data))
     }, [solutionId]);
 
     if(!solution) {
