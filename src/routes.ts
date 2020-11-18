@@ -5,6 +5,8 @@ import EditDiagramPage from 'pages/edit-diagram/EditDiagramPage';
 import MyAssignmentsPage from 'pages/my-assignments/MyAssignmentsPage';
 import EditAssignmentPage from 'pages/edit-assignment/EditAssignmentPage';
 import ProfessorAssignmentsPage from 'pages/professor-assignments-page/ProfessorAssignmentsPage';
+import RegisterPage from 'pages/register-page/RegisterPage';
+import LoginPage from 'pages/login-page/LoginPage';
 export default [
     {
         path: paths.MY_DIAGRAM,
@@ -31,5 +33,15 @@ export default [
     {
         path: `${paths.PROFESSOR_ASSIGNMENTS}`,
         component: ProfessorAssignmentsPage
+    },
+    {
+        path: paths.REGISTER,
+        component: RegisterPage,
+        disableHeader: true
+    },
+    {
+        path: paths.LOGIN,
+        component: LoginPage,
+        disableHeader: true
     }
 ] as {path: string, component: any, disableHeader?: boolean}[];

@@ -40,7 +40,7 @@ $sizes: (
     @each $shortDir, $longDir in $directions {
         @each $short, $long in $types {
             .#{$short}#{$shortDir}-#{$sizeLabel} {
-                #{$long}-#{$longDir}: $size;
+                #{$long}-#{$longDir}: $size !important;
             }
         }
     }
@@ -83,4 +83,9 @@ $sizes: (
 
 .position-absolute {
     position: absolute;
+}
+
+
+.form-title {
+
 }

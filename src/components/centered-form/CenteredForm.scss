@@ -1,0 +1,9 @@
+.centered-form {
+    margin-top: 50vh;
+    position: relative;
+    .inner-wrapper {
+        transform: translateY(-50%);
+        position: absolute;
+        width: 100%;
+    }
+}

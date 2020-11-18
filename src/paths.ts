@@ -5,5 +5,7 @@ export default {
     EDIT_DIAGRAM: '/edit-diagram',
     STUDENT_ASSIGNMENTS: '/assignments',
     EDIT_ASSIGNMENT: '/edit-assignment',
-    PROFESSOR_ASSIGNMENTS: '/professor-assignments'
+    PROFESSOR_ASSIGNMENTS: '/professor-assignments',
+    REGISTER: '/register',
+    LOGIN: '/login'
 };
