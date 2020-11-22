@@ -1,16 +1,20 @@
-import { Input, Row, Space, Typography, Form, Button, Col } from 'antd'
+import { Input, Row, Space, Typography, Form, Button, Col, Alert } from 'antd'
+import _ from 'lodash';
 import { useForm } from 'antd/lib/form/Form';
 import Password from 'antd/lib/input/Password';
 import CenteredForm from 'components/centered-form/CenteredForm'
 import FormTitle from 'components/form-title/FormTitle';
 import paths from 'paths';
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { registerUser } from 'shared/endpoints';
 import { composableLabels, labels } from 'shared/strings';
+import { useLoadingRequest } from 'utils/hooks';
 const { Text, Title } = Typography;
 export default function RegisterPage(props: any) {
     const [form] = Form.useForm();
-    const onFinish = () => { console.log("FIN") };
+    const history = useHistory();
+    const [registerRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(registerUser, null);
 
     const onFinishFailed = () => { console.log("ERR") };
 
@@ -19,7 +23,7 @@ export default function RegisterPage(props: any) {
             <FormTitle>
                 Registration
             </FormTitle>
-            <Form onFinish={onFinish} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
+            <Form onFinish={(values) => registerRequest(values).catch(_.noop)} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
                 <Form.Item
                     rules={[{ required: true, message: composableLabels.fieldRequired(labels.firstName) }]}
                     required
@@ -58,6 +62,11 @@ export default function RegisterPage(props: any) {
                         </Link>
                     </Col>
                     </Row>
+                    {response !== null && <Alert
+                        message={response.message}
+                        // description="Further details about the context of this alert."
+                        type={response.status === 'success' ? "success" : "error"}
+                    />}
 
 
             </Form>
