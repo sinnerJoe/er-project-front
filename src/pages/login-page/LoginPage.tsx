@@ -10,6 +10,7 @@ import paths from 'paths';
 import { authenticate } from 'shared/endpoints';
 import { useLoadingRequest } from 'utils/hooks';
 import { stringify } from 'querystring';
+import { hashPassword } from 'utils/password';
 const { Text, Title } = Typography;
 
 export default function LoginPage(props: any) {
@@ -20,7 +21,7 @@ export default function LoginPage(props: any) {
     const history = useHistory();
     const onFinish = ({email, password}: any) => {
         // TODO RECEIVE USER DATA AND REDIRECT ACCORDINGLY TO THE ROLE
-        authRequest(email, password).then(() => {
+        authRequest(email, hashPassword(password)).then(() => {
             history.replace(paths.PROFESSOR_ASSIGNMENTS);
         })
         .catch(_.identity);

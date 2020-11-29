@@ -10,6 +10,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { registerUser } from 'shared/endpoints';
 import { composableLabels, labels } from 'shared/strings';
 import { useLoadingRequest } from 'utils/hooks';
+import { hashPassword} from 'utils/password';
 const { Text, Title } = Typography;
 export default function RegisterPage(props: any) {
     const [form] = Form.useForm();
@@ -18,12 +19,17 @@ export default function RegisterPage(props: any) {
 
     const onFinishFailed = () => { console.log("ERR") };
 
+    const onSubmit = (values: any) => {
+         const hash = hashPassword(values.password);
+         registerRequest({...values, password: hash}).catch(_.noop);
+    };
+
     return (
         <CenteredForm width={350} >
             <FormTitle>
                 Registration
             </FormTitle>
-            <Form onFinish={(values) => registerRequest(values).catch(_.noop)} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
+            <Form onFinish={onSubmit} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
                 <Form.Item
                     rules={[{ required: true, message: composableLabels.fieldRequired(labels.firstName) }]}
                     required
