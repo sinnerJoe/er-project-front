@@ -7,6 +7,9 @@ import EditAssignmentPage from 'pages/edit-assignment/EditAssignmentPage';
 import ProfessorAssignmentsPage from 'pages/professor-assignments-page/ProfessorAssignmentsPage';
 import RegisterPage from 'pages/register-page/RegisterPage';
 import LoginPage from 'pages/login-page/LoginPage';
+import NotAuthenticatedPage from 'pages/not-authenticated/NotAuthenticatedPage';
+import NotFoundPage from 'pages/not-found/NotFoundPage';
+
 export default [
     {
         path: paths.MY_DIAGRAM,
@@ -37,11 +40,25 @@ export default [
     {
         path: paths.REGISTER,
         component: RegisterPage,
-        disableHeader: true
+        disableHeader: true,
+        secure: false
     },
     {
         path: paths.LOGIN,
         component: LoginPage,
+        disableHeader: true,
+        secure: false
+    },
+    {
+        path: paths.NOT_AUTHENTICATED,
+        component: NotAuthenticatedPage,
+        secure: false,
         disableHeader: true
+    },
+    {
+        path: paths.NOT_FOUND,
+        component: NotFoundPage,
+        disableHeader: true,
+        secure: false
     }
-] as {path: string, component: any, disableHeader?: boolean}[];
+] as {secure?: boolean, path: string, component: any, disableHeader?: boolean}[];

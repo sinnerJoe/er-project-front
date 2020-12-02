@@ -5,7 +5,8 @@ import {
   Switch, 
   Route, 
   Link,
-  withRouter
+  withRouter,
+  Redirect
 } from 'react-router-dom';
 
 import routes from 'routes';
@@ -13,24 +14,24 @@ import routes from 'routes';
 import 'antd/dist/antd.css';
 import './App.scss';
 import Header from 'components/header/Header';
+import UniversalRoute from 'components/secure-route/UniversalRoute';
+import paths from 'paths';
 
 
 function createRoutes() {
-  return routes.map(({path, disableHeader, component: Component}) => ( 
-    <Route path={path}>
-      {!disableHeader && <Header/>}
-      <Component/>
-    </Route>
-  ))
+  return routes.map(({path, secure, component}) => ( 
+    <UniversalRoute secure={secure} path={path} component={component} /> 
+  ));
 }
 
 function App() {
-  const [show, setShow] = useState(false);
   return (
-    <div>
+    <div className="no-scroll window-height">
       <Router>
+      <Header/>
         <Switch>
           {createRoutes()}
+          <Route render={() => <Redirect to={paths.NOT_FOUND} />} />
         </Switch>
       </Router>
     </div>

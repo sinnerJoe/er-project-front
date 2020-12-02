@@ -1,13 +1,14 @@
 import React from 'react'
-import { Row, Col, Avatar } from 'antd'
-import IconLink from 'components/icon-link/IconLink'
-import { HomeFilled, DatabaseFilled, UserOutlined, MenuOutlined, SettingFilled, ArrowRightOutlined, RightOutlined, LeftOutlined, FormOutlined, FileTextOutlined, LogoutOutlined, ContainerOutlined, SecurityScanOutlined, SecurityScanFilled, PlusOutlined, SolutionOutlined, AppstoreAddOutlined } from '@ant-design/icons';
+import { HomeFilled, DatabaseFilled, UserOutlined, MenuOutlined, SettingFilled, ArrowRightOutlined, RightOutlined, LeftOutlined, FormOutlined, FileTextOutlined, LogoutOutlined, ContainerOutlined, SecurityScanOutlined, SecurityScanFilled, PlusOutlined, SolutionOutlined, AppstoreAddOutlined, LoadingOutlined } from '@ant-design/icons';
 import paths from 'paths'
 
 import './Header.scss';
 import NavigationMenu from 'components/navigation-menu/NavigationMenu';
 import { NavItem } from 'components/navigation-menu/MenuItems';
 import { DropdownItem, DropdownMenu } from 'components/navigation-menu/DropdownMenu';
+import { useLocation } from 'react-router-dom';
+import routes from 'routes';
+import LogoutButton from './LogoutButton';
 
 const BackButtonItem = ({ children }: { children: React.ReactNode }) => (
     <DropdownItem openedMenu="main" leftIcon={<LeftOutlined />}>
@@ -47,6 +48,14 @@ const rightMenus = {
     )
 }
 function Header(props: {}) {
+    
+    const location = useLocation();
+
+    const hide = routes.some(route => route.disableHeader && location.pathname.match(route.path))
+
+    if(hide) {
+        return null;
+    }
 
     return (
         <NavigationMenu>
@@ -74,9 +83,7 @@ function Header(props: {}) {
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
                         Assignments(Professor)
                     </DropdownItem>
-                    <DropdownItem leftIcon={<LogoutOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
-                        Log Out
-                    </DropdownItem>
+                    <LogoutButton />
                 </DropdownMenu>
             </NavItem>
         </NavigationMenu>)

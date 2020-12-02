@@ -7,5 +7,8 @@ export default {
     EDIT_ASSIGNMENT: '/edit-assignment',
     PROFESSOR_ASSIGNMENTS: '/professor-assignments',
     REGISTER: '/register',
-    LOGIN: '/login'
+    LOGIN: '/login',
+    UNAUTHORIZED: '/unauthorized',
+    NOT_AUTHENTICATED: '/not-authenticated',
+    NOT_FOUND: '/not-found'
 };

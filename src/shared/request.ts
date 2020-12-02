@@ -1,17 +1,21 @@
 import axios from 'axios';
 
-const hostApiPrefix = 'http://127.0.0.1/api/';
+const hostApiPrefix = 'http://localhost/api/';
+
+// axios.defaults.withCredentials = true;
 
 function request(path: string, method: 'POST' | 'PUT' | 'DELETE' | 'GET', params?: any, payload?: any) {
     return axios.request({
         method,
         params,
-        baseURL: hostApiPrefix,
+        baseURL: '/api/',
         data: payload,
         url: path,
+        withCredentials: true,
         responseType: "json",
         // xsrfCookieName: "er_session",
-        headers: ""
+        // withCredentials: true
+        // headers: ""
     });
 }
 

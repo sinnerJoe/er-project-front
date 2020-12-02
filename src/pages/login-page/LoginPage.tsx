@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import _ from 'lodash';
 import { Input, Row, Space, Typography, Form, Button, Col, Alert } from 'antd'
-import { useForm } from 'antd/lib/form/Form';
 import Password from 'antd/lib/input/Password';
 import CenteredForm from 'components/centered-form/CenteredForm'
 import FormTitle from 'components/form-title/FormTitle';
@@ -9,19 +8,27 @@ import { Link, useHistory } from 'react-router-dom';
 import paths from 'paths';
 import { authenticate } from 'shared/endpoints';
 import { useLoadingRequest } from 'utils/hooks';
-import { stringify } from 'querystring';
 import { hashPassword } from 'utils/password';
-const { Text, Title } = Typography;
+import { fetchCurrentUser } from 'store/slices/user';
+import store from 'store';
+
+const loginRequest = async (email: string, password: string) => {
+    const response = await authenticate(email, hashPassword(password));
+    // if(response.data.status === 'success') {
+    //     await store.dispatch(fetchCurrentUser());
+    // }
+    return response;
+}
 
 export default function LoginPage(props: any) {
     const [form] = Form.useForm();
     // const [loading, setLoading] = useState(false);
     // const [response, setResponse] = useState<{status: string, message: string} | null> (null);
-    const [authRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(authenticate, null);
+    const [authRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(loginRequest, null);
     const history = useHistory();
     const onFinish = ({email, password}: any) => {
         // TODO RECEIVE USER DATA AND REDIRECT ACCORDINGLY TO THE ROLE
-        authRequest(email, hashPassword(password)).then(() => {
+        authRequest(email, password).then(() => {
             history.replace(paths.PROFESSOR_ASSIGNMENTS);
         })
         .catch(_.identity);

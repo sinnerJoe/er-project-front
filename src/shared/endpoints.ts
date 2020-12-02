@@ -5,13 +5,17 @@ import {get, post, del, put} from './request';
 
 export function registerUser(data: User) {
     console.log(fromUser(data))
-    return post("users/", fromUser(data));
+    return post("users/", fromUser(data), {});
 }
 
 export function authenticate(email: string, password: string) {
-    return post("auth/", {email, password});
+    return post("auth/", {email, password}, {});
 }
 
-export function fetchSalt(email: string) {
-    return get("auth/", {email});
+export function fetchSessionUserData() {
+    return get("auth/");
+}
+
+export function logoutSession() {
+    return del("auth/");
 }

@@ -89,3 +89,11 @@ $sizes: (
 .text-center { 
     text-align: center;
 }
+      
+.no-scroll {
+    overflow-y: hidden;
+}
+
+.window-height {
+    height: 100vh;
+}

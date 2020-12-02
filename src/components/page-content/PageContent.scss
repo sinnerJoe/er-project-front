@@ -1,5 +1,9 @@
 .page-content-container {
-    width: 85%;
-    margin: 0 auto;
-    margin-bottom: 32px;
+    overflow-y: auto;
+    height: calc(100vh - var(--nav-size));
+    .page-content {
+        width: 85%;
+        margin: 0 auto;
+        margin-bottom: 32px;
+    }
 }

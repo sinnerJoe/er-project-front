@@ -21,6 +21,7 @@ export default function RegisterPage(props: any) {
 
     const onSubmit = (values: any) => {
          const hash = hashPassword(values.password);
+         console.log({...values, password: hash});
          registerRequest({...values, password: hash}).catch(_.noop);
     };
 
