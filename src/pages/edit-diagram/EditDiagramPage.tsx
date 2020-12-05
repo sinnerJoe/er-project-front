@@ -5,6 +5,7 @@ import { parseSolution, Solution, SolutionTab } from 'interfaces/Solution';
 import Diagram from 'components/diagram';
 import paths from 'paths';
 import { diagramImage } from 'constant/test-consts';
+import { RequestErrorStatus } from 'shared/interfaces/ResponseType';
 
 export default function EditDiagramPage(props:any) {
     // const {solutionId} = useParams();
@@ -13,7 +14,13 @@ export default function EditDiagramPage(props:any) {
     const [solution, setSolution] = useState<Partial<Solution>>();
     const solutionId = new URLSearchParams(location.search).get('solId')
     useEffect(() => {
-        fetchSolution(Number(solutionId)).then((response) => setSolution(parseSolution(response.data.data)))
+        fetchSolution(Number(solutionId))
+        .then((response) => setSolution(parseSolution(response.data.data)))
+        .catch(({response}) => {
+            if(response.data.status === RequestErrorStatus.NotFound) {
+                history.replace(paths.NOT_FOUND);
+            }
+        })
     }, [solutionId]);
 
     if(!solution) {

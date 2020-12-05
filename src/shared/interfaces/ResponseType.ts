@@ -7,7 +7,7 @@ export interface SuccessResponse<T> {
     status: "success"
 }
 
-export enum RequestErrorStatuses {
+export enum RequestErrorStatus {
     BadParameter="invalid_parameter",
     InternalServerError="invalid_server_error",
     InvalidMethod="bad_method",
@@ -19,7 +19,7 @@ export enum RequestErrorStatuses {
 export interface ErrorResponse {
     message: string,
     date: string,
-    status: RequestErrorStatuses
+    status: RequestErrorStatus
 }
 
 export type ApiResponse<T> = ErrorResponse | SuccessResponse<T>;
