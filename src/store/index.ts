@@ -1,8 +1,15 @@
 import {configureStore} from '@reduxjs/toolkit';
-import user from './slices/user';
+import user, { UserState } from './slices/user';
+import modals, { ModalSliceData } from './slices/modals';
 
 export default configureStore({
     reducer: {
-        user 
+        user,
+        modals
     }
 });
+
+export interface StoreData {
+    user: UserState,
+    modals: ModalSliceData
+}

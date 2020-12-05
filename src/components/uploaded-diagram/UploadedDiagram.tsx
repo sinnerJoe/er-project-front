@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Row, Col, Button, Space } from 'antd'
+import { Row, Col, Button, Space, Typography } from 'antd'
 
 import paths from 'paths';
 import './UploadedDiagram.scss';
@@ -11,11 +11,13 @@ import { Link } from 'react-router-dom';
 import { AssignmentModel } from 'interfaces/Assignment';
 import { deleteDiagram } from 'actions/diagram';
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
+import { deleteSolution } from 'shared/endpoints';
+
+const {Title} = Typography;
 
 
 
-
-type Props = { onDelete: Function} & Partial<Solution> 
+type Props = { onDelete: Function} & Partial<Solution>;
 
 const testTabs: Partial<SolutionTab>[] = [
     {
@@ -38,10 +40,13 @@ const testAssignments: Partial<AssignmentModel>[] = [
     }
 ]
 
-export default function UploadedDiagram({onDelete=() => {}, tabs=testTabs, updatedOn=new Date().toISOString(), id, assignments = testAssignments}: Props) {
+export default function UploadedDiagram({title, onDelete=() => {}, tabs=testTabs, updatedOn=new Date().toISOString(), id, assignments = testAssignments}: Props) {
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
             <Col className="meta-info">
+                <Title className="mb-5" level={4}>
+                    {title}
+                </Title>
                 <InfoLabel text="Diagrams">
                     <ul itemType=''>
                         {tabs.map((tab, key) => (
@@ -79,7 +84,11 @@ export default function UploadedDiagram({onDelete=() => {}, tabs=testTabs, updat
                 
                 
                         <Button 
-                        onClick={() => deleteDiagram(id).then(onDelete as any)}
+                        onClick={() => {
+                            if(typeof id !== 'undefined') {
+                                deleteSolution(id).then(onDelete as any)
+                            } 
+                        }}
                         className="standard-button" type="primary" danger>
                             <Row align="middle"><DeleteFilled className="mr-2"/> Delete </Row>
                         </Button>

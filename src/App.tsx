@@ -16,6 +16,7 @@ import './App.scss';
 import Header from 'components/header/Header';
 import UniversalRoute from 'components/secure-route/UniversalRoute';
 import paths from 'paths';
+import ModalManager from 'app/modal-manager/ModalManager';
 
 
 function createRoutes() {
@@ -29,6 +30,7 @@ function App() {
     <div className="no-scroll window-height">
       <Router>
       <Header/>
+      <ModalManager />
         <Switch>
           {createRoutes()}
           <Route render={() => <Redirect to={paths.NOT_FOUND} />} />

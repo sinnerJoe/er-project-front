@@ -2,7 +2,7 @@ import { clearSubmission, submitSolution } from 'actions/assignments';
 import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
-import PickSolutionModal from 'components/pick-solution-modal/PickSolutionModal';
+import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
 import { AssignmentModel } from 'interfaces/Assignment'
 import { Mark } from 'interfaces/Mark'
 import { Solution } from 'interfaces/Solution'

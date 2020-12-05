@@ -30,8 +30,8 @@ const userSlice = createSlice({
             if(!payload){
                 return;
             }
-            state.userId = payload.userId;
-            state.role = payload.role;
+            state.userId = Number(payload.userId);
+            state.role = Number(payload.role);
             state.email = payload.email;
         }
     }

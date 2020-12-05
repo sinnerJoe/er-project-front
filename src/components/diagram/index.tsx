@@ -118,6 +118,8 @@ export default function Diagram({defaultSetup, onSave}: Props) {
           if(editorUi.current) {
             editorUi.current.editor.modified = false;
             delete (document as any).onbeforeunload;
+            document.querySelector('body > .mxPopupMenu')?.remove(); //remove 1px X 1px div that creates scroll for the whole page
+            document.querySelector('body > div:last-child')?.remove(); //remove 1px X 1px div that creates scroll for the whole page
           }
         }
     }, [])

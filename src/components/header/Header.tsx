@@ -9,6 +9,7 @@ import { DropdownItem, DropdownMenu } from 'components/navigation-menu/DropdownM
 import { useLocation } from 'react-router-dom';
 import routes from 'routes';
 import LogoutButton from './LogoutButton';
+import CreateSolutionButton from './CreateSolutionButton';
 
 const BackButtonItem = ({ children }: { children: React.ReactNode }) => (
     <DropdownItem openedMenu="main" leftIcon={<LeftOutlined />}>
@@ -37,9 +38,7 @@ const rightMenus = {
             <BackButtonItem>
                 Create New
             </BackButtonItem>
-            <DropdownItem leftIcon={<SolutionOutlined />} link={paths.NEW_DIAGRAM}>
-                Solution
-            </DropdownItem>
+            <CreateSolutionButton />
             <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.EDIT_ASSIGNMENT}>
                Assignment 
                </DropdownItem>

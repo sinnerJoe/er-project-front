@@ -4,7 +4,7 @@ const hostApiPrefix = 'http://localhost/api/';
 
 // axios.defaults.withCredentials = true;
 
-function request(path: string, method: 'POST' | 'PUT' | 'DELETE' | 'GET', params?: any, payload?: any) {
+function request(path: string, method: 'POST' | 'PUT' | 'DELETE' | 'GET', params?: any, payload?: any, overrideParams?: any) {
     return axios.request({
         method,
         params,
@@ -13,6 +13,7 @@ function request(path: string, method: 'POST' | 'PUT' | 'DELETE' | 'GET', params
         url: path,
         withCredentials: true,
         responseType: "json",
+        ...(overrideParams || {})
         // xsrfCookieName: "er_session",
         // withCredentials: true
         // headers: ""
@@ -30,4 +31,11 @@ export function put(path:string, payload?:any, params?:any) {
 }
 export function del(path:string, payload?:any, params?:any) {
     return request(path, "DELETE", params, payload);
+}
+
+export function fetchBinary(path: string) {
+    return request(path, "GET", undefined, undefined, {
+        responseType: 'arraybuffer',
+        baseURL: '/'
+    });
 }

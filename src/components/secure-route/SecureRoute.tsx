@@ -20,7 +20,7 @@ export default function SecureRoute({component: Component, path}: SecureRoutePro
             render = {(props) => {
                 if(userData.userId === -1) {
                     (dispatch(fetchCurrentUser()) as any).then((data: any) => {
-                        if(!data.payload) {
+                        if(!data.payload.data) {
                             history.replace(paths.NOT_AUTHENTICATED);
                         }
                     })

@@ -25,4 +25,4 @@ export interface ErrorResponse {
 export type ApiResponse<T> = ErrorResponse | SuccessResponse<T>;
 
 
-export type AxiosResponsePromise<T> = Promise<AxiosResponse<ApiResponse<T>>>;
+export type AxiosResponsePromise<T> = Promise<AxiosResponse<SuccessResponse<T>>>;
