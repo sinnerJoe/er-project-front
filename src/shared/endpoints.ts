@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { ServerAssignment } from "interfaces/Assignment";
 import { ServerSolution } from "interfaces/Solution";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { ApiResponse, AxiosResponsePromise } from "./interfaces/ResponseType";
@@ -46,4 +47,16 @@ export async function getImageBase64(url: string) {
     const response = await fetchBinary(url);
 
     return Buffer.from(response.data, 'binary').toString("base64");
+}
+
+export function fetchAssignment(id: number):AxiosResponsePromise<ServerAssignment> {
+    return get("assignments/", {id});
+}
+
+export function updateAssignment(id: number, data: {title: string, description: string}) {
+    return put("assignments/", data, {id});
+}
+
+export function createAssignment(data: {title: string, description: string }){
+    return post('assignments/', data);
 }

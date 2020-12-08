@@ -5,18 +5,19 @@ import SecureRoute from './SecureRoute'
 
 export interface UniversalRouteProps{
     secure?: boolean;
+    exact?: boolean;
     path: string;
     component: React.FC<any>
 };
 
-export default function UniversalRoute({secure=true, path, component: Component}: UniversalRouteProps) {
+export default function UniversalRoute({secure=true, exact=false, path, component: Component}: UniversalRouteProps) {
 
     if(secure) {
-        return <SecureRoute component={Component} path={path} />;
+        return <SecureRoute component={Component} exact={exact} path={path} />;
     }
 
     return (
-        <Route path={path}>
+        <Route path={path} exact={exact}>
             <Component />
         </Route>
     );

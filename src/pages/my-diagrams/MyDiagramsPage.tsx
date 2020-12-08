@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Button, Space } from 'antd'
+import _ from 'lodash';
 import { BrowserRouter as Router, Route, NavLink, useHistory } from 'react-router-dom'
 import UploadedDiagram from 'components/uploaded-diagram/UploadedDiagram'
 import PageContent from 'components/page-content/PageContent'
@@ -17,7 +18,7 @@ export default function MyDiagramsPage(props: any) {
   const fetchSolutions = useCallback(() => { 
     getOwnSolutions()
     .then((response) => response.data.data.map(parseSolution))
-    .then(setSolutions) 
+    .then(setSolutions).catch(_.noop);
   }, []);
   useEffect(fetchSolutions, [...Object.values(props)])
   console.log(solutions)

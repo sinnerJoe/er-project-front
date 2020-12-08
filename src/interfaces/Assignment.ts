@@ -10,3 +10,9 @@ export type AssignmentModel = {
     start: string,
     end: string
 }
+
+export interface ServerAssignment {
+    title: string, 
+    description: string,
+    id: number
+}

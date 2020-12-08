@@ -1,4 +1,4 @@
-.centered-form {
+.centered-form:not(.only-horizontal) {
     margin-top: 50vh;
     position: relative;
     .inner-wrapper {

@@ -13,16 +13,28 @@ import routes from 'routes';
 
 import 'antd/dist/antd.css';
 import './App.scss';
+import EmptyPage from 'pages/empty-page/EmptyPage';
 import Header from 'components/header/Header';
 import UniversalRoute from 'components/secure-route/UniversalRoute';
 import paths from 'paths';
 import ModalManager from 'app/modal-manager/ModalManager';
+import withRequestedUser from 'utils/withRequestedUser';
 
 
 function createRoutes() {
-  return routes.map(({path, secure, component}) => ( 
-    <UniversalRoute secure={secure} path={path} component={component} /> 
-  ));
+  return routes.map(({path, secure = true, component}) => {
+    let Component = component;
+    if(secure) {
+      Component = withRequestedUser(EmptyPage, component);
+    }
+
+    return (
+      <Route path={path}>
+        <Component />
+      </Route>
+    )
+  })
+    // <UniversalRoute secure={secure} path={path} component={component} /> 
 }
 
 function App() {
@@ -33,6 +45,9 @@ function App() {
       <ModalManager />
         <Switch>
           {createRoutes()}
+          <Route path="/" exact={true} >
+            <EmptyPage />
+          </Route>
           <Route render={() => <Redirect to={paths.NOT_FOUND} />} />
         </Switch>
       </Router>

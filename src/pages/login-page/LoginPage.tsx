@@ -11,6 +11,8 @@ import { useLoadingRequest } from 'utils/hooks';
 import { hashPassword } from 'utils/password';
 import { fetchCurrentUser } from 'store/slices/user';
 import store from 'store';
+import withRequestedUser from 'utils/withRequestedUser';
+import EmptyPage from 'pages/empty-page/EmptyPage';
 
 const loginRequest = async (email: string, password: string) => {
     const response = await authenticate(email, hashPassword(password));
@@ -20,7 +22,7 @@ const loginRequest = async (email: string, password: string) => {
     return response;
 }
 
-export default function LoginPage(props: any) {
+function LoginPage(props: any) {
     const [form] = Form.useForm();
     // const [loading, setLoading] = useState(false);
     // const [response, setResponse] = useState<{status: string, message: string} | null> (null);
@@ -58,7 +60,7 @@ export default function LoginPage(props: any) {
                     </Form.Item>
                     </Col>
                     <Col>
-                        <Link to={paths.REGISTER}>
+                        <Link to={{pathname: paths.REGISTER, state: {avoidAuth: true}}}>
                             <Button  type="ghost">
                                 Sign Up
                             </Button>
@@ -75,3 +77,5 @@ export default function LoginPage(props: any) {
         </CenteredForm>
     )
 }
+
+export default withRequestedUser(LoginPage, EmptyPage);

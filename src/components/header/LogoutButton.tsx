@@ -18,8 +18,10 @@ export default function LogoutButton() {
 
     const handleLogout = () => {
         logoutRequest().then(() => {
-            history.replace(paths.LOGIN);
-            dispatch(clearData());
+            history.replace(paths.LOGIN, {avoidAuth: true});
+            setTimeout(() => {
+                dispatch(clearData());
+            }, 0)
         });
     };
 

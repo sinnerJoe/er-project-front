@@ -7,21 +7,23 @@ import { fetchCurrentUser } from 'store/slices/user';
 
 export interface SecureRouteProps{
     path: string;
-    component: React.FC<any>
+    component: React.FC<any>,
+    exact: boolean
 }
 
-export default function SecureRoute({component: Component, path}: SecureRouteProps) {
+export default function SecureRoute({component: Component, exact, path}: SecureRouteProps) {
     const userData = useUserSelector();
     const dispatch = useDispatch();
     const history = useHistory();
     return (
         <Route 
-            path={path} 
+            exact={exact}
+            path={path}
             render = {(props) => {
                 if(userData.userId === -1) {
                     (dispatch(fetchCurrentUser()) as any).then((data: any) => {
                         if(!data.payload.data) {
-                            history.replace(paths.NOT_AUTHENTICATED);
+                            history.replace("/");
                         }
                     })
                     return null;

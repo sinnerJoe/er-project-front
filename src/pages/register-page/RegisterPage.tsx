@@ -6,13 +6,16 @@ import CenteredForm from 'components/centered-form/CenteredForm'
 import FormTitle from 'components/form-title/FormTitle';
 import paths from 'paths';
 import React from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, Redirect, useHistory, useLocation } from 'react-router-dom';
 import { registerUser } from 'shared/endpoints';
 import { composableLabels, labels } from 'shared/strings';
 import { useLoadingRequest } from 'utils/hooks';
 import { hashPassword} from 'utils/password';
+import withRequestedUser from 'utils/withRequestedUser';
+import EmptyPage from 'pages/empty-page/EmptyPage';
 const { Text, Title } = Typography;
-export default function RegisterPage(props: any) {
+
+function RegisterPage(props: any) {
     const [form] = Form.useForm();
     const history = useHistory();
     const [registerRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(registerUser, null);
@@ -62,7 +65,9 @@ export default function RegisterPage(props: any) {
                     </Form.Item>
                     </Col>
                     <Col>
-                        <Link to={paths.LOGIN} className="pb-0 mb-0">
+                        <Link 
+                           className="pb-0 mb-0" 
+                           to={{pathname: paths.LOGIN, state: {avoidAuth: true}}}>
                             <Button type="ghost">
                                 Back to login screen
                             </Button>
@@ -80,3 +85,5 @@ export default function RegisterPage(props: any) {
         </CenteredForm>
     )
 }
+
+export default withRequestedUser(RegisterPage, EmptyPage);

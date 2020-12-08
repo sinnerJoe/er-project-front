@@ -22,17 +22,18 @@ const userSlice = createSlice({
             state.role = initialState.role;
             state.email = initialState.email;
             state.userId = initialState.userId;
-        }
+        },
     },
     extraReducers: {
         [fetchCurrentUser.fulfilled as unknown as string]: (state, action) => {
-            const payload = action.payload;
-            if(!payload){
+            const {payload: {data}} = action;
+            if(!data){
                 return;
             }
-            state.userId = Number(payload.userId);
-            state.role = Number(payload.role);
-            state.email = payload.email;
+            console.log(data);
+            state.userId = Number(data.userId);
+            state.role = Number(data.role);
+            state.email = data.email;
         }
     }
 })
