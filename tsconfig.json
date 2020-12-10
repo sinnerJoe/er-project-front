@@ -4,8 +4,11 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ES2020.String"
     ],
+    "baseUrl": "src",
+    "suppressImplicitAnyIndexErrors": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

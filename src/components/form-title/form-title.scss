@@ -1,0 +1,27 @@
+.form-title {
+    border-left: 6px #262626 solid;
+    padding-bottom: 0;
+    .container {
+        padding-left: 6px;
+        overflow: hidden;
+        .title-content {
+            animation-name: blink;
+            animation-duration: 0.6s;
+            animation-delay: 0s;
+        }
+    }
+}
+
+@keyframes blink{
+    from {
+        transform: translateX(-110%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    // 100% {
+    //     border-left-color: #262626;
+    // }
+}

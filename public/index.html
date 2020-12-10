@@ -9,7 +9,10 @@
       name="description"
       content="Web site created using create-react-app"
     />
+    <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/styles/grapheditor.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/wxresources/css/common.css" charset="UTF-8" type="text/css">
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -25,9 +28,58 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script type="text/javascript">
+      // Parses URL parameters. Supported parameters are:
+      // - lang=xy: Specifies the language of the user interface.
+      // - touch=1: Enables a touch-style user interface.
+      // - storage=local: Enables HTML5 local storage.
+      // - chrome=0: Chromeless mode.
+
+      var urlParams = (function (url) {
+        var result = new Object();
+        var idx = url.lastIndexOf('?');
+
+        if (idx > 0) {
+          var params = url.substring(idx + 1).split('&');
+
+          for (var i = 0; i < params.length; i++) {
+            idx = params[i].indexOf('=');
+
+            if (idx > 0) {
+              result[params[i].substring(0, idx)] = params[i].substring(idx + 1);
+            }
+          }
+        }
+
+        return result;
+      })(window.location.href);
+
+      // Default resources are included in grapheditor resources
+      mxLoadResources = false;
+    </script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Init.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/deflate/pako.min.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/deflate/base64.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/jscolor/jscolor.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/sanitizer/sanitizer.min.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/mxClient.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/EditorUi.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/TabUi.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/UMLConverter.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/TabManager.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Editor.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Sidebar.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Graph.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Format.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Shapes.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Actions.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Menus.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Toolbar.js"></script>
+    <script type="text/javascript" src="%PUBLIC_URL%/js/Dialogs.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    
     <div id="root"></div>
     <!--
       This HTML file is a template.
