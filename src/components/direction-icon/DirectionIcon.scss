@@ -1,0 +1,7 @@
+
+.direction-icon {
+    transition: transform 0.3s;
+    &.open {
+        transform: rotate(180deg);
+    }
+}

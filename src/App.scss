@@ -97,3 +97,8 @@ $sizes: (
 .window-height {
     height: 100vh;
 }
+
+.overflow-ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

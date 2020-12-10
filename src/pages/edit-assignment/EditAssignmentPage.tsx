@@ -68,7 +68,7 @@ export default function EditAssignmentPage(props: any) {
             <Row justify="center" className="mt-4 mb-4"><Title level={3}>{title}</Title></Row>
             <Row justify="center" className="full-width">
                 <Col span="24">
-                    <Form {...layout} form={form} className='full-width ' name="assignment-form" onFinish={onFinish}>
+                    <Form {...layout} form={form} className="full-width" name="assignment-form" onFinish={onFinish}>
                         <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                             <Input />
                         </Form.Item>

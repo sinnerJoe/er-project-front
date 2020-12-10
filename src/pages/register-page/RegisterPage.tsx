@@ -18,7 +18,7 @@ const { Text, Title } = Typography;
 function RegisterPage(props: any) {
     const [form] = Form.useForm();
     const history = useHistory();
-    const [registerRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(registerUser, null);
+    const [registerRequest, response, loading, error] = useLoadingRequest<{message: string, status: string} | null>(registerUser, null);
 
     const onFinishFailed = () => { console.log("ERR") };
 
@@ -77,7 +77,11 @@ function RegisterPage(props: any) {
                     {response !== null && <Alert
                         message={response.message}
                         // description="Further details about the context of this alert."
-                        type={response.status === 'success' ? "success" : "error"}
+                        type="success"
+                    />}
+                    {error && <Alert 
+                        message={error?.message}
+                        type='error'
                     />}
 
 

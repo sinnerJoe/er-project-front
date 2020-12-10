@@ -10,5 +10,8 @@ export default {
     LOGIN: '/login',
     UNAUTHORIZED: '/unauthorized',
     NOT_AUTHENTICATED: '/not-authenticated',
-    NOT_FOUND: '/not-found'
+    NOT_FOUND: '/not-found',
+    CREATE_PLAN: '/create-plan',
+    EDIT_PLAN: '/edit-plan',
+    PLANS: '/plans'
 };

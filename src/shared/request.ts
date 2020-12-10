@@ -4,7 +4,13 @@ const hostApiPrefix = 'http://localhost/api/';
 
 // axios.defaults.withCredentials = true;
 
-function request(path: string, method: 'POST' | 'PUT' | 'DELETE' | 'GET', params?: any, payload?: any, overrideParams?: any) {
+function request(
+    path: string, 
+    method: 'POST' | 'PUT' | 'DELETE' | 'GET' | 'PATCH', 
+    params?: any, 
+    payload?: any, 
+    overrideParams?: any
+) {
     return axios.request({
         method,
         params,
@@ -31,6 +37,9 @@ export function put(path:string, payload?:any, params?:any) {
 }
 export function del(path:string, payload?:any, params?:any) {
     return request(path, "DELETE", params, payload);
+}
+export function patch(path:string, payload?:any, params?:any) {
+    return request(path, "PATCH", params, payload);
 }
 
 export function fetchBinary(path: string) {

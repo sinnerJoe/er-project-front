@@ -32,7 +32,7 @@ export default function PickSolutionModal(props: Props) {
 
 
     return (
-        <Modal 
+        <Modal
           title="Submit solution"
           okText="Submit"
           visible={props.visible}
@@ -42,7 +42,7 @@ export default function PickSolutionModal(props: Props) {
           closable
         >
             <Select 
-                onChange={(id: number, ...rest) => { console.log("CHOOSE"); setChosen(id); }}
+                onChange={(id: number, ...rest) => { setChosen(id); }}
                 style={{width: "100%"}}
             >
                 {

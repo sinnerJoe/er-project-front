@@ -55,19 +55,19 @@ export function useSynchronizedRequest<T=any, A extends any[] = any[]>(requestFu
     },[requestFunction]);
 }
 
-export function useLoadingRequest<T=any, A extends any[]=any[], >(requestFunction:(...args:A) => AxiosResponsePromise<T>, initialData:T, initialLoading=false)
-: [ (...args:A) => AxiosResponsePromise<T>, T, boolean] {
-    const [state, setState] = useState<{data: T, loading: boolean}>({data: initialData, loading: initialLoading});
+export function useLoadingRequest<T=any, A extends any[]=any[]>(requestFunction:(...args:A) => AxiosResponsePromise<T>, initialData:T, initialLoading=false)
+: [ (...args:A) => AxiosResponsePromise<T>, T, boolean, any] {
+    const [state, setState] = useState<{data: T, loading: boolean, error?: any}>({data: initialData, loading: initialLoading, error: undefined});
     const synchronizedRequest = useSynchronizedRequest(requestFunction);
     const request = useCallback((...args: A) => {
         setState({data: initialData, loading: true}) 
         return synchronizedRequest(...args).then(response => {
-            setState({data: response.data as unknown as T, loading: false}) 
+            setState({data: response?.data?.data, loading: false}) 
             return response;
         }).catch(err => {
-            setState({data: err.response.data, loading: false});
-            throw err.response.data;
+            setState({data: initialData, loading: false, error: err?.response?.data});
+            throw err;
         });
     }, [requestFunction]);
-    return [request, state.data, state.loading];
+    return [request, state.data, state.loading, state.error];
 }

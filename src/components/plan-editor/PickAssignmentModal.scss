@@ -1,0 +1,36 @@
+.modal-assignment-entry {
+    $collapsed-width: 70px;
+    max-height: $collapsed-width;
+    min-height: $collapsed-width;
+    transition: max-height 0.2s, background-color 0.3s;
+    box-sizing: border-box;
+    background-color: inherit;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+
+    .description {
+        text-overflow: ellipsis;
+        height: 30px;
+        overflow: hidden;
+    }
+
+    &.open {
+        max-height: 1000px;
+        .description {
+            height: auto;
+        }
+    }
+
+    &.selected-entry {
+        background-color: #e6f7ff;
+    }
+
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+        border-bottom-color: transparent;
+    }
+    
+}

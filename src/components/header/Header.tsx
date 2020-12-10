@@ -41,7 +41,10 @@ const rightMenus = {
             <CreateSolutionButton />
             <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.EDIT_ASSIGNMENT}>
                Assignment 
-               </DropdownItem>
+            </DropdownItem>
+            <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.CREATE_PLAN}>
+               Educational Plan 
+            </DropdownItem>
 
         </React.Fragment>
     )
@@ -81,6 +84,9 @@ function Header(props: {}) {
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
                         Assignments(Professor)
+                    </DropdownItem>
+                    <DropdownItem leftIcon={<FormOutlined />} link={paths.PLANS}>
+                        Educational Plans 
                     </DropdownItem>
                     <LogoutButton />
                 </DropdownMenu>

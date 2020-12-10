@@ -9,6 +9,9 @@ import RegisterPage from 'pages/register-page/RegisterPage';
 import LoginPage from 'pages/login-page/LoginPage';
 import NotAuthenticatedPage from 'pages/not-authenticated/NotAuthenticatedPage';
 import NotFoundPage from 'pages/not-found/NotFoundPage';
+import CreatePlanPage from 'pages/create-plan-page/CreatePlanPage';
+import PlanListPage from 'pages/plan-list-page/PlanListPage';
+import EditPlanPage from 'pages/edit-plan-page/EditPlanPage';
 
 export default [
     {
@@ -60,5 +63,17 @@ export default [
         component: NotFoundPage,
         disableHeader: true,
         secure: false
+    },
+    {
+        path: paths.CREATE_PLAN,
+        component: CreatePlanPage
+    },
+    {
+        path: `${paths.EDIT_PLAN}/:id`,
+        component: EditPlanPage
+    },
+    {
+        path: paths.PLANS,
+        component: PlanListPage
     }
 ] as {secure?: boolean, path: string, component: any, disableHeader?: boolean}[];

@@ -20,7 +20,7 @@ export default function withRequestedUser(UnauthenticatedComponent: React.FC, Au
         
         useEffect(() => {
             if(userId === -1 && !location?.state?.avoidAuth) {
-                requestUser();
+                requestUser().catch();
             }
         }, [])
 

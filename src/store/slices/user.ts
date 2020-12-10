@@ -26,6 +26,7 @@ const userSlice = createSlice({
     },
     extraReducers: {
         [fetchCurrentUser.fulfilled as unknown as string]: (state, action) => {
+            if(!action.payload) return;
             const {payload: {data}} = action;
             if(!data){
                 return;
