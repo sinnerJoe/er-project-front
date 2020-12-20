@@ -12,6 +12,7 @@ import NotFoundPage from 'pages/not-found/NotFoundPage';
 import CreatePlanPage from 'pages/create-plan-page/CreatePlanPage';
 import PlanListPage from 'pages/plan-list-page/PlanListPage';
 import EditPlanPage from 'pages/edit-plan-page/EditPlanPage';
+import GroupsPage from 'pages/groups/GroupsPage';
 
 export default [
     {
@@ -75,5 +76,9 @@ export default [
     {
         path: paths.PLANS,
         component: PlanListPage
+    },
+    {
+        path: paths.GROUPS,
+        component: GroupsPage
     }
 ] as {secure?: boolean, path: string, component: any, disableHeader?: boolean}[];

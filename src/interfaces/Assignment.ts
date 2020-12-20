@@ -1,5 +1,6 @@
 import { Moment } from "moment";
-import { Solution } from "./Solution";
+import { Teacher } from "shared/interfaces/User";
+import { ServerSolution, Solution } from "./Solution";
 
 export type AssignmentModel = {
     title: string,
@@ -22,5 +23,7 @@ export interface PlannedAssignment {
     id: number | string,
     startDate: Moment,
     endDate: Moment,
-    assignment: ServerAssignment
+    assignment: ServerAssignment,
+    solution?: ServerSolution,
+    reviewer?: Teacher
 }

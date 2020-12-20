@@ -1,5 +1,5 @@
 import React from 'react'
-import { HomeFilled, DatabaseFilled, UserOutlined, MenuOutlined, SettingFilled, ArrowRightOutlined, RightOutlined, LeftOutlined, FormOutlined, FileTextOutlined, LogoutOutlined, ContainerOutlined, SecurityScanOutlined, SecurityScanFilled, PlusOutlined, SolutionOutlined, AppstoreAddOutlined, LoadingOutlined } from '@ant-design/icons';
+import { HomeFilled, DatabaseFilled, UserOutlined, MenuOutlined, SettingFilled, ArrowRightOutlined, RightOutlined, LeftOutlined, FormOutlined, FileTextOutlined, LogoutOutlined, ContainerOutlined, SecurityScanOutlined, SecurityScanFilled, PlusOutlined, SolutionOutlined, AppstoreAddOutlined, LoadingOutlined, DeploymentUnitOutlined } from '@ant-design/icons';
 import paths from 'paths'
 
 import './Header.scss';
@@ -87,6 +87,9 @@ function Header(props: {}) {
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.PLANS}>
                         Educational Plans 
+                    </DropdownItem>
+                    <DropdownItem leftIcon={<DeploymentUnitOutlined />} link={paths.GROUPS}>
+                        Groups
                     </DropdownItem>
                     <LogoutButton />
                 </DropdownMenu>

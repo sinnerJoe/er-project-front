@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { resolve } from 'dns';
 import {useState, useRef, useEffect, useCallback, useMemo} from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import {AxiosResponsePromise} from 'shared/interfaces/ResponseType';
 import { TupleType } from 'typescript';
 
@@ -70,4 +71,29 @@ export function useLoadingRequest<T=any, A extends any[]=any[]>(requestFunction:
         });
     }, [requestFunction]);
     return [request, state.data, state.loading, state.error];
+}
+
+export function useQueryStringMaster<T extends Record<string, string>>(defaults:T = {} as T): {
+        pathname: string,
+        queryString: string, 
+        fullpath: string,
+        [key: string]: string | undefined
+    } & T {
+    const location = useLocation();
+    return new Proxy(new URLSearchParams(location.search), {
+        get(target, prop: string) {
+            if(prop === 'queryString') {
+                return target.toString();
+            } else if(prop === 'pathname') {
+                return location.pathname;
+            } else if(prop === 'fullpath') {
+                return `${location.pathname}?${target.toString()}`
+            }
+            return target.get(prop) || defaults[prop];
+        },
+        set(target, prop: string, value) {
+            target.set(prop, value);
+            return true;
+        }
+    }) as any;
 }

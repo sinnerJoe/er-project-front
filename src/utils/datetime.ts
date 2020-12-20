@@ -35,3 +35,7 @@ export function momentifyFields(object: any, fields = dateFields): void {
         }
     }
 }
+
+export function getCurrentYear(): number {
+    return new Date().getFullYear();
+}

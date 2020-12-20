@@ -9,16 +9,21 @@ import moment from 'moment'
 import SearchBox from 'components/searchbox/SearchBox'
 import { PlusSquareFilled } from '@ant-design/icons'
 import paths from 'paths'
-import { AssignmentModel } from 'interfaces/Assignment'
+import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
 import { getAssignments } from 'actions/assignments'
 import Assignment from 'components/assignment/Assignment'
+import { useLoadingRequest } from 'utils/hooks'
+import { getPlannedAssignments } from 'shared/endpoints'
 
 export default function MyAssignmentsPage(props: any) {
-  const [assignments, setAssignments] = useState<AssignmentModel[]>([]);
-  const updateAssignments = useCallback(() => { console.log("LALAL"); getAssignments().then(setAssignments) }, []);
-  useEffect(updateAssignments, [...Object.values(props)])
+  const [request, assignments, loading] = useLoadingRequest(getPlannedAssignments, []);
   console.log(assignments)
-  const history = useHistory();
+  useEffect(() => {
+    request()
+  }, []);
+
+  const submitSolution = () => {}
+
   return (
     <PageContent>
       <SearchBox 
@@ -28,9 +33,8 @@ export default function MyAssignmentsPage(props: any) {
         {
           assignments.map((assignment) => (
             <Assignment
-              solution={assignment.submittedSolution}
-              onSubmit={updateAssignments} 
-              assignment={assignment}
+              onSubmit={submitSolution} 
+              {...assignment}
               />
           ))
         }

@@ -13,5 +13,6 @@ export default {
     NOT_FOUND: '/not-found',
     CREATE_PLAN: '/create-plan',
     EDIT_PLAN: '/edit-plan',
-    PLANS: '/plans'
+    PLANS: '/plans',
+    GROUPS: '/groups'
 };

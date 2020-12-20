@@ -1,3 +1,4 @@
+import { Moment } from "moment";
 import { PassThrough } from "stream";
 import { AssignmentModel } from "./Assignment";
 import { Mark } from "./Mark";
@@ -33,6 +34,7 @@ export interface ServerSolution {
     mark: number | null,
     reviewedBy: number | null,
     reviewedAt: string | null,
+    submittedAt: string | Moment,
     diagrams: ServerDiagram[]
 
 }

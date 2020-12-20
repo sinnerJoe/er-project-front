@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import paths from 'paths';
 
 export interface CreateSolutionModalProps {
-    onClose: () => void;
+    onCancel: () => void;
     visible: boolean
 }
 
@@ -18,7 +18,7 @@ export default function CreateSolutionModal(props:CreateSolutionModalProps) {
 
     const handleOk = useCallback(() => {
         history.push(paths.NEW_DIAGRAM, {title});
-        props.onClose();
+        props.onCancel();
     }, [title]);
 
     return (
@@ -27,7 +27,7 @@ export default function CreateSolutionModal(props:CreateSolutionModalProps) {
             okText="Start editimg"
             onOk={handleOk}
             visible={props.visible}
-            onCancel={props.onClose}
+            onCancel={props.onCancel}
             okButtonProps={{disabled: title.trim().length === 0}}
             closable>
                 <label>

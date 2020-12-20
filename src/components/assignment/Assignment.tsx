@@ -3,21 +3,22 @@ import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
-import { AssignmentModel } from 'interfaces/Assignment'
+import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
 import { Mark } from 'interfaces/Mark'
-import { Solution } from 'interfaces/Solution'
+import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
+import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
+import { IdIndex } from 'shared/interfaces/Id';
 
 const { Text, Link } = Typography;
 
 
 
 function SubmittedSolution(props: {
-    solution?: Partial<Solution>,
+    solution?: ServerSolution,
     assignmentId: number,
-    submittedAt?: string,
 }) {
     return (
         <Space direction="vertical" size="small" className="full-width">
@@ -43,7 +44,7 @@ function SubmittedSolution(props: {
                                     </AttachmentLink>
                                 </Link>
                                 <Text className="ml-2" type="secondary">
-                                    (Submitted on {props.submittedAt})
+                                    (Submitted on {props.solution.submittedAt})
                         </Text>
                             </span>
 
@@ -57,7 +58,7 @@ function SubmittedSolution(props: {
     )
 }
 
-function SubmittedMark(props: Partial<Mark>) {
+function SubmittedMark(props: {mark?: IdIndex | null, reviewedAt?: string | Moment}) {
     if (props.mark == null) {
         return null;
     }
@@ -69,7 +70,7 @@ function SubmittedMark(props: Partial<Mark>) {
             </label>
             <div>
                 <Text strong>{props.mark}</Text>
-                <Text type="secondary">{`(${props.createdAt || new Date().toISOString()})`}</Text>
+                <Text type="secondary">{`(${props.reviewedAt || new Date().toISOString()})`}</Text>
             </div>
         </div>
     )
@@ -81,14 +82,11 @@ function SubmittedMark(props: Partial<Mark>) {
 //     )
 // }
 
-type Props = {
-    assignment: Partial<AssignmentModel>,
-    solution?: Partial<Solution>,
-    mark?: Mark,
+export interface AssignmentProps extends PlannedAssignment {
     onSubmit: () => void
 }
 
-export default function Assignment(props: Props) {
+export default function Assignment(props: AssignmentProps) {
 
     const [showModal, setShowModal] = useState(false);
 
@@ -99,12 +97,11 @@ export default function Assignment(props: Props) {
             </p>
             <SubmittedSolution
                 solution={props.solution}
-                submittedAt={props.assignment.submittedAt}
                 assignmentId={props.assignment.id || 0} />
-            <SubmittedMark {...props.mark} />
+            <SubmittedMark mark={props.solution?.mark} reviewedAt={props.solution?.reviewedAt || undefined}  />
             <Row align="middle" className="mt-4">
                 <Col>
-                    <DateInterval start={props.assignment.start || ''} end={props.assignment.end || ''} />
+                    <DateInterval start={props.startDate as any} end={props.endDate as any} />
                 </Col>
                 <Col className="ml-auto">
                     <Space direction="horizontal" size="small">

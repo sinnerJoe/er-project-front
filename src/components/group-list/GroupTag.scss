@@ -1,0 +1,11 @@
+.group-tag.ant-tag {
+    cursor: pointer;
+    padding: 5px 10px;
+    &.selected {
+        font-weight: bold;
+    }
+    .content{
+        display: inline-block;
+        // height: 2size="small"px;
+    }
+}
