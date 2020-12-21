@@ -3,7 +3,7 @@ import { Solution } from "interfaces/Solution";
 import {testInput, diagramImage} from 'constant/test-consts'
 import { fakeGet } from "./faker";
 import { DATE_FORMAT } from "shared/constants";
-import moment from "antd/node_modules/moment";
+import moment from "moment";
 let diagrams: {[key: number] : Solution} = {
     1: {
        id: 1,

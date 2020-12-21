@@ -7,7 +7,7 @@ import './PickAssignmentModal.scss';
 
 export type StandardOverridenProps = 'onOk' | 'data' | 'loading' | 'initialSelected' | 'renderItem' | 'title';
 
-export interface PickerModalProps<T> extends Omit<React.ComponentProps<Modal>, 'onOk'> {
+export interface PickerModalProps<T> extends Omit<React.ComponentProps<typeof Modal>, 'onOk'> {
     data: T[],
     renderItem: (itemData: T) => React.ReactNode,
     loading: boolean,
@@ -29,6 +29,7 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
 
     return (
         <Modal
+            closable
             onOk={(e) => {
                 if(selected) {
                     const potentialPromise = onOk(selected);

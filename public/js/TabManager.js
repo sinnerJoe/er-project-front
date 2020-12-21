@@ -161,78 +161,83 @@ TabManager.prototype.init = function () {
 }
 
 TabManager.prototype.cloneSelectedTab = function (label) {
-    this.saveCurrentTabState();
-    var focusedTab = this.getFocusedTab();
-    var modelState = focusedTab.modelState;
-    var clone = {
-        id: this.nextTabId,
-        diagramType: focusedTab.diagramType,
-        label: label,
-        focused: false,
-        undoManagerState: {
-            history: [],
-            indexOfNextAdd: 0,
-        },
-        modelState: {
-            cells: [this.getModel().cloneCell(modelState.cells[0], true)],
-            nextId: modelState.nextId,
+    this.saveCurrentTabState().then(() => {
+
+            var focusedTab = this.getFocusedTab();
+            var modelState = focusedTab.modelState;
+            var clone = {
+                id: this.nextTabId,
+                diagramType: focusedTab.diagramType,
+                label: label,
+            focused: false,
+            undoManagerState: {
+                history: [],
+                indexOfNextAdd: 0,
+            },
+            modelState: {
+                cells: [this.getModel().cloneCell(modelState.cells[0], true)],
+                nextId: modelState.nextId,
+            }
         }
-    }
-    console.log(clone.modelState)
-    this.tabData.push(clone);
-    this.selectTab(this.nextTabId)
-    this.nextTabId++;
+        console.log(clone.modelState)
+        this.tabData.push(clone);
+        this.selectTab(this.nextTabId)
+        this.nextTabId++;
+    });
     // this.tabViewBar.renderTabs(this.tabData);
 }
 
 TabManager.prototype.convertToUml = function (label) {
-    this.saveCurrentTabState();
-    var modelState = this.getFocusedTab().modelState;
-    var converter = new UMLConverter(this.editorUi.editor.graph, modelState.cells);
+    this.saveCurrentTabState().then(() => {
 
-    var clone = {
-        id: this.nextTabId,
-        label: label,
-        diagramType: mxConstants.UML_DIAGRAM,
-        focused: false,
-        undoManagerState: {
-            history: [],
-            indexOfNextAdd: 0,
-        },
-        modelState: {
-            // cells: [this.getModel().cloneCell(modelState.cells[0], true)],
-            importCells: converter.convert(),
-            nextId: modelState.nextId,
+        var modelState = this.getFocusedTab().modelState;
+        var converter = new UMLConverter(this.editorUi.editor.graph, modelState.cells);
+
+        var clone = {
+            id: this.nextTabId,
+            label: label,
+            diagramType: mxConstants.UML_DIAGRAM,
+            focused: false,
+            undoManagerState: {
+                history: [],
+                indexOfNextAdd: 0,
+            },
+            modelState: {
+                // cells: [this.getModel().cloneCell(modelState.cells[0], true)],
+                importCells: converter.convert(),
+                nextId: modelState.nextId,
+            }
         }
-    }
-    console.log(clone.modelState)
-    this.tabData.push(clone);
-    this.selectTab(this.nextTabId);
-    this.nextTabId++;
+        console.log(clone.modelState)
+        this.tabData.push(clone);
+        this.selectTab(this.nextTabId);
+        this.nextTabId++;
 
+    })
 
     // this.tabViewBar.renderTabs(this.tabData);
 
 }
 
 TabManager.prototype.selectTab = function (id) {
-    this.saveCurrentTabState();
-    var chosenTabIndex = null;
-    for (var i in this.tabData) {
-        if (this.tabData[i].id === id) {
-            chosenTabIndex = i;
+    this.saveCurrentTabState().then( () => {
+            var chosenTabIndex = null;
+            for (var i in this.tabData) {
+                if (this.tabData[i].id === id) {
+                chosenTabIndex = i;
+            }
+            this.tabData[i].focused = this.tabData[i].id === id;
+            this.tabData[i].editingLabel = false;
         }
-        this.tabData[i].focused = this.tabData[i].id === id;
-        this.tabData[i].editingLabel = false;
-    }
-    if (chosenTabIndex != this.focusedTabIndex) {
-        this.focusedTabIndex = chosenTabIndex;
-        this.loadTabState(this.getFocusedTab());
-        this.tabViewBar.renderTabs(this.tabData);
-        this.updatePalletes();
-        this.affectMenuBar(this.getFocusedTab().diagramType)
-    }
-    console.log(this.tabData, this.getModel())
+        if (chosenTabIndex != this.focusedTabIndex) {
+            this.focusedTabIndex = chosenTabIndex;
+            this.loadTabState(this.getFocusedTab());
+            this.tabViewBar.renderTabs(this.tabData);
+            this.updatePalletes();
+            this.affectMenuBar(this.getFocusedTab().diagramType)
+        }
+        console.log(this.tabData, this.getModel())
+    });
 }
 
 TabManager.prototype.listenSelectTab = function () {

@@ -10,6 +10,7 @@ import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { setGroupCoordinator, setGroupPlan, setStudentGroup } from 'shared/endpoints';
 import { ExclamationOutlined, PlusOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { openConfirmPromise } from 'utils/modals';
+import { Student, Teacher } from 'shared/interfaces/User';
 
 const { Title, Link } = Typography;
 
@@ -20,7 +21,7 @@ export interface GroupEditProps extends CollegeGroup {
 export default function GroupEdit({ id, name, students, year, coordinator, plan, onChange }: GroupEditProps) {
 
     const [planPickerInstance, openPlanPicker] = useModal(PlanPickerModal, {
-        onOk: ({ id: planId }) => {
+        onOk: ({ id: planId }: Plan) => {
             if (planId != null) {
                 return setGroupPlan(id, planId).then(onChange);
             }
@@ -29,7 +30,7 @@ export default function GroupEdit({ id, name, students, year, coordinator, plan,
     });
 
     const [coordinatorPicker, openCoordinatorPicker] = useModal(CoordinatorPickerModal, {
-        onOk: ({ id: coordinatorId }) => {
+        onOk: ({ id: coordinatorId }: Teacher) => {
             if (coordinatorId != null) {
                 return setGroupCoordinator(id, coordinatorId).then(onChange);
             }
@@ -38,7 +39,7 @@ export default function GroupEdit({ id, name, students, year, coordinator, plan,
     });
 
     const [studentPicker, openStudentPicker] = useModal(StudentPickerModal, {
-        onOk: ({ group, id: studentId }) => {
+        onOk: ({ group, id: studentId }: Student) => {
             const changeGroup = () => setStudentGroup(studentId, id);
                 if(group) { 
                     return openConfirmPromise({

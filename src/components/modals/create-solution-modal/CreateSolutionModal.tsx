@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {Input, Modal, Select} from 'antd'
+import _ from 'lodash';
 import { Solution } from 'interfaces/Solution'
 import { getSolutions } from 'actions/diagram';
 import { useHistory } from 'react-router-dom';
 import paths from 'paths';
 
 export interface CreateSolutionModalProps {
-    onCancel: () => void;
+    onCancel?: () => void;
     visible: boolean
 }
 
-export default function CreateSolutionModal(props:CreateSolutionModalProps) {
+export default function CreateSolutionModal({onCancel = _.noop, visible}:CreateSolutionModalProps) {
 
     const [title, setTitle] = useState("");
 
@@ -18,7 +19,7 @@ export default function CreateSolutionModal(props:CreateSolutionModalProps) {
 
     const handleOk = useCallback(() => {
         history.push(paths.NEW_DIAGRAM, {title});
-        props.onCancel();
+        onCancel();
     }, [title]);
 
     return (
@@ -26,8 +27,8 @@ export default function CreateSolutionModal(props:CreateSolutionModalProps) {
             title="Create Solution"
             okText="Start editimg"
             onOk={handleOk}
-            visible={props.visible}
-            onCancel={props.onCancel}
+            visible={visible}
+            onCancel={onCancel || _.noop}
             okButtonProps={{disabled: title.trim().length === 0}}
             closable>
                 <label>

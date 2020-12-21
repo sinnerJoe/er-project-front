@@ -1,5 +1,5 @@
 import { OmitProps } from "antd/lib/transfer/ListBody";
-import moment from "antd/node_modules/moment";
+import moment from "moment";
 import { AssignmentModel } from "interfaces/Assignment";
 import { PartialBy } from "interfaces/helpers";
 import { omit } from "lodash";

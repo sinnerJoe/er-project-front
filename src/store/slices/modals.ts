@@ -15,7 +15,7 @@ export enum ModalLevel {
 export interface ModalInstance {
     level: ModalLevel,
     modalType: ModalType, 
-    props?: Object
+    props?: any
 }
 
 export interface ModalSliceData {

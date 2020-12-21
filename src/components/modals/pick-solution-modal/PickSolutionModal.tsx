@@ -1,57 +1,68 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import {Modal, Select} from 'antd'
-import { Solution } from 'interfaces/Solution'
-import { getSolutions } from 'actions/diagram';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Col, Image, Modal, Row, Select, Typography } from 'antd'
+import { ServerSolution, Solution } from 'interfaces/Solution'
+import { useLoadingRequest } from 'utils/hooks';
+import { fetchSolution, getOwnSolutions } from 'shared/endpoints';
+import PickerModal, { PickerModalProps, StandardOverridenProps } from '../picker-modal/PickerModal';
+import './PickSolutionModal';
 
-type Props = {
-    onChoose: (solutionId: number) => void;
-    onClose: () => void;
-    visible: boolean
+
+const { Text } = Typography;
+export interface PickSolutionModalProps extends Omit<PickerModalProps<ServerSolution>, StandardOverridenProps> {
+    onOk: (solution: ServerSolution) => Promise<unknown> | void;
+    visible: boolean,
+    initialValue: ServerSolution | null
 }
-export default function PickSolutionModal(props: Props) {
-    const [solutions, setSolutions] = useState<Solution[]>([]);
-    const [chosen, setChosen] = useState<number | null>(null);
-    // const [visible, setVisible] = useState(props.visible);
-
+export default function PickSolutionModal({ visible, initialValue, onOk, ...rest }: PickSolutionModalProps) {
+    const [request, data, loading, err] = useLoadingRequest(getOwnSolutions, []);
     useEffect(() => {
-        getSolutions().then(res => setSolutions(res))
-    }, []);
-
-    const handleOk = useCallback(() => {
-        if(chosen) {
-            props.onChoose(chosen);
-            // setVisible(false);
-            props.onClose();
+        if (visible) {
+            request();
         }
-    }, [props.onChoose, chosen]);
+    }, [visible]);
 
-    const handleCancel = useCallback(() => {
-        // setVisible(false);
-        props.onClose();
-    }, [props.onClose])
+    const selected = useMemo(() => data.find(v => v.id === initialValue?.id) || null, [data]);
+
 
 
     return (
-        <Modal
-          title="Submit solution"
-          okText="Submit"
-          visible={props.visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          okButtonProps={{disabled: !chosen}}
-          closable
-        >
-            <Select 
-                onChange={(id: number, ...rest) => { setChosen(id); }}
-                style={{width: "100%"}}
-            >
-                {
-                    solutions.map(s => (
-                        <Select.Option key={s.id} value={s.id}>{s.title}</Select.Option>
-                    ))
-                }
+        <PickerModal
+            initialSelected={selected}
+            title="Submit solution"
+            okText="Submit"
+            data={data}
+            loading={loading}
+            onOk={(selected) => {
+                return onOk(selected);
+            }}
+            visible={visible}
+            {...rest}
+            renderItem={(solution) => {
 
-            </Select>
-        </Modal>
+                return (
+                    <React.Fragment>
+                        <Row >
+                            <Col span={12}>
+                                {solution.title}
+                            </Col>
+                            <Col span={12}>
+
+                                <Image.PreviewGroup>
+                                    <Row>
+                                        {solution.diagrams.map((diagram) => {
+                                            return <Col className="pick-solution-modal preview"><Image key={diagram.id} width={50} src={diagram.image} className="preview" /></Col>
+                                        })
+                                        }
+                                    </Row>
+                                </Image.PreviewGroup>
+                            </Col>
+                        </Row>
+                        <Text type="secondary">
+                            Updated at {solution.updatedAt}
+                        </Text>
+                    </React.Fragment>
+                )
+            }}
+        />
     )
 }

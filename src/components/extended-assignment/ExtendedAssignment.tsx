@@ -6,7 +6,7 @@ import SubmissionTable from './SubmissionTable'
 import LabeledData from './LabeledData'
 import Assignment from 'components/assignment/Assignment'
 import { DATE_WITHOUT_YEAR } from 'shared/constants'
-import moment from 'antd/node_modules/moment'
+import moment from 'moment'
 import { EditFilled, FieldTimeOutlined } from '@ant-design/icons'
 import { Link as RouterLink } from 'react-router-dom';
 import paths from 'paths'

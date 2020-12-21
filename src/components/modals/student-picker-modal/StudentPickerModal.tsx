@@ -4,7 +4,7 @@ import { useLoadingRequest } from 'utils/hooks';
 import {getStudents} from 'shared/endpoints';
 import PickerModal, { PickerModalProps, StandardOverridenProps } from '../picker-modal/PickerModal';
 import { Typography, Modal } from 'antd';
-import moment from 'antd/node_modules/moment';
+import moment from 'moment';
 import { SERVER_DATE, SERVER_DATE_TIME } from 'shared/constants';
 import { openConfirmPromise } from 'utils/modals';
 import { ExclamationOutlined } from '@ant-design/icons';

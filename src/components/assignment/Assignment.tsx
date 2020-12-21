@@ -2,14 +2,15 @@ import { clearSubmission, submitSolution } from 'actions/assignments';
 import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
+import { useModal } from 'components/modals/modal-hooks';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
 import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
-import { Mark } from 'interfaces/Mark'
 import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
 import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
+import { NO_YEAR_HUMAN_READABLE } from 'shared/constants';
 import { IdIndex } from 'shared/interfaces/Id';
 
 const { Text, Link } = Typography;
@@ -88,7 +89,15 @@ export interface AssignmentProps extends PlannedAssignment {
 
 export default function Assignment(props: AssignmentProps) {
 
-    const [showModal, setShowModal] = useState(false);
+
+    const [modalInstance, openModal] = useModal(PickSolutionModal, {
+        initialValue: props.solution || null,
+        onOk: (selectedSolution: ServerSolution) => {
+            if(props.assignment.id) {
+                submitSolution(props.assignment.id, selectedSolution.id).then(props.onSubmit);
+            }
+        },
+    })
 
     return (
         <Card title={props.assignment.title}>
@@ -101,11 +110,12 @@ export default function Assignment(props: AssignmentProps) {
             <SubmittedMark mark={props.solution?.mark} reviewedAt={props.solution?.reviewedAt || undefined}  />
             <Row align="middle" className="mt-4">
                 <Col>
-                    <DateInterval start={props.startDate as any} end={props.endDate as any} />
+                    <DateInterval dateFormat={NO_YEAR_HUMAN_READABLE} start={props.startDate as any} end={props.endDate as any} />
                 </Col>
                 <Col className="ml-auto">
                     <Space direction="horizontal" size="small">
-                        <Button onClick={() => setShowModal(true)}>
+                        {modalInstance}
+                        <Button onClick={openModal}>
                             {props.solution ? 'Change Solution' : 'Submit Solution'}
                         </Button>
                         {props.solution && <Button danger onClick={() => clearSubmission(props.assignment.id || 0).then(props.onSubmit)}>
@@ -114,11 +124,6 @@ export default function Assignment(props: AssignmentProps) {
                     </Space>
                 </Col>
             </Row>
-            <PickSolutionModal
-                onChoose={(solutionId) => submitSolution(props.assignment.id || 0, solutionId).then(props.onSubmit)}
-                onClose={() => setShowModal(false)}
-                visible={showModal}
-            />
         </Card>
     )
 }
