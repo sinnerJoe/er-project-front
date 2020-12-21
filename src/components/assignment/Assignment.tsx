@@ -1,9 +1,10 @@
-import { clearSubmission, submitSolution } from 'actions/assignments';
+import { clearSubmission} from 'actions/assignments';
 import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
 import { useModal } from 'components/modals/modal-hooks';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
+import PromiseButton from 'components/promise-button/PromiseButton';
 import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
 import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
@@ -11,6 +12,7 @@ import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
 import { NO_YEAR_HUMAN_READABLE } from 'shared/constants';
+import { submitSolution, unsubmitSolution } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 
 const { Text, Link } = Typography;
@@ -77,11 +79,6 @@ function SubmittedMark(props: {mark?: IdIndex | null, reviewedAt?: string | Mome
     )
 }
 
-// function PostedDate({postedAt: string}) {
-//     return (
-
-//     )
-// }
 
 export interface AssignmentProps extends PlannedAssignment {
     onSubmit: () => void
@@ -92,11 +89,7 @@ export default function Assignment(props: AssignmentProps) {
 
     const [modalInstance, openModal] = useModal(PickSolutionModal, {
         initialValue: props.solution || null,
-        onOk: (selectedSolution: ServerSolution) => {
-            if(props.assignment.id) {
-                submitSolution(props.assignment.id, selectedSolution.id).then(props.onSubmit);
-            }
-        },
+        onOk: (selectedSolution: ServerSolution) => submitSolution(selectedSolution.id, props.id).then(props.onSubmit),
     })
 
     return (
@@ -118,9 +111,16 @@ export default function Assignment(props: AssignmentProps) {
                         <Button onClick={openModal}>
                             {props.solution ? 'Change Solution' : 'Submit Solution'}
                         </Button>
-                        {props.solution && <Button danger onClick={() => clearSubmission(props.assignment.id || 0).then(props.onSubmit)}>
+                        {props.solution && <PromiseButton danger onClick={() => {
+                            const id = props?.solution?.id;
+
+                            if(id != null) {
+                                return unsubmitSolution(id).then(props.onSubmit);
+                            }
+
+                        }}>
                             Unsubmit
-                    </Button>}
+                    </PromiseButton>}
                     </Space>
                 </Col>
             </Row>

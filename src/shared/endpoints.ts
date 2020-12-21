@@ -145,3 +145,11 @@ export function setStudentGroup(userId: IdIndex, groupId: IdIndex | null) {
 export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[]> {
     return get('plans/assignments/');
 }
+
+export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
+    return patch('solutions/', {plannedAssignmentId}, {id: solutionId, target: 'submit'});
+}
+
+export function unsubmitSolution(solutionId: IdIndex) {
+    return patch('solutions/', {}, {id: solutionId, target: 'unsubmit'});
+}

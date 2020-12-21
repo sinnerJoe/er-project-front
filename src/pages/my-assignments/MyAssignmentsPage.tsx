@@ -22,7 +22,7 @@ export default function MyAssignmentsPage(props: any) {
     request()
   }, []);
 
-  const submitSolution = () => {}
+  const submitSolution = () => { request(); } 
 
   return (
     <PageContent>
