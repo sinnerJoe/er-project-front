@@ -7,7 +7,7 @@ import { Mark } from "./Mark";
 export type SolutionTab = {
     title: string,
     diagramXml?: string,
-    poster?: string
+    poster?: string,
 };
 
 export type Solution = {
@@ -23,7 +23,8 @@ export interface ServerDiagram {
     id: number,
     name: string,
     content: string,
-    image: string
+    image: string,
+    type: string
 }
 export interface ServerSolution {
     id: number,
@@ -52,7 +53,8 @@ export function parseSolution(solution: ServerSolution): Partial<Solution> {
         tabs: solution.diagrams.map(diagram => ({
           diagramXml: diagram.content,
           poster: diagram.image,
-          title: diagram.name
+          title: diagram.name,
+          type: diagram.type
         } as SolutionTab))
       } as Partial<Solution>;
 }

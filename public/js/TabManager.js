@@ -18,11 +18,12 @@ TabManager = function (editorUi, container, tabData) {
             this.createImportXmlCallback(initialSchema)()
             editor.graph.model.endUpdate();
         }, 0);
+        console.log("INSIDE CONSTRUCTOR", tabData);
         this.tabData = tabData.map((tabElement, index) => ({
             label: tabElement.label,
             id: index,
             focused: index == 0,
-            diagramType: mxConstants.ER_DIAGRAM, // TODO: add diagramType to TabData model
+            diagramType: tabElement.diagramType, // TODO: add diagramType to TabData model
             undoManagerState: this.copyUndoManagerState(),
             textSchema: tabElement.textSchema, //delete onload
             modelState: {
@@ -67,7 +68,8 @@ TabManager.prototype.serializeTabs = function () {
             return Promise.resolve({
                 schema: tab.textSchema,
                 poster: tab.poster,
-                title: tab.label
+                title: tab.label,
+                type: tab.diagramType
             })
         } else {
             node = encoder.encode(tab.modelState);
@@ -77,6 +79,7 @@ TabManager.prototype.serializeTabs = function () {
                 schema: mxUtils.getPrettyXml(node),
                 poster: poster,
                 title: tab.label,
+                type: tab.diagramType
             }
         ));
     }))

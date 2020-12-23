@@ -12,10 +12,11 @@ export default function CreateDiagram(props: any) {
   return (
     <Diagram defaultSetup={[]}
       onSave={(xmlData) => {
-        const tabs = xmlData.map(({ title, poster = diagramImage, schema }) => ({
+        const tabs = xmlData.map(({ title, type, poster = diagramImage, schema }) => ({
           content: schema,
           name: title,
           image: poster,
+          type
         }));
         createSolution({diagrams: tabs, title: location.state.title}).then(() => {
           history.push(paths.MY_DIAGRAM)

@@ -27,7 +27,13 @@ function capturePoster() {
   return fullImage
 }
 
-function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {
+function initDiagram(element: any, cb: any, config: { 
+  defaultSetup: {
+    schema: string, 
+    diagramType: string
+    label: string}[], 
+    onSave: (graphData: any) => void 
+  }) {
   var editorUiInit = EditorUi.prototype.init;
   EditorUi.prototype.init = function () {
     editorUiInit.apply(this, arguments);
@@ -68,8 +74,8 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
         [themeIndex]: xhr[1].getDocumentElement(),
       };
       // console.log(config.defaultSetup);
-      const defaultSetup = config.defaultSetup.map(({schema, label})=> 
-              ({label, textSchema: schema }));
+      const defaultSetup = config.defaultSetup.map(({schema, label, diagramType})=> 
+              ({label, diagramType, textSchema: schema}));
 
       const editor = new Editor(urlParams["chrome"] == "0", themes)
       
@@ -108,7 +114,11 @@ export default function Diagram({defaultSetup, onSave}: Props) {
 
     useLayoutEffect(() => {
         initDiagram(wrapperRef.current, (editor:any) => {editorUi.current = editor}, {
-          defaultSetup: defaultSetup.map((({title, diagramXml}: any) => ({label: title, schema: diagramXml}))),
+          defaultSetup: defaultSetup.map((({title, diagramXml, type}: any) => ({
+            label: title, 
+            schema: diagramXml, 
+            diagramType: type
+          }))),
           onSave: (xmlData) => {
             console.log(xmlData);
             onSave(xmlData);

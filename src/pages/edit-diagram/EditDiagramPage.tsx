@@ -35,7 +35,7 @@ export default function EditDiagramPage(props:any) {
             onSave={async (xmlData) => {
                 console.log("DATA", xmlData);
                 if(solution) {
-                    const diagramPromises = xmlData.map(async ({title, poster, schema}: any, index: number) => {
+                    const diagramPromises = xmlData.map(async ({title, poster, schema, type}: any, index: number) => {
                         let image = poster;
 
                         if(!poster) {
@@ -50,7 +50,8 @@ export default function EditDiagramPage(props:any) {
                         return {
                             content: schema, 
                             name: title,
-                            image
+                            image,
+                            type
                         };
                     });
 
