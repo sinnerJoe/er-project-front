@@ -102,3 +102,9 @@ $sizes: (
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}

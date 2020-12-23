@@ -17,7 +17,7 @@ export default function GroupsPage(props: {}) {
 
     const { year } = useQueryStringMaster({ year: String(new Date().getFullYear()) })
 
-    const [fetch, groups, loading] = useLoadingRequest(getGroups, [], true);
+    const [fetch, groups, loading] = useLoadingRequest(getGroups, [], {initialLoading: true});
 
     const [selectedGroupId, selectGroup] = useState<IdIndex | null>(null);
 

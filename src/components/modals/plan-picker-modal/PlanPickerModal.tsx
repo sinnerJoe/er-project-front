@@ -16,7 +16,7 @@ const { Text } = Typography;
 
 export default function PlanPickerModal({ onOk, initialValue, visible, ...rest }: PlanPickerModalProps) {
 
-    const [request, data, loading, err] = useLoadingRequest(fetchAllPlans, [], true);
+    const [request, data, loading, err] = useLoadingRequest(fetchAllPlans, [], {initialLoading: true});
 
     useEffect(() => {
         if (visible) {

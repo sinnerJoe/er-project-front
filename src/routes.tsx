@@ -1,3 +1,4 @@
+import React from 'react';
 import paths from 'paths';
 import  MyDiagramsPage from 'pages/my-diagrams/MyDiagramsPage';
 import  CreateDiagram from 'pages/create-diagram/CreateDiagram';
@@ -13,6 +14,10 @@ import CreatePlanPage from 'pages/create-plan-page/CreatePlanPage';
 import PlanListPage from 'pages/plan-list-page/PlanListPage';
 import EditPlanPage from 'pages/edit-plan-page/EditPlanPage';
 import GroupsPage from 'pages/groups/GroupsPage';
+import { DeploymentUnitOutlined } from '@ant-design/icons';
+import STEPS, { RoutePathStep } from 'shared/route-steps';
+
+
 
 export default [
     {
@@ -71,14 +76,29 @@ export default [
     },
     {
         path: `${paths.EDIT_PLAN}/:id`,
-        component: EditPlanPage
+        component: EditPlanPage,
+        routeSteps: [
+            STEPS.PLANS,
+            {
+                title: "Edit",
+                to: paths.EDIT_PLAN
+            }
+        ]
     },
     {
         path: paths.PLANS,
-        component: PlanListPage
+        component: PlanListPage,
+        routeSteps: [STEPS.PLANS]
     },
     {
         path: paths.GROUPS,
         component: GroupsPage
     }
-] as {secure?: boolean, path: string, component: any, disableHeader?: boolean}[];
+] as {
+    secure?: boolean, 
+    path: string, 
+    component: any, 
+    disableHeader?: boolean,
+    routeSteps?: RoutePathStep[]
+
+}[];

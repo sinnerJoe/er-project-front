@@ -12,7 +12,7 @@ export interface PlanListPageProps {
 };
 
 export default function PlanListPage(props: PlanListPageProps) {
-    const [request, data, loading, err] = useLoadingRequest(fetchAllPlans, [], true);
+    const [request, data, loading, err] = useLoadingRequest(fetchAllPlans, [], {initialLoading: true});
 
     useEffect(() => {
         request();

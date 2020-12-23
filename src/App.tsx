@@ -19,10 +19,11 @@ import UniversalRoute from 'components/secure-route/UniversalRoute';
 import paths from 'paths';
 import ModalManager from 'app/modal-manager/ModalManager';
 import withRequestedUser from 'utils/withRequestedUser';
+import RouteNotifier from 'components/header/RouteNotifier';
 
 
 function createRoutes() {
-  return routes.map(({path, secure = true, component}) => {
+  return routes.map(({path, secure = true, component}, index) => {
     let Component = component;
     if(secure) {
       Component = withRequestedUser(EmptyPage, component);
@@ -30,6 +31,7 @@ function createRoutes() {
 
     return (
       <Route path={path}>
+        <RouteNotifier routeIndex={index} />
         <Component />
       </Route>
     )

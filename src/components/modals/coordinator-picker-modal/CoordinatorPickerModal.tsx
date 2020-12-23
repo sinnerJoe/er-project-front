@@ -15,7 +15,7 @@ const { Text } = Typography;
 
 export default function CoordinatorPickerModal({ onOk, initialValue, visible, ...rest }: CoordinatorPickerModalProps) {
 
-    const [request, data, loading, err] = useLoadingRequest(getTeachers, [], true);
+    const [request, data, loading, err] = useLoadingRequest(getTeachers, [], {initialLoading: true});
 
     const {year = getCurrentYear()} = useQueryStringMaster()
 

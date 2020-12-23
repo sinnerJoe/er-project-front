@@ -16,7 +16,7 @@ export default function withRequestedUser(UnauthenticatedComponent: React.FC, Au
         const {userId} = useUserSelector();
         const dispatch = useDispatch();
         
-        const [requestUser, data, loading] = useLoadingRequest(() => dispatch(fetchCurrentUser()) as any, null, true);
+        const [requestUser, data, loading] = useLoadingRequest(() => dispatch(fetchCurrentUser()) as any, null, {initialLoading: true});
         
         useEffect(() => {
             if(userId === -1 && !location?.state?.avoidAuth) {

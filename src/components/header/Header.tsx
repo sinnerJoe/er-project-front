@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import routes from 'routes';
 import LogoutButton from './LogoutButton';
 import CreateSolutionButton from './CreateSolutionButton';
+import RoutePathBreadcrumbs from 'components/navigation-menu/RoutePathBreadcrumbs';
 
 const BackButtonItem = ({ children }: { children: React.ReactNode }) => (
     <DropdownItem openedMenu="main" leftIcon={<LeftOutlined />}>

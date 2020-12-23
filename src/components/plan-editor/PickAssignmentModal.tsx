@@ -28,7 +28,7 @@ export default function PickAssignmentModal(props: PickAssignmentModalProps) {
 
     const [chosenAssignment, chooseAssignment] = useState<ServerAssignment | null>(null);
 
-    const [request, assignments, loading] = useLoadingRequest(fetchUnpickedAssignments, [], true);
+    const [request, assignments, loading] = useLoadingRequest(fetchUnpickedAssignments, [], {initialLoading: true});
 
     const [expandedAssignment, expand] = useState<ServerAssignment | null>(null);
 

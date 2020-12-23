@@ -8,5 +8,6 @@ export interface CollegeGroup {
     year: IdIndex,
     coordinator?: Teacher,
     students?: Student[]
-    plan?: Plan
+    plan?: Plan,
+    uncheckedSubmissionCount?: IdIndex
 }

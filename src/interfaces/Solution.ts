@@ -1,4 +1,5 @@
 import { Moment } from "moment";
+import { Student, Teacher } from "shared/interfaces/User";
 import { PassThrough } from "stream";
 import { AssignmentModel } from "./Assignment";
 import { Mark } from "./Mark";
@@ -36,8 +37,11 @@ export interface ServerSolution {
     reviewedAt: string | null,
     submittedAt: string | Moment,
     diagrams: ServerDiagram[]
-
 }
+
+export interface EvaluatedSolution extends Omit<ServerSolution, 'reviewedBy'>{
+    reviewedBy?: Teacher
+}   
 
 export function parseSolution(solution: ServerSolution): Partial<Solution> {
     return {

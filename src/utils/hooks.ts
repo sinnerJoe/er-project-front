@@ -1,9 +1,7 @@
-import { AxiosResponse } from 'axios';
-import { resolve } from 'dns';
+import _ from 'lodash';
 import {useState, useRef, useEffect, useCallback, useMemo} from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import {AxiosResponsePromise} from 'shared/interfaces/ResponseType';
-import { TupleType } from 'typescript';
 
 export function useOnMount(cb: Function, deps = []) {
     const run = useRef(false);
@@ -56,12 +54,19 @@ export function useSynchronizedRequest<T=any, A extends any[] = any[]>(requestFu
     },[requestFunction]);
 }
 
-export function useLoadingRequest<T=any, A extends any[]=any[]>(requestFunction:(...args:A) => AxiosResponsePromise<T>, initialData:T, initialLoading=false)
+interface LoadingRequestParams {
+    initialLoading?: boolean,
+    resetValueOnLoading?: boolean,
+}
+
+export function useLoadingRequest<T=any, A extends any[]=any[]>(
+    requestFunction:(...args:A) => AxiosResponsePromise<T>, 
+    initialData:T, { initialLoading=false, resetValueOnLoading=true }: LoadingRequestParams = {})
 : [ (...args:A) => AxiosResponsePromise<T>, T, boolean, any] {
     const [state, setState] = useState<{data: T, loading: boolean, error?: any}>({data: initialData, loading: initialLoading, error: undefined});
     const synchronizedRequest = useSynchronizedRequest(requestFunction);
     const request = useCallback((...args: A) => {
-        setState({data: initialData, loading: true}) 
+        setState({data: resetValueOnLoading ? initialData: state.data, loading: true}) 
         return synchronizedRequest(...args).then(response => {
             setState({data: response?.data?.data, loading: false}) 
             return response;
@@ -87,7 +92,12 @@ export function useQueryStringMaster<T extends Record<string, string>>(defaults:
             } else if(prop === 'pathname') {
                 return location.pathname;
             } else if(prop === 'fullpath') {
-                return `${location.pathname}?${target.toString()}`
+                const queryString = target.toString();
+                if(queryString) {
+                    return `${location.pathname}?${queryString}`
+                } else {
+                    return location.pathname
+                }
             }
             return target.get(prop) || defaults[prop];
         },
@@ -96,4 +106,28 @@ export function useQueryStringMaster<T extends Record<string, string>>(defaults:
             return true;
         }
     }) as any;
+}
+
+
+export function useEffectOnce(cb: () => void, deps: any[], condition: () => boolean = _.constant(true)) {
+    const hasRun = useRef(false);
+    useEffect(() => {
+        if(!hasRun.current && condition()) {
+            hasRun.current = true;
+            cb();
+        }
+    }, deps)
+}
+
+export function useEffectSkip(cb: () => void, deps: any[], condition: () => boolean = _.constant(true), skips = 1) {
+    const runs = useRef(0);
+
+    useEffect(() => {
+        if(condition()) {
+            runs.current += 1;
+            if(runs.current > skips) {
+                cb();
+            } 
+        }
+    })
 }

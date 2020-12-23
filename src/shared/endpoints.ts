@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios";
 import { SentPlannedAssignment } from "components/plan-editor/PlanEditor";
-import { PlannedAssignment, ServerAssignment } from "interfaces/Assignment";
+import { EvaluatedAssignment, PlannedAssignment, ServerAssignment } from "interfaces/Assignment";
 import { CollegeGroup } from "interfaces/Group";
 import { Plan } from "interfaces/Plan";
-import { ServerSolution } from "interfaces/Solution";
+import { EvaluatedSolution, ServerSolution } from "interfaces/Solution";
 import { Moment } from "moment";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { IdIndex } from "./interfaces/Id";
@@ -110,6 +110,15 @@ export function getShallowGroups(year: IdIndex): AxiosResponsePromise<{year: IdI
     return get("groups/", {year, 'type': 'shallow'});
 }
 
+export function getSubmissionGroups(year: IdIndex): AxiosResponsePromise<{
+    year: IdIndex, 
+    id: IdIndex, 
+    name: string, 
+    uncheckedSubmissionCount: IdIndex
+}[]>  {
+    return get("groups/", {year, 'type': 'submissions'});
+}
+
 export function getGroups(year: IdIndex): AxiosResponsePromise<CollegeGroup[]> {
     return get("groups/", {year});
 }
@@ -146,10 +155,18 @@ export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[
     return get('plans/assignments/');
 }
 
+export function getPlannedAssignmentsWithAnswers(groupId: IdIndex, plannedAssignmentId?: IdIndex): AxiosResponsePromise<EvaluatedAssignment[]> {
+    return get('plans/assignments/', {groupId, plannedAssignmentId});
+}
+
 export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
     return patch('solutions/', {plannedAssignmentId}, {id: solutionId, target: 'submit'});
 }
 
 export function unsubmitSolution(solutionId: IdIndex) {
     return patch('solutions/', {}, {id: solutionId, target: 'unsubmit'});
+}
+
+export function assignMark(solutionId: IdIndex, mark: IdIndex | null) {
+    return patch('solutions/', {mark}, {id: solutionId, target: 'mark'});
 }

@@ -1,10 +1,13 @@
 import { Button, Col, Row } from 'antd';
+import PromiseButton from 'components/promise-button/PromiseButton';
 import React, { memo, useState } from 'react'
+import { IdIndex } from 'shared/interfaces/Id';
+import { useLoadingRequest } from 'utils/hooks';
 import MarkView from './MarkView';
 
 type Props = {
-    mark?: number,
-    onSubmit: (mark?: number) => void
+    mark?: IdIndex,
+    onSubmit: (mark: IdIndex | null) => void
 }
 
 const MARK_CLASS = "pointer"
@@ -13,6 +16,7 @@ const MARK_UNCHANGED = "The selected mark is already set."
 function MarkPicker(props: Props) {
     const inputMark = props.mark || 0;
     const [mark, setMark] = useState(inputMark);
+    const [loading, setLoading] = useState(false);
 
     return (
         <div className="mark-picker">
@@ -41,21 +45,21 @@ function MarkPicker(props: Props) {
             <Row justify="end" className="mt-3">
                 <Col>
                     {!!inputMark && (
-                        <Button
-                            onClick={() => props.onSubmit()}
+                        <PromiseButton
+                            onClick={() => props.onSubmit(null)}
                             type="primary"
                             className="mr-1"
                             danger>
                             Clear
-                        </Button>
+                        </PromiseButton>
                     )
                     }
-                    <Button
+                    <PromiseButton
                         title={inputMark === mark ? MARK_UNCHANGED : undefined}
                         disabled={inputMark === mark}
                         onClick={() => props.onSubmit(mark)}>
                         Change
-                    </Button>
+                    </PromiseButton>
                 </Col>
             </Row>
         </div>

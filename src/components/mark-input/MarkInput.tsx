@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import {Popover} from 'antd';
+import _ from 'lodash';
 import MarkView from './MarkView';
 import MarkPicker from './MarkPicker';
 import { postSolutionMark } from 'actions/diagram';
+import { assignMark } from 'shared/endpoints';
+import { IdIndex } from 'shared/interfaces/Id';
 
 type Props = {
-    solutionId: number,
-    mark?: number,
+    solutionId: IdIndex,
+    mark?: IdIndex,
     onChange: () => void 
 }
 export default function MarkInput(props: Props) {
@@ -17,11 +20,12 @@ export default function MarkInput(props: Props) {
             visible={visible}
             content={
             <MarkPicker 
-                onSubmit={(mark?: number) => {
-                    postSolutionMark(props.solutionId, mark);
-                    setVisible(false);
-                    props.onChange();
-                }} 
+                onSubmit={(mark: IdIndex | null = null) => {
+                    return assignMark(props.solutionId, mark).then(() => {
+                        setVisible(false);
+                        props.onChange();
+                    }).catch(_.noop);
+                }}
             mark={props.mark}/>}
             trigger="click"
             onVisibleChange={setVisible}

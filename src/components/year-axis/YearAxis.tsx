@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { getCurrentYear } from 'utils/datetime';
 
 export interface YearAxisProps {
-    onChange: (year: number) => void
+    onChange?: (year: number) => void
 };
 
 
@@ -26,7 +26,9 @@ export default function YearAxis(props: YearAxisProps) {
     }
 
     const notifyChanged = () => {
-        props.onChange(year);
+        if(props.onChange) {
+            props.onChange(year);
+        }
         queryMaster.year = String(year);
         history.push(queryMaster.fullpath);
     }

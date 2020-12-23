@@ -1,4 +1,5 @@
 import { CollegeGroup } from 'interfaces/Group';
+import { EvaluatedSolution, ServerSolution } from 'interfaces/Solution';
 import _ from 'lodash';
 import { Moment } from 'moment';
 import {reshape, shapeBack} from 'shared/reshape';
@@ -18,6 +19,10 @@ export interface User {
 
 export interface Student extends Omit<User, 'group'> {
     group?: CollegeGroup
+}
+
+export interface EvaluatedStudent extends Student {
+    solution?: EvaluatedSolution
 }
 
 const shape = {

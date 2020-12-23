@@ -1,16 +1,18 @@
 import { Mark } from 'interfaces/Mark'
 import React from 'react'
+import { IdIndex } from 'shared/interfaces/Id';
 
 import {getMarkClass} from './mark-helpers';
 
 import './mark-view.scss';
 
-type Props = Partial<Mark> & {
+export interface MarkViewProps {
     onClick?: () => void,
-    className: string
+    className: string,
+    mark?: IdIndex
 }
 
-export default function MarkView(props: Props) {
+export default function MarkView(props: MarkViewProps) {
     const mark = props.mark || 'N/A';
 
     return (

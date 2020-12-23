@@ -10,7 +10,7 @@ import { useLoadingRequest } from 'utils/hooks';
 
 export default function EditPlanPage(props: {}) {
 
-    const [request, data, loading, err] = useLoadingRequest(fetchPlan, null, true);
+    const [request, data, loading, err] = useLoadingRequest(fetchPlan, null, {initialLoading: true});
 
     const {id} = useParams<{id?: string}>();
 
