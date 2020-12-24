@@ -14,11 +14,11 @@ import { useModal } from 'components/modals/modal-hooks'
 import { getOwnSolutions } from 'shared/endpoints'
 
 export default function MyDiagramsPage(props: any) {
-  const [solutions, setSolutions] = useState<Partial<Solution>[]>([]);
+  const [solutions, setSolutions] = useState<Solution[]>([]);
   const fetchSolutions = useCallback(() => { 
     getOwnSolutions()
     .then((response) => response.data.data.map(parseSolution))
-    .then(setSolutions).catch(_.noop);
+    .then(setSolutions as any).catch(_.noop);
   }, []);
   useEffect(fetchSolutions, [...Object.values(props)])
   console.log(solutions)
@@ -34,11 +34,11 @@ export default function MyDiagramsPage(props: any) {
         {
           solutions.map((solution) => (
             <UploadedDiagram 
-              title={solution.title}
+              title={solution.title || ''}
               onDelete={fetchSolutions} 
-              tabs={solution.tabs} 
-              id={solution.id} 
-              assignments={solution.assignments} 
+              tabs={solution.tabs || []} 
+              id={solution.id || 0} 
+              assignments={solution.assignments || []} 
               updatedOn={solution.updatedOn} />
           ))
         }

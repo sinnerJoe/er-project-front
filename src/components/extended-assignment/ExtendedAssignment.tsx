@@ -38,8 +38,6 @@ export default function ExtendedAssignment({groupId, onRefreshData, assignment: 
         setData(evaluatedAssignment);
     }, [evaluatedAssignment]);
 
-    console.log("UPDATE ", id)
-
     const [requestAssignment, assignmentData, loading] = useLoadingRequest(getPlannedAssignmentsWithAnswers, []);
 
     useEffect(() => {

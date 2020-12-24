@@ -17,30 +17,9 @@ const {Title} = Typography;
 
 
 
-type Props = { onDelete: Function} & Partial<Solution>;
+type Props = { onDelete: Function} & Solution;
 
-const testTabs: Partial<SolutionTab>[] = [
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-];
-
-const testAssignments: Partial<AssignmentModel>[] = [
-    {
-        title:"Create the schema for UAIC DB."
-    }
-]
-
-export default function UploadedDiagram({title, onDelete=() => {}, tabs=testTabs, updatedOn=new Date().toISOString(), id, assignments = testAssignments}: Props) {
+export default function UploadedDiagram({title, onDelete=() => {}, tabs = [], updatedOn=new Date().toISOString(), id, assignments}: Props) {
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
             <Col className="meta-info">

@@ -30,7 +30,7 @@ export default function GroupList({
 
     return (
         <div className={`group-list ${className}`}>
-            { groups.map((group) => {
+            { groups.map((group, index) => {
                 const tag = (
                     <GroupTag
                         className={selectedGroupId === group.id ? 'selected' : ''}
@@ -44,6 +44,7 @@ export default function GroupList({
                 const submissionCount = badgeSelector(group);
                 return (
                     <Badge
+                        style={{zIndex: groups.length - index - 1}}
                         size="small"
                         offset={[-11, 0]}
                         title={badgeTitleGenerator(submissionCount)}

@@ -24,14 +24,11 @@ const loginRequest = async (email: string, password: string) => {
 
 function LoginPage(props: any) {
     const [form] = Form.useForm();
-    // const [loading, setLoading] = useState(false);
-    // const [response, setResponse] = useState<{status: string, message: string} | null> (null);
     const [authRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(loginRequest, null);
     const history = useHistory();
     const onFinish = ({email, password}: any) => {
-        // TODO RECEIVE USER DATA AND REDIRECT ACCORDINGLY TO THE ROLE
         authRequest(email, password).then(() => {
-            history.replace(paths.PROFESSOR_ASSIGNMENTS);
+            history.replace('');
         })
         .catch(_.identity);
     };
