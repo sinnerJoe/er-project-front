@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {Input, Modal, Select} from 'antd'
 import _ from 'lodash';
-import { Solution } from 'interfaces/Solution'
-import { getSolutions } from 'actions/diagram';
 import { useHistory } from 'react-router-dom';
 import paths from 'paths';
 

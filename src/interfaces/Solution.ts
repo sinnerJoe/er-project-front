@@ -1,8 +1,7 @@
 import { Moment } from "moment";
+import { IdIndex } from "shared/interfaces/Id";
 import { Student, Teacher } from "shared/interfaces/User";
-import { PassThrough } from "stream";
-import { AssignmentModel } from "./Assignment";
-import { Mark } from "./Mark";
+import { AssignmentModel, ServerAssignment } from "./Assignment";
 
 export type SolutionTab = {
     title: string,
@@ -15,8 +14,11 @@ export type Solution = {
     title: string,
     updatedOn: string,
     id: number,
-    assignments: Partial<AssignmentModel>[],
-    mark?: Mark
+    mark?: IdIndex,
+    reviewer?: Teacher,
+    assignment?: ServerAssignment,
+    reviewedAt: string | null,
+    userId: IdIndex
 };
 
 export interface ServerDiagram {
@@ -34,8 +36,9 @@ export interface ServerSolution {
     createdAt: string,
     updatedAt: string,
     mark: number | null,
-    reviewedBy: number | null,
-    reviewedAt: string | null,
+    reviewedAt?: string | null,
+    reviewer?: Teacher,
+    assignment?: ServerAssignment,
     submittedAt: string | Moment,
     diagrams: ServerDiagram[]
 }
@@ -48,13 +51,17 @@ export function parseSolution(solution: ServerSolution): Partial<Solution> {
     return {
         id: solution.id,
         title: solution.title,
-        mark: solution.mark ? solution.mark : undefined,
+        userId: solution.userId,
+        mark: solution.mark,
         updatedOn: solution.updatedAt,
+        assignment: solution.assignment,
         tabs: solution.diagrams.map(diagram => ({
           diagramXml: diagram.content,
           poster: diagram.image,
           title: diagram.name,
           type: diagram.type
-        } as SolutionTab))
+        } as SolutionTab)),
+        reviewer: solution.reviewer,
+        reviewedAt: solution.reviewedAt
       } as Partial<Solution>;
 }

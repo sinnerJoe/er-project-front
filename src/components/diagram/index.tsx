@@ -32,7 +32,8 @@ function initDiagram(element: any, cb: any, config: {
     schema: string, 
     diagramType: string
     label: string}[], 
-    onSave: (graphData: any) => void 
+    onSave: (graphData: any) => void,
+    viewMode: boolean
   }) {
   var editorUiInit = EditorUi.prototype.init;
   EditorUi.prototype.init = function () {
@@ -40,19 +41,6 @@ function initDiagram(element: any, cb: any, config: {
     this.actions.get("export").setEnabled(false);
 
     // Updates action states which require a backend
-    if (!Editor.useLocalStorage) {
-      setTimeout(
-        mxUtils.bind(this, function (this: any) {
-          var enabled = true;
-          // this.actions.get("open").setEnabled(enabled || Graph.fileSupport);
-          this.actions.get("import").setEnabled(enabled || Graph.fileSupport);
-          this.actions.get("save").setEnabled(enabled);
-          this.actions.get("saveAs").setEnabled(enabled);
-          this.actions.get("export").setEnabled(enabled);
-        }),
-        0
-      );
-    }
   };
   // Adds required resources (disables loading of fallback properties, this can only
   // be used if we know that all keys are defined in the language specific file)
@@ -102,10 +90,11 @@ function initDiagram(element: any, cb: any, config: {
 
 type Props = {
   defaultSetup: any,
-  onSave: (xmlData: any[]) => void
+  onSave: (xmlData: any[]) => void,
+  viewMode?: boolean;
 }
 
-export default function Diagram({defaultSetup, onSave}: Props) {
+export default function Diagram({defaultSetup, onSave, viewMode=false}: Props) {
 
     const wrapperRef = useRef<Element | null>((null as unknown) as HTMLElement);
     const editorUi = useRef<any>(null);
@@ -122,7 +111,8 @@ export default function Diagram({defaultSetup, onSave}: Props) {
           onSave: (xmlData) => {
             console.log(xmlData);
             onSave(xmlData);
-          } 
+          },
+          viewMode
         });
         return () => {
           if(editorUi.current) {

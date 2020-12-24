@@ -3400,15 +3400,15 @@ EditorUi.prototype.createUi = function()
 	// Creates menubar
 	this.menubar = (this.editor.chromeless) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
-	if(!this.editor.chromeless) {
-		var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
-		let tabData = !this.config.defaultSetup || !this.config.defaultSetup.length ? null : this.config.defaultSetup; 
-		this.tabManager = new TabManager(this, tabBarContainer, tabData);
-		this.tabManager.init();
-		this.container.appendChild(tabBarContainer);
+	// if(!this.editor.chromeless) {
+	var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
+	let tabData = !this.config.defaultSetup || !this.config.defaultSetup.length ? null : this.config.defaultSetup; 
+	this.tabManager = new TabManager(this, tabBarContainer, tabData);
+	this.tabManager.init();
+	this.container.appendChild(tabBarContainer);
 		// this.tabViewBar.addTab('ER Diagram', 0, true);
 		// this.tabViewBar.addTab('ER Diagram', 1);
-	}
+	// }
 
 	if (this.menubar != null)
 	{

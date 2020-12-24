@@ -21,7 +21,6 @@ export default function MyDiagramsPage(props: any) {
     .then(setSolutions as any).catch(_.noop);
   }, []);
   useEffect(fetchSolutions, [...Object.values(props)])
-  console.log(solutions)
   const [modal, openModal] = useModal(CreateSolutionModal, {});
   return (
     <PageContent>
@@ -34,11 +33,15 @@ export default function MyDiagramsPage(props: any) {
         {
           solutions.map((solution) => (
             <UploadedDiagram 
+              userId={solution.userId}
+              reviewedAt={solution.reviewedAt}
+              reviewer={solution.reviewer}
+              mark={solution.mark}
               title={solution.title || ''}
               onDelete={fetchSolutions} 
               tabs={solution.tabs || []} 
               id={solution.id || 0} 
-              assignments={solution.assignments || []} 
+              assignment={solution.assignment}
               updatedOn={solution.updatedOn} />
           ))
         }

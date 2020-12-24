@@ -1,19 +1,20 @@
-import { clearSubmission} from 'actions/assignments';
 import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
+import InfoLabel from 'components/info-label/InfoLabel';
+import MarkView from 'components/mark-input/MarkView';
 import { useModal } from 'components/modals/modal-hooks';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
+import MultilineText from 'components/multiline-text/MultilineText';
 import PromiseButton from 'components/promise-button/PromiseButton';
+import SubmittedMark from 'components/submitted-mark/SubmittedMark';
 import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
 import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
-import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
 import { NO_YEAR_HUMAN_READABLE } from 'shared/constants';
 import { submitSolution, unsubmitSolution } from 'shared/endpoints';
-import { IdIndex } from 'shared/interfaces/Id';
 
 const { Text, Link } = Typography;
 
@@ -61,24 +62,6 @@ function SubmittedSolution(props: {
     )
 }
 
-function SubmittedMark(props: {mark?: IdIndex | null, reviewedAt?: string | Moment}) {
-    if (props.mark == null) {
-        return null;
-    }
-
-    return (
-        <div>
-            <label>
-                Mark
-            </label>
-            <div>
-                <Text strong>{props.mark}</Text>
-                <Text type="secondary">{`(${props.reviewedAt || new Date().toISOString()})`}</Text>
-            </div>
-        </div>
-    )
-}
-
 
 export interface AssignmentProps extends PlannedAssignment {
     onSubmit: () => void
@@ -92,15 +75,41 @@ export default function Assignment(props: AssignmentProps) {
         onOk: (selectedSolution: ServerSolution) => submitSolution(selectedSolution.id, props.id).then(props.onSubmit),
     })
 
+    const controlButtons = !props.reviewer ? (
+        <React.Fragment>
+            <Button onClick={openModal}>
+                {props.solution ? 'Change Solution' : 'Submit Solution'}
+            </Button>
+            {props.solution && <PromiseButton danger onClick={() => {
+                const id = props?.solution?.id;
+
+                if (id != null) {
+                    return unsubmitSolution(id).then(props.onSubmit);
+                }
+
+            }}>
+                Unsubmit
+                    </PromiseButton>}
+        </React.Fragment>
+    ) : "Can't change after evaluation";
+
     return (
         <Card title={props.assignment.title}>
             <p>
-                {props.assignment.description}
+                <MultilineText>
+                    {props.assignment.description}
+                </MultilineText>
             </p>
             <SubmittedSolution
                 solution={props.solution}
                 assignmentId={props.assignment.id || 0} />
-            <SubmittedMark mark={props.solution?.mark} reviewedAt={props.solution?.reviewedAt || undefined}  />
+            {props.reviewer && 
+            <InfoLabel text="Mark" className="mt-2">
+                <SubmittedMark 
+                    reviewer={props.reviewer}
+                    mark={props.solution?.mark || undefined} 
+                    reviewedAt={props.solution?.reviewedAt || undefined} />
+            </InfoLabel>}
             <Row align="middle" className="mt-4">
                 <Col>
                     <DateInterval dateFormat={NO_YEAR_HUMAN_READABLE} start={props.startDate as any} end={props.endDate as any} />
@@ -108,19 +117,7 @@ export default function Assignment(props: AssignmentProps) {
                 <Col className="ml-auto">
                     <Space direction="horizontal" size="small">
                         {modalInstance}
-                        <Button onClick={openModal}>
-                            {props.solution ? 'Change Solution' : 'Submit Solution'}
-                        </Button>
-                        {props.solution && <PromiseButton danger onClick={() => {
-                            const id = props?.solution?.id;
-
-                            if(id != null) {
-                                return unsubmitSolution(id).then(props.onSubmit);
-                            }
-
-                        }}>
-                            Unsubmit
-                    </PromiseButton>}
+                        {controlButtons}
                     </Space>
                 </Col>
             </Row>

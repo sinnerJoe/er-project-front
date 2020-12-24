@@ -6,6 +6,7 @@ var DEFAULT_UNDO_MANAGER_STATE = {
 TabManager = function (editorUi, container, tabData) {
     this.editorUi = editorUi;
     this.capturePoster = editorUi.config.capturePoster;
+    this.viewMode = editorUi.config.viewMode;
     var root = new mxCell();
     var subRoot = new mxCell();
     root.insert(subRoot);
@@ -127,7 +128,11 @@ TabManager.prototype.saveCurrentTabState = function () {
     var focusedTab = this.getFocusedTab();
     focusedTab.undoManagerState = this.copyUndoManagerState();
     focusedTab.modelState = this.copyModelState()
-    return this.capturePoster().then((poster) => focusedTab.poster = poster);
+    if(!this.viewMode) {
+        return this.capturePoster().then((poster) => focusedTab.poster = poster);
+    } else {
+        return Promise.resolve();
+    }
 }
 
 TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) {

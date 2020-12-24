@@ -148,16 +148,6 @@ type Props = {
     onRefreshData: () => void
 }
 
-function pickData(solution: Partial<Solution>) {
-    return {
-        student: "Ion Popa",
-        group: 'A5',
-        solution: { title: solution.title, id: solution.id },
-        mark: { ...solution.mark, solutionId: solution.id },
-        key: solution.id
-    }
-}
-
 export default function SubmissionTable({students, onRefreshData}: Props) {
     return (
         <Table rowKey="id"  columns={columns(onRefreshData)} pagination={{pageSize: 10}} dataSource={students} />

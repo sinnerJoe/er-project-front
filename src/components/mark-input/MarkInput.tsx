@@ -3,7 +3,6 @@ import {Popover} from 'antd';
 import _ from 'lodash';
 import MarkView from './MarkView';
 import MarkPicker from './MarkPicker';
-import { postSolutionMark } from 'actions/diagram';
 import { assignMark } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 

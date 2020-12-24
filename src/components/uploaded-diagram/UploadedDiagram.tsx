@@ -9,20 +9,30 @@ import { Solution, SolutionTab } from 'interfaces/Solution';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { AssignmentModel } from 'interfaces/Assignment';
-import { deleteDiagram } from 'actions/diagram';
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import { deleteSolution } from 'shared/endpoints';
+import SubmittedMark from 'components/submitted-mark/SubmittedMark';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 
 
-type Props = { onDelete: Function} & Solution;
+type Props = { onDelete: Function } & Solution;
 
-export default function UploadedDiagram({title, onDelete=() => {}, tabs = [], updatedOn=new Date().toISOString(), id, assignments}: Props) {
+export default function UploadedDiagram({
+    reviewedAt,
+    mark,
+    reviewer,
+    title,
+    onDelete = () => { },
+    tabs = [],
+    updatedOn = new Date().toISOString(),
+    id,
+    assignment
+}: Props) {
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
-            <Col className="meta-info">
+            <Col className="meta-info" md={10} lg={8}>
                 <Title className="mb-5" level={4}>
                     {title}
                 </Title>
@@ -34,46 +44,42 @@ export default function UploadedDiagram({title, onDelete=() => {}, tabs = [], up
                     </ul>
                 </InfoLabel>
                 <InfoLabel text="Last edit">
-                    {moment(updatedOn).format('DD.MM.YYYY HH:mm')}
+                    {updatedOn}
                 </InfoLabel>
-                <InfoLabel text="Submitted to">
-                    {assignments.map((assignment, key) => (
-                        <Link key={key} to={`${paths.EDIT_DIAGRAM}?`}>
-                            <AttachmentLink> 
-                                {assignment.title}
-                            </AttachmentLink>
-                        </Link>
-                    ))}
-                    {
-                        !assignments.length && <i>Nothing</i>
-                    }
-                </InfoLabel>
+                {assignment && <InfoLabel text="Submitted to">
+                    <i>{assignment.title}</i>
+                </InfoLabel>}
+                {reviewer && (
+                    <InfoLabel text="Review">
+                        <SubmittedMark reviewedAt={reviewedAt || undefined} mark={mark} reviewer={reviewer} />
+                    </InfoLabel>
+                )}
             </Col>
-            <Col>
+            <Col md={4}>
                 <img className="image" src={tabs[0].poster} />
             </Col>
             <Col>
-            <Space direction="vertical">
-                
+                <Space direction="vertical">
+
                     <Link to={`${paths.EDIT_DIAGRAM}?solId=${id}`}>
                         <Button className="standard-button" type="primary">
-                            <Row align="middle"><EditFilled className="mr-2"/> Edit </Row>
+                            <Row align="middle"><EditFilled className="mr-2" /> Edit </Row>
                         </Button>
                     </Link>
-                
-                
-                        <Button 
+
+
+                    <Button
                         onClick={() => {
-                            if(typeof id !== 'undefined') {
+                            if (typeof id !== 'undefined') {
                                 deleteSolution(id).then(onDelete as any)
-                            } 
+                            }
                         }}
                         className="standard-button" type="primary" danger>
-                            <Row align="middle"><DeleteFilled className="mr-2"/> Delete </Row>
-                        </Button>
-                
-            </Space>
-                    
+                        <Row align="middle"><DeleteFilled className="mr-2" /> Delete </Row>
+                    </Button>
+
+                </Space>
+
             </Col>
         </Row>
     )

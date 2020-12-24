@@ -6,13 +6,14 @@ import Diagram from 'components/diagram';
 import paths from 'paths';
 import { diagramImage } from 'constant/test-consts';
 import { RequestErrorStatus } from 'shared/interfaces/ResponseType';
+import { useQueryStringMaster } from 'utils/hooks';
+import { useSelector } from 'react-redux';
+import { StoreData } from 'store';
 
-export default function EditDiagramPage(props:any) {
-    // const {solutionId} = useParams();
-    const location = useLocation<{solId: string}>();
+export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean}) {
     const history = useHistory();
     const [solution, setSolution] = useState<Partial<Solution>>();
-    const solutionId = new URLSearchParams(location.search).get('solId')
+    const solutionId = useQueryStringMaster().solId;
     useEffect(() => {
         fetchSolution(Number(solutionId))
         .then((response) => setSolution(parseSolution(response.data.data)))
@@ -23,17 +24,19 @@ export default function EditDiagramPage(props:any) {
         })
     }, [solutionId]);
 
+    const userId = useSelector<StoreData>((state) => state.user.userId)
+
+    const viewMode = viewOnly || !!solution?.reviewer || (solution?.userId != userId);
+
     if(!solution) {
         return null;
     }
 
-    console.log(solution);
-
     return (
         <Diagram 
             defaultSetup={solution.tabs} 
+            viewMode={viewMode}
             onSave={async (xmlData) => {
-                console.log("DATA", xmlData);
                 if(solution) {
                     const diagramPromises = xmlData.map(async ({title, poster, schema, type}: any, index: number) => {
                         let image = poster;
