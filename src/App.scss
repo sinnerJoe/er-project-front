@@ -108,3 +108,20 @@ $sizes: (
     justify-content: center;
     flex-wrap: wrap;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.preview-container {
+    .preview-image {
+        object-fit: cover;
+        height: 100%;
+    }
+    width: 100%;
+    .ant-image, .preview {
+        background: var(--diagram-bg);
+        width: 100%;
+        height: 100%;
+    }
+}

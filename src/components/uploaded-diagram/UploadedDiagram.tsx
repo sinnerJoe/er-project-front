@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Row, Col, Button, Space, Typography } from 'antd'
+import { Row, Col, Button, Space, Typography, Carousel, Image } from 'antd'
 
 import paths from 'paths';
 import './UploadedDiagram.scss';
@@ -12,6 +12,7 @@ import { AssignmentModel } from 'interfaces/Assignment';
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import { deleteSolution } from 'shared/endpoints';
 import SubmittedMark from 'components/submitted-mark/SubmittedMark';
+import { IMG_FALLBACK } from 'shared/constants';
 
 const { Title } = Typography;
 
@@ -30,6 +31,13 @@ export default function UploadedDiagram({
     id,
     assignment
 }: Props) {
+
+    const renderImagePreview = (poster?: string, index: number = 0) => ( 
+                        <div  key={index} className='preview-container'>
+                            <Image src={poster} fallback={IMG_FALLBACK} className="cursor-pointer full-width preview-image" />
+                        </div>
+  );
+
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
             <Col className="meta-info" md={10} lg={8}>
@@ -55,8 +63,18 @@ export default function UploadedDiagram({
                     </InfoLabel>
                 )}
             </Col>
-            <Col md={4}>
-                <img className="image" src={tabs[0].poster} />
+            <Col md={8}>
+                {/* <img className="image" src={tabs[0].poster} /> */}
+                <Image.PreviewGroup>
+
+                { tabs.length > 1 && <Carousel dotPosition="left" dots={{className: 'black-dots'}}>
+
+                    { tabs.map(({poster}, index) => renderImagePreview(poster, index))}
+
+                    </Carousel> 
+                }
+                {  tabs.length == 1 && renderImagePreview(tabs[0].poster) }
+                </Image.PreviewGroup> 
             </Col>
             <Col>
                 <Space direction="vertical">

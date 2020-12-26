@@ -1,6 +1,5 @@
 import { Input, Row, Space, Typography, Form, Button, Col, Alert } from 'antd'
 import _ from 'lodash';
-import { useForm } from 'antd/lib/form/Form';
 import Password from 'antd/lib/input/Password';
 import CenteredForm from 'components/centered-form/CenteredForm'
 import FormTitle from 'components/form-title/FormTitle';
@@ -13,6 +12,7 @@ import { useLoadingRequest } from 'utils/hooks';
 import { hashPassword} from 'utils/password';
 import withRequestedUser from 'utils/withRequestedUser';
 import EmptyPage from 'pages/empty-page/EmptyPage';
+import GroupSelect from './GroupSelect';
 const { Text, Title } = Typography;
 
 function RegisterPage(props: any) {
@@ -33,7 +33,7 @@ function RegisterPage(props: any) {
             <FormTitle>
                 Registration
             </FormTitle>
-            <Form onFinish={onSubmit} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
+            <Form onFinish={onSubmit} layout="vertical" className="full-width">
                 <Form.Item
                     rules={[{ required: true, message: composableLabels.fieldRequired(labels.firstName) }]}
                     required
@@ -45,7 +45,7 @@ function RegisterPage(props: any) {
                     <Input placeholder="Doe" />
                 </Form.Item>
                 <Form.Item required label='Group' name="group">
-                    <Input placeholder="A3" />
+                    <GroupSelect />
                 </Form.Item>
                 <Form.Item required label='Email Address' name="email">
                     <Input type="email" placeholder="john.doe@info.uaic.ro" />

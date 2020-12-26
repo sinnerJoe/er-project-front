@@ -50,7 +50,9 @@ export default function PickSolutionModal({ visible, initialValue, onOk, ...rest
                                 <Image.PreviewGroup>
                                     <Row>
                                         {solution.diagrams.map((diagram) => {
-                                            return <Col className="pick-solution-modal preview"><Image key={diagram.id} width={50} src={diagram.image} className="preview" /></Col>
+                                            return (<Col className="pick-solution-modal preview">
+                                                <Image key={diagram.id} width={50} src={diagram.image} className="preview" />
+                                                </Col>)
                                         })
                                         }
                                     </Row>

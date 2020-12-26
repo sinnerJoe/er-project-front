@@ -14,5 +14,6 @@ export default {
     CREATE_PLAN: '/create-plan',
     EDIT_PLAN: '/edit-plan',
     PLANS: '/plans',
-    GROUPS: '/groups'
+    GROUPS: '/groups',
+    USERS: '/users'
 };

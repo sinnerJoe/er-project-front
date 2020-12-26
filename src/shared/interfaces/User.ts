@@ -1,3 +1,4 @@
+import { PlannedAssignment } from 'interfaces/Assignment';
 import { CollegeGroup } from 'interfaces/Group';
 import { EvaluatedSolution, ServerSolution } from 'interfaces/Solution';
 import _ from 'lodash';
@@ -23,6 +24,10 @@ export interface Student extends Omit<User, 'group'> {
 
 export interface EvaluatedStudent extends Student {
     solution?: EvaluatedSolution
+}
+
+export interface UserSummary extends Student {
+    evaluatedSolutions: ServerSolution[]
 }
 
 const shape = {

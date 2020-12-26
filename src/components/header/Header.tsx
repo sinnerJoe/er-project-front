@@ -92,6 +92,9 @@ function Header(props: {}) {
                     <DropdownItem leftIcon={<DeploymentUnitOutlined />} link={paths.GROUPS}>
                         Groups
                     </DropdownItem>
+                    <DropdownItem leftIcon={<UserOutlined />} link={paths.USERS}>
+                        Users
+                    </DropdownItem>
                     <LogoutButton />
                 </DropdownMenu>
             </NavItem>

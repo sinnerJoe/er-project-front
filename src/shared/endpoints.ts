@@ -8,8 +8,9 @@ import { Moment } from "moment";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { IdIndex } from "./interfaces/Id";
 import { ApiResponse, AxiosResponsePromise } from "./interfaces/ResponseType";
-import { fromUser, Student, Teacher, User } from "./interfaces/User";
-import {get, post, del, put, fetchBinary, patch} from './request';
+import { Role } from "./interfaces/Role";
+import { fromUser, Student, Teacher, User, UserSummary } from "./interfaces/User";
+import { get, post, del, put, fetchBinary, patch } from './request';
 
 export function registerUser(data: User) {
     console.log(fromUser(data))
@@ -17,7 +18,7 @@ export function registerUser(data: User) {
 }
 
 export function authenticate(email: string, password: string) {
-    return post("auth/", {email, password}, {});
+    return post("auth/", { email, password }, {});
 }
 
 export function fetchSessionUserData() {
@@ -37,15 +38,15 @@ export function getOwnSolutions(): AxiosResponsePromise<ServerSolution[]> {
 }
 
 export function fetchSolution(id: number): AxiosResponsePromise<ServerSolution> {
-    return get("solutions/", {id});
+    return get("solutions/", { id });
 }
 
 export function updateSolution(id: number, diagrams: ExpectedDiagram[]) {
-    return put("solutions/", {diagrams}, {id});
+    return put("solutions/", { diagrams }, { id });
 }
 
 export function deleteSolution(id: number) {
-    return del("solutions/", {id});
+    return del("solutions/", { id });
 }
 
 export async function getImageBase64(url: string) {
@@ -54,15 +55,15 @@ export async function getImageBase64(url: string) {
     return Buffer.from(response.data, 'binary').toString("base64");
 }
 
-export function fetchAssignment(id: number):AxiosResponsePromise<ServerAssignment> {
-    return get("assignments/", {id});
+export function fetchAssignment(id: number): AxiosResponsePromise<ServerAssignment> {
+    return get("assignments/", { id });
 }
 
-export function updateAssignment(id: number, data: {title: string, description: string}) {
-    return put("assignments/", data, {id});
+export function updateAssignment(id: number, data: { title: string, description: string }) {
+    return put("assignments/", data, { id });
 }
 
-export function createAssignment(data: {title: string, description: string }){
+export function createAssignment(data: { title: string, description: string }) {
     return post('assignments/', data);
 }
 
@@ -74,16 +75,16 @@ export function fetchAllGroups() {
     return get("groups/");
 }
 
-export function createPlan(name: string): AxiosResponsePromise<{id: IdIndex}> {
-    return post("plans/", {name});
+export function createPlan(name: string): AxiosResponsePromise<{ id: IdIndex }> {
+    return post("plans/", { name });
 }
 
 export function deletePlan(id: IdIndex) {
-    return del('plans/', undefined, {id});
+    return del('plans/', undefined, { id });
 }
 
 export function fetchPlan(id: IdIndex): AxiosResponsePromise<Plan> {
-    return get("plans/", {id});
+    return get("plans/", { id });
 }
 
 export function fetchAllPlans(): AxiosResponsePromise<Plan[]> {
@@ -91,64 +92,76 @@ export function fetchAllPlans(): AxiosResponsePromise<Plan[]> {
 }
 
 export function addPlannedAssignments(planId: IdIndex, data: SentPlannedAssignment[]) {
-    return post("plans/assignments/", {assignments: data}, {id: planId});
+    return post("plans/assignments/", { assignments: data }, { id: planId });
 }
 
 export function removePlannedAssignments(plannedAssignmentIds: IdIndex[]) {
-    return del("plans/assignments/", undefined, {ids: plannedAssignmentIds});
+    return del("plans/assignments/", undefined, { ids: plannedAssignmentIds });
 }
 
 export function updatePlannedAssignments(data: Partial<SentPlannedAssignment>[]) {
-    return put('/plans/assignments/', {assignments: data});
+    return put('/plans/assignments/', { assignments: data });
 }
 
 export function updatePlanName(id: IdIndex, name: string) {
-    return patch("plans/", {name}, {id});
+    return patch("plans/", { name }, { id });
 }
 
-export function getShallowGroups(year: IdIndex): AxiosResponsePromise<{year: IdIndex, id: IdIndex, name: string}[]>  {
-    return get("groups/", {year, 'type': 'shallow'});
+export function getShallowGroups(year: IdIndex): AxiosResponsePromise<{ year: IdIndex, id: IdIndex, name: string }[]> {
+    return get("groups/", { year, 'type': 'shallow' });
 }
 
 export function getSubmissionGroups(year: IdIndex): AxiosResponsePromise<{
-    year: IdIndex, 
-    id: IdIndex, 
-    name: string, 
+    year: IdIndex,
+    id: IdIndex,
+    name: string,
     uncheckedSubmissionCount: IdIndex
-}[]>  {
-    return get("groups/", {year, 'type': 'submissions'});
+}[]> {
+    return get("groups/", { year, 'type': 'submissions' });
 }
 
 export function getGroups(year: IdIndex): AxiosResponsePromise<CollegeGroup[]> {
-    return get("groups/", {year});
+    return get("groups/", { year });
 }
 
 export function createGroup(name: string, year: IdIndex) {
-    return post("groups/", {name, year});
+    return post("groups/", { name, year });
 }
 
 export function deleteGroup(id: IdIndex) {
-    return del("groups/", {}, {id});
+    return del("groups/", {}, { id });
 }
 
 export function getTeachers(groupYear: IdIndex): AxiosResponsePromise<Teacher[]> {
-    return get("users/", {role: 'teacher', year: groupYear});
+    return get("users/", { role: 'teacher', year: groupYear });
 }
 
 export function getStudents(): AxiosResponsePromise<Student[]> {
-    return get("users/", {role: 'student'});
+    return get("users/", { role: 'student' });
+}
+
+export function fetchAllUsers(registrationYear?: IdIndex): AxiosResponsePromise<UserSummary[]> {
+    return get("users/", { year: registrationYear });
+}
+
+export function deleteUser(id: IdIndex) {
+    return del("users/", {}, {id});
+}
+
+export function setUserRole(id: IdIndex, role: Role) {
+    return patch("users/", { role }, { id, target: 'role' });
 }
 
 export function setGroupCoordinator(groupId: IdIndex, coordinatorId: IdIndex) {
-    return patch('groups/', {coordinatorId}, {id: groupId, target: "coordinator"});
+    return patch('groups/', { coordinatorId }, { id: groupId, target: "coordinator" });
 }
 
 export function setGroupPlan(groupId: IdIndex, planId: IdIndex) {
-    return patch('groups/', {planId}, {id: groupId, target: "plan"});
+    return patch('groups/', { planId }, { id: groupId, target: "plan" });
 }
 
 export function setStudentGroup(userId: IdIndex, groupId: IdIndex | null) {
-    return patch('users/', {groupId}, {id: userId, target: 'group'});
+    return patch('users/', { groupId }, { id: userId, target: 'group' });
 }
 
 export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[]> {
@@ -156,17 +169,17 @@ export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[
 }
 
 export function getPlannedAssignmentsWithAnswers(groupId: IdIndex, plannedAssignmentId?: IdIndex): AxiosResponsePromise<EvaluatedAssignment[]> {
-    return get('plans/assignments/', {groupId, plannedAssignmentId});
+    return get('plans/assignments/', { groupId, plannedAssignmentId });
 }
 
 export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
-    return patch('solutions/', {plannedAssignmentId}, {id: solutionId, target: 'submit'});
+    return patch('solutions/', { plannedAssignmentId }, { id: solutionId, target: 'submit' });
 }
 
 export function unsubmitSolution(solutionId: IdIndex) {
-    return patch('solutions/', {}, {id: solutionId, target: 'unsubmit'});
+    return patch('solutions/', {}, { id: solutionId, target: 'unsubmit' });
 }
 
 export function assignMark(solutionId: IdIndex, mark: IdIndex | null) {
-    return patch('solutions/', {mark}, {id: solutionId, target: 'mark'});
+    return patch('solutions/', { mark }, { id: solutionId, target: 'mark' });
 }

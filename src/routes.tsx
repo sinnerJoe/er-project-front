@@ -16,6 +16,7 @@ import EditPlanPage from 'pages/edit-plan-page/EditPlanPage';
 import GroupsPage from 'pages/groups/GroupsPage';
 import { DeploymentUnitOutlined } from '@ant-design/icons';
 import STEPS, { RoutePathStep } from 'shared/route-steps';
+import UsersPage from 'pages/users-page/UsersPage';
 
 
 
@@ -93,6 +94,10 @@ export default [
     {
         path: paths.GROUPS,
         component: GroupsPage
+    },
+    {
+        path: paths.USERS,
+        component: UsersPage
     }
 ] as {
     secure?: boolean, 

@@ -36,6 +36,10 @@ export function momentifyFields(object: any, fields = dateFields): void {
     }
 }
 
+export function extractEducationalYear(date: Moment): number {
+    return moment(date).subtract(9, 'months').get('year')
+}
+
 export function getCurrentYear(): number {
-    return new Date().getFullYear();
+    return extractEducationalYear(moment());
 }
