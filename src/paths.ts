@@ -15,5 +15,6 @@ export default {
     EDIT_PLAN: '/edit-plan',
     PLANS: '/plans',
     GROUPS: '/groups',
-    USERS: '/users'
+    USERS: '/users',
+    CHANGE_PASSWORD: '/change-password'
 };

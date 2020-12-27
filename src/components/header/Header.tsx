@@ -11,6 +11,13 @@ import routes from 'routes';
 import LogoutButton from './LogoutButton';
 import CreateSolutionButton from './CreateSolutionButton';
 import RoutePathBreadcrumbs from 'components/navigation-menu/RoutePathBreadcrumbs';
+import { Typography } from 'antd';
+import { useSelector } from 'react-redux';
+import { StoreData } from 'store';
+import { User } from 'shared/interfaces/User';
+import { UserState } from 'store/slices/user';
+
+const {Text} = Typography;
 
 const BackButtonItem = ({ children }: { children: React.ReactNode }) => (
     <DropdownItem openedMenu="main" leftIcon={<LeftOutlined />}>
@@ -29,7 +36,7 @@ const rightMenus = {
             <DropdownItem leftIcon={<UserOutlined />}>
                 Edit Profile
             </DropdownItem>
-            <DropdownItem leftIcon={<SecurityScanFilled />}>
+            <DropdownItem link={paths.CHANGE_PASSWORD} leftIcon={<SecurityScanFilled />}>
                 Change Password
             </DropdownItem>
         </React.Fragment>
@@ -54,6 +61,8 @@ function Header(props: {}) {
     
     const location = useLocation();
 
+    const user = useSelector<StoreData, UserState>((state) => state.user)
+
     const hide = routes.some(route => route.disableHeader && location.pathname.match(route.path))
 
     if(hide) {
@@ -62,7 +71,9 @@ function Header(props: {}) {
 
     return (
         <NavigationMenu>
-            <NavItem icon={<UserOutlined />} destination="" />
+            <Text className="text-white mr-2">
+                {user.email}
+            </Text>
             <NavItem icon={<MenuOutlined />} destination="" >
                 <DropdownMenu rightMenus={rightMenus}>
                     <DropdownItem openedMenu="settings"

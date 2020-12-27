@@ -13,6 +13,7 @@ import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import { deleteSolution } from 'shared/endpoints';
 import SubmittedMark from 'components/submitted-mark/SubmittedMark';
 import { IMG_FALLBACK } from 'shared/constants';
+import PreviewImage from 'components/preview-image/PreviewImage';
 
 const { Title } = Typography;
 
@@ -32,11 +33,8 @@ export default function UploadedDiagram({
     assignment
 }: Props) {
 
-    const renderImagePreview = (poster?: string, index: number = 0) => ( 
-                        <div  key={index} className='preview-container'>
-                            <Image src={poster} fallback={IMG_FALLBACK} className="cursor-pointer full-width preview-image" />
-                        </div>
-  );
+    const renderImagePreview = (poster?: string, index: number = 0) => <PreviewImage poster={poster} key={index} />;
+
 
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
@@ -57,7 +55,7 @@ export default function UploadedDiagram({
                 {assignment && <InfoLabel text="Submitted to">
                     <i>{assignment.title}</i>
                 </InfoLabel>}
-                {reviewer && (
+                {reviewedAt && (
                     <InfoLabel text="Review">
                         <SubmittedMark reviewedAt={reviewedAt || undefined} mark={mark} reviewer={reviewer} />
                     </InfoLabel>

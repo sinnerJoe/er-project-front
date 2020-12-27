@@ -17,6 +17,7 @@ import GroupsPage from 'pages/groups/GroupsPage';
 import { DeploymentUnitOutlined } from '@ant-design/icons';
 import STEPS, { RoutePathStep } from 'shared/route-steps';
 import UsersPage from 'pages/users-page/UsersPage';
+import ChangePasswordPage from 'pages/change-password-page/ChangePasswordPage';
 
 
 
@@ -98,6 +99,10 @@ export default [
     {
         path: paths.USERS,
         component: UsersPage
+    },
+    {
+        path: paths.CHANGE_PASSWORD,
+        component: ChangePasswordPage
     }
 ] as {
     secure?: boolean, 

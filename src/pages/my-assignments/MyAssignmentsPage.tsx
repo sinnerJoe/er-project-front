@@ -16,10 +16,7 @@ export default function MyAssignmentsPage(props: any) {
   const submitSolution = () => { request(); } 
 
   return (
-    <PageContent>
-      <SearchBox 
-        onChange={()=>{}} 
-       />
+    <PageContent spaceTop>
       <Space direction="vertical" size="large" className="full-width">
         {
           assignments.map((assignment) => (

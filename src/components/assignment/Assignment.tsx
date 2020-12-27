@@ -7,10 +7,12 @@ import { useModal } from 'components/modals/modal-hooks';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
 import MultilineText from 'components/multiline-text/MultilineText';
 import PromiseButton from 'components/promise-button/PromiseButton';
+import SubmittedDate from 'components/submitted-date/SubmittedDate';
 import SubmittedMark from 'components/submitted-mark/SubmittedMark';
 import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
 import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
+import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
 import { NO_YEAR_HUMAN_READABLE } from 'shared/constants';
@@ -23,6 +25,8 @@ const { Text, Link } = Typography;
 function SubmittedSolution(props: {
     solution?: ServerSolution,
     assignmentId: number,
+    startDate: string | Moment,
+    endDate: string | Moment
 }) {
     return (
         <Space direction="vertical" size="small" className="full-width">
@@ -48,7 +52,12 @@ function SubmittedSolution(props: {
                                     </AttachmentLink>
                                 </Link>
                                 <Text className="ml-2" type="secondary">
-                                    (Submitted on {props.solution.submittedAt})
+                                    <span className="mr-1">submitted on </span>
+                                    <SubmittedDate
+                                        endDate={props.endDate}
+                                        startDate={props.startDate}
+                                        date={props.solution.submittedAt}
+                                    />
                         </Text>
                             </span>
 
@@ -75,7 +84,7 @@ export default function Assignment(props: AssignmentProps) {
         onOk: (selectedSolution: ServerSolution) => submitSolution(selectedSolution.id, props.id).then(props.onSubmit),
     })
 
-    const controlButtons = !props.reviewer ? (
+    const controlButtons = !props.solution?.reviewedAt ? (
         <React.Fragment>
             <Button onClick={openModal}>
                 {props.solution ? 'Change Solution' : 'Submit Solution'}
@@ -101,15 +110,17 @@ export default function Assignment(props: AssignmentProps) {
                 </MultilineText>
             </p>
             <SubmittedSolution
+                startDate={props.startDate}
+                endDate={props.endDate}
                 solution={props.solution}
                 assignmentId={props.assignment.id || 0} />
-            {props.reviewer && 
-            <InfoLabel text="Mark" className="mt-2">
-                <SubmittedMark 
-                    reviewer={props.reviewer}
-                    mark={props.solution?.mark || undefined} 
-                    reviewedAt={props.solution?.reviewedAt || undefined} />
-            </InfoLabel>}
+            {props.solution?.reviewedAt &&
+                <InfoLabel text="Mark" className="mt-2">
+                    <SubmittedMark
+                        reviewer={props.reviewer}
+                        mark={props.solution?.mark || undefined}
+                        reviewedAt={props.solution?.reviewedAt || undefined} />
+                </InfoLabel>}
             <Row align="middle" className="mt-4">
                 <Col>
                     <DateInterval dateFormat={NO_YEAR_HUMAN_READABLE} start={props.startDate as any} end={props.endDate as any} />

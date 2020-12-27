@@ -34,16 +34,4 @@
             border-radius: $thickness;
         }
     }
-    .preview-container {
-        height: 0px;
-        padding-bottom: 80%;
-        width: 100%;
-        position: relative;
-        .ant-image {
-            position: absolute;
-        }
-        .preview-image {
-            position: absolute;
-        }
-    }
 }

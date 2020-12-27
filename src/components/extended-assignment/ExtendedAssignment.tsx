@@ -91,6 +91,8 @@ export default function ExtendedAssignment({groupId, onRefreshData, assignment: 
                 <Link onClick={() => setExpanded(!expanded)}>{linkText}</Link>
                 {expanded && (
                     <SubmissionTable
+                        startDate={startDate}
+                        endDate={endDate}
                         students={students}
                         onRefreshData={handleRefresh}
                     />

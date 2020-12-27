@@ -7,8 +7,10 @@ import MarkInput from 'components/mark-input/MarkInput';
 import { SortOrder } from 'antd/lib/table/interface';
 import { EvaluatedStudent, Teacher } from 'shared/interfaces/User';
 import { SERVER_DATE_TIME } from 'shared/constants';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { SearchOutlined } from '@ant-design/icons';
+import ThumbnailList from 'components/thumbnail-list/ThumbnailList';
+import SubmittedDate from 'components/submitted-date/SubmittedDate';
 
 const { Text, Link } = Typography;
 
@@ -50,7 +52,7 @@ const extractMark = (s: EvaluatedStudent) => !s.solution ? -1 : s.solution.mark 
 
 const concatName = ({firstName, lastName}: EvaluatedStudent | Teacher) => `${firstName} ${lastName}`;
 
-const columns = (refreshData: () => void) => [
+const columns = (refreshData: () => void, startDate: string | Moment, endDate: string | Moment) => [
     {
         title: 'Student',
         dataIndex: 'firstName',
@@ -93,7 +95,13 @@ const columns = (refreshData: () => void) => [
         title: 'Submitted at',
         dataIndex: ['solution', 'submittedAt'],
         key: 'group',
-        render: (v?: string) => v ? moment(v, SERVER_DATE_TIME).format(SERVER_DATE_TIME): '-',
+        render: (v: string | undefined) => {
+            if(!v) {
+                return '-'
+            }
+
+            return <SubmittedDate date={v} startDate={startDate} endDate={endDate} />
+        },
         sorter: (a: EvaluatedStudent,b: EvaluatedStudent) => compareNullableText(a?.solution?.submittedAt as any, b?.solution?.submittedAt as any),
         sortDirections: ['ascend', 'descend'] as SortOrder[],
     },
@@ -126,6 +134,7 @@ const columns = (refreshData: () => void) => [
         title: 'Mark',
         dataIndex: ['solution', 'mark'],
         key: 'mark',
+        extendabled: true,
         render: (data: any, obj: EvaluatedStudent) => obj.solution ? (
             <MarkInput 
                 onChange={refreshData}
@@ -145,11 +154,26 @@ const columns = (refreshData: () => void) => [
 
 type Props = {
     students: EvaluatedStudent[],
+    startDate: string | Moment,
+    endDate: string | Moment,
     onRefreshData: () => void
 }
 
-export default function SubmissionTable({students, onRefreshData}: Props) {
+export default function SubmissionTable({students, onRefreshData, startDate, endDate}: Props) {
     return (
-        <Table rowKey="id"  columns={columns(onRefreshData)} pagination={{pageSize: 10}} dataSource={students} />
+        <Table 
+        expandable={{
+            rowExpandable: (student: EvaluatedStudent) => !!student.solution,
+            expandedRowRender: (student: EvaluatedStudent) => {
+                const diagrams = student.solution?.diagrams || [];
+                return (
+                    <ThumbnailList thumbnails={diagrams.map(({image, name}) => ({image, tooltipContent: name}))} />
+                )
+            }
+        }}
+        rowKey="id"  
+        columns={columns(onRefreshData, startDate, endDate)} 
+        pagination={{pageSize: 10}} 
+        dataSource={students} />
     )
 }

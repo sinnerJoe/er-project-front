@@ -152,6 +152,10 @@ export function setUserRole(id: IdIndex, role: Role) {
     return patch("users/", { role }, { id, target: 'role' });
 }
 
+export function changePassword(oldPassword: string, password: string) {
+    return patch("users/", { oldPassword, password }, { target: 'password' });
+}
+
 export function setGroupCoordinator(groupId: IdIndex, coordinatorId: IdIndex) {
     return patch('groups/', { coordinatorId }, { id: groupId, target: "coordinator" });
 }
