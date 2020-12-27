@@ -1,8 +1,12 @@
 import { DeleteFilled } from '@ant-design/icons';
 import { Input, List, Typography, Form, Modal } from 'antd';
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { deleteCurrentUser } from 'shared/endpoints';
+import { clearData } from 'store/slices/user';
 import { useLoadingRequest } from 'utils/hooks';
+import { hashPassword } from 'utils/password';
 
 const {Text} = Typography;
 
@@ -13,8 +17,16 @@ export interface ConfirmAccountDeleteModalProps {
 
 export default function ConfirmAccountDeleteModal({visible, onCancel}: ConfirmAccountDeleteModalProps) {
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+    const history = useHistory();
 
     const [request, rsp, loading, err] = useLoadingRequest(deleteCurrentUser, null);
+
+    const onResponse = () => {
+        dispatch(clearData());
+        onCancel();
+        history.push(""); 
+    }
 
     return (
         <Modal
@@ -28,7 +40,7 @@ export default function ConfirmAccountDeleteModal({visible, onCancel}: ConfirmAc
             closable
             visible={visible}
             onOk={() => {
-                request(password).then(onCancel).catch(() => {})
+                request(hashPassword(password)).then(onResponse).catch(() => {});
             }}
         >
             <Text type='danger'>
