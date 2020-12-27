@@ -33,7 +33,7 @@ const rightMenus = {
             <BackButtonItem>
                 Settings
             </BackButtonItem>
-            <DropdownItem leftIcon={<UserOutlined />}>
+            <DropdownItem link={paths.EDIT_PROFILE} leftIcon={<UserOutlined />}>
                 Edit Profile
             </DropdownItem>
             <DropdownItem link={paths.CHANGE_PASSWORD} leftIcon={<SecurityScanFilled />}>

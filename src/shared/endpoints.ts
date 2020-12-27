@@ -140,6 +140,10 @@ export function getStudents(): AxiosResponsePromise<Student[]> {
     return get("users/", { role: 'student' });
 }
 
+export function fetchOwnData(): AxiosResponsePromise<User> {
+    return get("users/");
+}
+
 export function fetchAllUsers(registrationYear?: IdIndex): AxiosResponsePromise<UserSummary[]> {
     return get("users/", { year: registrationYear });
 }
@@ -148,12 +152,20 @@ export function deleteUser(id: IdIndex) {
     return del("users/", {}, {id});
 }
 
+export function deleteCurrentUser(password: string) {
+    return del("users/", {password});
+}
+
 export function setUserRole(id: IdIndex, role: Role) {
     return patch("users/", { role }, { id, target: 'role' });
 }
 
 export function changePassword(oldPassword: string, password: string) {
     return patch("users/", { oldPassword, password }, { target: 'password' });
+}
+
+export function changeName(firstName: string, lastName: string) {
+    return patch("users/", {firstName, lastName}, {target: 'name'});
 }
 
 export function setGroupCoordinator(groupId: IdIndex, coordinatorId: IdIndex) {

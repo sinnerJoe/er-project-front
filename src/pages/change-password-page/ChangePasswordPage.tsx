@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { changePassword } from 'shared/endpoints';
 import {hashPassword} from 'utils/password';
 import { useLoadingRequest } from 'utils/hooks';
+import { SaveFilled } from '@ant-design/icons';
 
 export default function ChangePasswordPage(props: any) {
 
@@ -36,8 +37,8 @@ export default function ChangePasswordPage(props: any) {
                     <PasswordRepeat />
                     <Form.Item>
                         <Row justify="end">
-                            <Button loading={loading} htmlType="submit" type="primary">
-                                Submit
+                            <Button icon={<SaveFilled />} loading={loading} htmlType="submit" type="primary">
+                                Save
                         </Button>
                         </Row>
                     </Form.Item>

@@ -17,7 +17,7 @@ export default function PasswordRepeat(props: PasswordRepeatProps) {
                     },
                 ]}
                 required label="Password" name="password" {...props}>
-                <Input type="password" />
+                <Input.Password />
             </Form.Item>
             <Form.Item
                 hasFeedback

@@ -13,6 +13,7 @@ import { hashPassword} from 'utils/password';
 import withRequestedUser from 'utils/withRequestedUser';
 import EmptyPage from 'pages/empty-page/EmptyPage';
 import GroupSelect from './GroupSelect';
+import PasswordRepeat from 'components/password-repeat/PasswordRepeat';
 const { Text, Title } = Typography;
 
 function RegisterPage(props: any) {
@@ -50,12 +51,7 @@ function RegisterPage(props: any) {
                 <Form.Item required label='Email Address' name="email">
                     <Input type="email" placeholder="john.doe@info.uaic.ro" />
                 </Form.Item>
-                <Form.Item required label='Password' name="password">
-                    <Password placeholder="***********" />
-                </Form.Item>
-                <Form.Item required label='Repeat Password' name="passwordAgain">
-                    <Password placeholder="***********" />
-                </Form.Item>
+                <PasswordRepeat />
                     <Row gutter={[10, 10]}>
                     <Col>
                     <Form.Item>
@@ -76,7 +72,6 @@ function RegisterPage(props: any) {
                     </Row>
                     {response !== null && <Alert
                         message={response.message}
-                        // description="Further details about the context of this alert."
                         type="success"
                     />}
                     {error && <Alert 

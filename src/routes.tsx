@@ -18,6 +18,7 @@ import { DeploymentUnitOutlined } from '@ant-design/icons';
 import STEPS, { RoutePathStep } from 'shared/route-steps';
 import UsersPage from 'pages/users-page/UsersPage';
 import ChangePasswordPage from 'pages/change-password-page/ChangePasswordPage';
+import EditProfilePage from 'pages/edit-profile/EditProfilePage';
 
 
 
@@ -103,6 +104,10 @@ export default [
     {
         path: paths.CHANGE_PASSWORD,
         component: ChangePasswordPage
+    },
+    {
+        path: paths.EDIT_PROFILE,
+        component: EditProfilePage
     }
 ] as {
     secure?: boolean, 
