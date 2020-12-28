@@ -5,9 +5,10 @@ import { CollegeGroup } from "interfaces/Group";
 import { Plan } from "interfaces/Plan";
 import { EvaluatedSolution, ServerSolution } from "interfaces/Solution";
 import { Moment } from "moment";
+import { dispatchNotifications, notify, STANDARD_ERROR_NOTIFICATION } from "./error-handlers";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { IdIndex } from "./interfaces/Id";
-import { ApiResponse, AxiosResponsePromise } from "./interfaces/ResponseType";
+import { ApiResponse, AxiosResponsePromise, RequestErrorStatus } from "./interfaces/ResponseType";
 import { Role } from "./interfaces/Role";
 import { fromUser, Student, Teacher, User, UserSummary } from "./interfaces/User";
 import { get, post, del, put, fetchBinary, patch } from './request';
@@ -42,11 +43,13 @@ export function fetchSolution(id: number): AxiosResponsePromise<ServerSolution> 
 }
 
 export function updateSolution(id: number, diagrams: ExpectedDiagram[]) {
-    return put("solutions/", { diagrams }, { id });
+    return dispatchNotifications(() => put("solutions/", { diagrams }, { id }), [
+        STANDARD_ERROR_NOTIFICATION
+    ]);
 }
 
 export function deleteSolution(id: number) {
-    return del("solutions/", { id });
+    return dispatchNotifications( () => del("solutions/", { id }), [STANDARD_ERROR_NOTIFICATION]);
 }
 
 export async function getImageBase64(url: string) {
