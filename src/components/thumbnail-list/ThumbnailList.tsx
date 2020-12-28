@@ -20,7 +20,7 @@ export default function ThumbnailList(props: ThumbnailListProps) {
 
     return (
         <Image.PreviewGroup>
-            <Row className="full-width">
+            <Row gutter={[10, 10]} className="full-width">
                 {content}
             </Row>
         </Image.PreviewGroup>

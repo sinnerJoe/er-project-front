@@ -43,3 +43,22 @@ export function extractEducationalYear(date: Moment): number {
 export function getCurrentYear(): number {
     return extractEducationalYear(moment());
 }
+
+function isLeap(year: number): boolean {
+    if(year % 400 == 0) return true;
+    if(year % 100 == 0) return false;
+    return year % 4 == 0;
+}
+
+export function normalizeDate(date: Moment, year: number): Moment {
+    const month = date.get("month");
+
+    if(month < 8 && month >= 0) {
+        const day = date.get('date');
+        if(isLeap(year + 1) || month != 1 || day != 29) {
+            return moment(date).set('year', year + 1);
+        }
+        return moment(date).set('day', 28).set('year', year + 1);
+    }
+    return moment(date).set('year', year);
+}

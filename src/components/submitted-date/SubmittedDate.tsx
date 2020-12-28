@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import moment, { Moment } from 'moment';
 import { Tag, Typography } from 'antd';
 import { SERVER_DATE_TIME } from 'shared/constants';
+import { extractEducationalYear, normalizeDate } from 'utils/datetime';
 
 const {Text} = Typography
 
@@ -14,12 +15,11 @@ export interface SubmittedDateProps {
 export default function SubmittedDate({date, endDate, startDate}: SubmittedDateProps) {
 
     
-    const endDateMoment = moment(endDate)
-    const startDateMoment = moment(startDate)
-
     const dateMoment = moment(date);
+    const endDateMoment = normalizeDate(moment(endDate), extractEducationalYear(dateMoment));
+    const startDateMoment = normalizeDate(moment(startDate), extractEducationalYear(dateMoment));
 
-    const formattedDate = moment(date).format(SERVER_DATE_TIME);
+    const formattedDate = dateMoment.format(SERVER_DATE_TIME);
 
     if(dateMoment.isAfter(endDateMoment)) {
         return <Text type="danger">
