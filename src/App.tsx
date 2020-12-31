@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import logo from './logo.svg';
 import { 
-  BrowserRouter as Router, 
+  Router, 
   Switch, 
   Route, 
   Link,
@@ -20,6 +19,7 @@ import paths from 'paths';
 import ModalManager from 'app/modal-manager/ModalManager';
 import withRequestedUser from 'utils/withRequestedUser';
 import RouteNotifier from 'components/header/RouteNotifier';
+import browserHistory from 'shared/history';
 
 
 function createRoutes() {
@@ -42,7 +42,7 @@ function createRoutes() {
 function App() {
   return (
     <div className="no-scroll window-height">
-      <Router>
+      <Router history={browserHistory}>
       <Header/>
       <ModalManager />
         <Switch>
