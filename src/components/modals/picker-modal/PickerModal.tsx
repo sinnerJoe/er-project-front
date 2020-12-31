@@ -1,9 +1,10 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import _ from 'lodash';
-import { Modal } from 'antd';
+import { Empty, Modal, Skeleton } from 'antd';
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 
 import './PickAssignmentModal.scss';
+import PickerListSkeleton from './PickerListSkeleton';
 
 export type StandardOverridenProps = 'onOk' | 'data' | 'loading' | 'initialSelected' | 'renderItem' | 'title';
 
@@ -65,11 +66,9 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
             </div>)
         }
 
-        {loading && (
-           <div className="picker-loading">
-               <LoadingOutlined size={16} />
-           </div> 
-        )}
+        {loading && <PickerListSkeleton/>}
+
+        {!loading && !data.length && <Empty/>}
 
         
         </Modal>

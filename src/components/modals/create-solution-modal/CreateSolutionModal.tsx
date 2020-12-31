@@ -6,17 +6,22 @@ import paths from 'paths';
 
 export interface CreateSolutionModalProps {
     onCancel?: () => void;
-    visible: boolean
+    visible: boolean,
+    onOk?: (title: string) => void
 }
 
-export default function CreateSolutionModal({onCancel = _.noop, visible}:CreateSolutionModalProps) {
+export default function CreateSolutionModal({onCancel = _.noop, visible, onOk}:CreateSolutionModalProps) {
 
     const [title, setTitle] = useState("");
 
     const history = useHistory();
 
     const handleOk = useCallback(() => {
-        history.push(paths.NEW_DIAGRAM, {title});
+        if(!onOk) {
+            history.push(paths.NEW_DIAGRAM, {title});
+        } else {
+            onOk(title);
+        }
         onCancel();
     }, [title]);
 

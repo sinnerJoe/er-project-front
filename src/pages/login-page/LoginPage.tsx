@@ -13,6 +13,7 @@ import { fetchCurrentUser } from 'store/slices/user';
 import store from 'store';
 import withRequestedUser from 'utils/withRequestedUser';
 import EmptyPage from 'pages/empty-page/EmptyPage';
+import { notify } from 'shared/error-handlers';
 
 const loginRequest = async (email: string, password: string) => {
     const response = await authenticate(email, hashPassword(password));
@@ -27,8 +28,13 @@ function LoginPage(props: any) {
     const [authRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(loginRequest, null);
     const history = useHistory();
     const onFinish = ({email, password}: any) => {
-        authRequest(email, password).then(() => {
-            history.replace('');
+        authRequest(email, password).then((response) => {
+            if(response.data.data) {
+                notify({type: "success", message: "Authentication succeeded"})(response);
+                history.replace('');
+            } else {
+                notify({type: "error", message: "Authentication faied"})(response);
+            }
         })
         .catch(_.identity);
     };

@@ -131,3 +131,12 @@ export function useEffectSkip(cb: () => void, deps: any[], condition: () => bool
         }
     })
 }
+
+export function useBlockHistory(prompt: string = "Are you sure you want to leave the page and lose the data?") {
+  const history = useHistory();
+  const unblock = useMemo(() => {
+    return history.block(prompt);
+  }, []);
+  useEffect(() => unblock, []);
+  return unblock;
+}

@@ -39,8 +39,8 @@ export default function ModalManager(props: {}) {
                         <ModalComponent
                             {...props}
                             key={key}
-                            onOk={() => {
-                                onOk();
+                            onOk={(...args: any) => {
+                                onOk(...args);
                             }}
                             onCancel={closeModal}
                             visible={true}

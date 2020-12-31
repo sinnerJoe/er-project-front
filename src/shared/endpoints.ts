@@ -5,16 +5,15 @@ import { CollegeGroup } from "interfaces/Group";
 import { Plan } from "interfaces/Plan";
 import { EvaluatedSolution, ServerSolution } from "interfaces/Solution";
 import { Moment } from "moment";
-import { dispatchNotifications, notify, STANDARD_ERROR_NOTIFICATION } from "./error-handlers";
+import { dispatchNotifications, generateStdNotification, generateSuccessNotification, handleGetStdErrors, notify, redirectNotFound } from "./error-handlers";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { IdIndex } from "./interfaces/Id";
-import { ApiResponse, AxiosResponsePromise, RequestErrorStatus } from "./interfaces/ResponseType";
+import { ApiResponse, AxiosResponsePromise, HttpResponseCode } from "./interfaces/ResponseType";
 import { Role } from "./interfaces/Role";
 import { fromUser, Student, Teacher, User, UserSummary } from "./interfaces/User";
 import { get, post, del, put, fetchBinary, patch } from './request';
 
 export function registerUser(data: User) {
-    console.log(fromUser(data))
     return post("users/", fromUser(data), {});
 }
 
@@ -30,30 +29,28 @@ export function logoutSession() {
     return del("auth/");
 }
 
-export function createSolution(solutionData: ExpectedSolution) {
-    return post("solutions/", solutionData);
+export function createSolution(solutionData: ExpectedSolution, onResponse?: () => void) {
+    return dispatchNotifications(() => post("solutions/", solutionData), [generateStdNotification(), generateSuccessNotification()], onResponse);
 }
 
 export function getOwnSolutions(): AxiosResponsePromise<ServerSolution[]> {
-    return get("solutions/");
+    return handleGetStdErrors(() => get("solutions/"));
 }
 
-export function fetchSolution(id: number): AxiosResponsePromise<ServerSolution> {
-    return get("solutions/", { id });
+export function fetchSolution(id: number, onResponse?: () => void): AxiosResponsePromise<ServerSolution> {
+    return dispatchNotifications(() => get("solutions/", { id }), [redirectNotFound], onResponse);
 }
 
 export function updateSolution(id: number, diagrams: ExpectedDiagram[]) {
-    return dispatchNotifications(() => put("solutions/", { diagrams }, { id }), [
-        STANDARD_ERROR_NOTIFICATION
-    ]);
+    return dispatchNotifications(() => put("solutions/", { diagrams }, { id }), [generateStdNotification(), generateSuccessNotification()]);
 }
 
 export function deleteSolution(id: number) {
-    return dispatchNotifications( () => del("solutions/", { id }), [STANDARD_ERROR_NOTIFICATION]);
+    return dispatchNotifications(() => del("solutions/", { id }), [generateStdNotification()]);
 }
 
 export async function getImageBase64(url: string) {
-    const response = await fetchBinary(url);
+    const response = await fetchBinary(url) as any;
 
     return Buffer.from(response.data, 'binary').toString("base64");
 }
@@ -152,11 +149,11 @@ export function fetchAllUsers(registrationYear?: IdIndex): AxiosResponsePromise<
 }
 
 export function deleteUser(id: IdIndex) {
-    return del("users/", {}, {id});
+    return del("users/", {}, { id });
 }
 
 export function deleteCurrentUser(password: string) {
-    return del("users/", {password});
+    return del("users/", { password });
 }
 
 export function setUserRole(id: IdIndex, role: Role) {
@@ -168,7 +165,7 @@ export function changePassword(oldPassword: string, password: string) {
 }
 
 export function changeName(firstName: string, lastName: string) {
-    return patch("users/", {firstName, lastName}, {target: 'name'});
+    return patch("users/", { firstName, lastName }, { target: 'name' });
 }
 
 export function setGroupCoordinator(groupId: IdIndex, coordinatorId: IdIndex) {

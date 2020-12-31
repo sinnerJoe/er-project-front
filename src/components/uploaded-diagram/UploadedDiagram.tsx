@@ -65,7 +65,7 @@ export default function UploadedDiagram({
                 {/* <img className="image" src={tabs[0].poster} /> */}
                 <Image.PreviewGroup>
 
-                { tabs.length > 1 && <Carousel dotPosition="left" dots={{className: 'black-dots'}}>
+                { tabs.length > 1 && <Carousel verticalSwiping dotPosition="left" dots={{className: 'black-dots'}}>
 
                     { tabs.map(({poster}, index) => renderImagePreview(poster, index))}
 

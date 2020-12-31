@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Button, Space } from 'antd'
+import { Button, Skeleton, Space } from 'antd'
 import _ from 'lodash';
 import { BrowserRouter as Router, Route, NavLink, useHistory } from 'react-router-dom'
 import UploadedDiagram from 'components/uploaded-diagram/UploadedDiagram'
@@ -15,10 +15,13 @@ import { getOwnSolutions } from 'shared/endpoints'
 
 export default function MyDiagramsPage(props: any) {
   const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [loading, setLoading] = useState(true);
   const fetchSolutions = useCallback(() => { 
+    setLoading(true);
     getOwnSolutions()
     .then((response) => response.data.data.map(parseSolution))
-    .then(setSolutions as any).catch(_.noop);
+    .then(setSolutions as any).catch(_.noop)
+    .then(() => setLoading(false));
   }, []);
   useEffect(fetchSolutions, [...Object.values(props)])
   const [modal, openModal] = useModal(CreateSolutionModal, {});
@@ -30,8 +33,7 @@ export default function MyDiagramsPage(props: any) {
         onButtonClick={openModal} 
         buttonLabel="Create New Solution" />
       <Space direction="vertical" size="large" className="full-width">
-        {
-          solutions.map((solution) => (
+        { !loading && solutions.map((solution) => (
             <UploadedDiagram 
               userId={solution.userId}
               reviewedAt={solution.reviewedAt}
@@ -44,6 +46,8 @@ export default function MyDiagramsPage(props: any) {
               assignment={solution.assignment}
               updatedOn={solution.updatedOn} />
           ))
+        }
+        { loading && Array.from({length: 5}).map((v, k) => <Skeleton />)
         }
       </Space>
     </PageContent>
