@@ -62,7 +62,6 @@ export default function UploadedDiagram({
                 )}
             </Col>
             <Col md={8}>
-                {/* <img className="image" src={tabs[0].poster} /> */}
                 <Image.PreviewGroup>
 
                 { tabs.length > 1 && <Carousel verticalSwiping dotPosition="left" dots={{className: 'black-dots'}}>

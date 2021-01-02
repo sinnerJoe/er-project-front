@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react'
-import { Button, Space } from 'antd'
+import { Button, Skeleton, Space } from 'antd'
 import { BrowserRouter as Router, Route, NavLink, useHistory } from 'react-router-dom'
 import PageContent from 'components/page-content/PageContent'
 import ExtendedAssignment from 'components/extended-assignment/ExtendedAssignment'
@@ -9,11 +9,12 @@ import { getPlannedAssignmentsWithAnswers, getShallowGroups, getSubmissionGroups
 import GroupList from 'components/group-list/GroupList'
 import { getCurrentYear } from 'utils/datetime'
 import { IdIndex } from 'shared/interfaces/Id'
+import TagsSkeleton from 'components/skeletons/TagsSkeleton'
 
 
 export default function ProfessorAssignmentsPage(props: any) {
-  const [fetchGroups, groups, loadingGroups, errGroups] = useLoadingRequest(getSubmissionGroups, [], {initialLoading: true, resetValueOnLoading: false});
-  const [fetch, assignments, loading, err] = useLoadingRequest(getPlannedAssignmentsWithAnswers, [], {initialLoading: true, resetValueOnLoading: false});
+  const [fetchGroups, groups, loadingGroups] = useLoadingRequest(getSubmissionGroups, [], {initialLoading: true, resetValueOnLoading: false});
+  const [fetch, assignments, loading] = useLoadingRequest(getPlannedAssignmentsWithAnswers, [], {initialLoading: true, resetValueOnLoading: false});
   const queryMaster = useQueryStringMaster();
   const history = useHistory();
   const { year = getCurrentYear(), group } = queryMaster;
@@ -53,9 +54,9 @@ export default function ProfessorAssignmentsPage(props: any) {
   let content = <div className="flex-center">No groups with plans assignmed for this year</div>;
   if (groups.length || loadingGroups) {
     content = (<React.Fragment> 
-      {!loadingGroups && (
+      {!loadingGroups ? (
       <GroupList
-        className="flex-center mt-10 mb-5"
+        className="flex-center"
         groups={groups}
         badgeTitleGenerator={(count) => count ? `${count} submitted solutions pending evaluation` : undefined}
         badgeSelector={(group) => group.uncheckedSubmissionCount || null}
@@ -69,10 +70,9 @@ export default function ProfessorAssignmentsPage(props: any) {
           }
         }}
         selectedGroupId={selectedGroupId}
-      />)}
-      <Space direction="vertical" size="large" className="full-width">
-        {
-          !loading && assignments.map((assignment) => (
+      />): <TagsSkeleton justify="center" />}
+      <Space direction="vertical" size="large" className="full-width mt-5">
+        { !loading && assignments.map((assignment) => (
             <ExtendedAssignment
               assignment={assignment}
               key={assignment.id}
@@ -81,6 +81,7 @@ export default function ProfessorAssignmentsPage(props: any) {
             />
           ))
         }
+        { loading && new Array(4).fill(<Skeleton active/>)}
       </Space>
     </React.Fragment>);
   }
@@ -89,7 +90,9 @@ export default function ProfessorAssignmentsPage(props: any) {
   return (
     <PageContent>
       <YearAxis />
-      {content}
+      <div className="mt-10">
+        {content}
+      </div>
     </PageContent>
   )
 }

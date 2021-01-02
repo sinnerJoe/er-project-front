@@ -3,7 +3,7 @@ import {Button} from 'antd';
 import _ from 'lodash';
 
 export interface PromiseButtonProps extends Omit<React.ComponentProps<typeof Button>, 'onClick' | 'loading'> {
-   onClick: () => void | Promise<unknown> 
+   onClick: (stopLoading: () => void) => void | Promise<unknown> 
 };
 
 export default function PromiseButton({onClick, ...rest}: PromiseButtonProps) {
@@ -13,7 +13,7 @@ export default function PromiseButton({onClick, ...rest}: PromiseButtonProps) {
         <Button 
             {...rest}
             onClick={() => {
-                const potentialPromise = onClick();
+                const potentialPromise = onClick(() => setLoading(false));
                 if(potentialPromise) {
                     setLoading(true);
                     potentialPromise.catch(_.noop).then(() => setLoading(false));

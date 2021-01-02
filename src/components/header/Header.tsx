@@ -47,7 +47,7 @@ const rightMenus = {
                 Create New
             </BackButtonItem>
             <CreateSolutionButton />
-            <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.EDIT_ASSIGNMENT}>
+            <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.CREATE_ASSIGNMENT}>
                Assignment 
             </DropdownItem>
             <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.CREATE_PLAN}>
@@ -95,7 +95,10 @@ function Header(props: {}) {
                         My Assignments
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
-                        Assignments(Professor)
+                       Assignment Evaluation
+                    </DropdownItem>
+                    <DropdownItem leftIcon={<FormOutlined />} link={paths.ALL_ASSIGNMENTS}>
+                       All Assignments 
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.PLANS}>
                         Educational Plans 

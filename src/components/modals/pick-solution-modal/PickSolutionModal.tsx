@@ -5,6 +5,7 @@ import { useLoadingRequest } from 'utils/hooks';
 import { fetchSolution, getOwnSolutions } from 'shared/endpoints';
 import PickerModal, { PickerModalProps, StandardOverridenProps } from '../picker-modal/PickerModal';
 import './PickSolutionModal';
+import PreviewImage from 'components/preview-image/PreviewImage';
 
 
 const { Text } = Typography;
@@ -46,14 +47,16 @@ export default function PickSolutionModal({ visible, initialValue, onOk, ...rest
                                 {solution.title}
                             </Col>
                             <Col span={12}>
-
                                 <Image.PreviewGroup>
-                                    <Row>
-                                        {solution.diagrams.map((diagram) => {
-                                            return (<Col className="pick-solution-modal preview">
-                                                <Image key={diagram.id} width={50} src={diagram.image} className="preview" />
-                                                </Col>)
-                                        })
+                                    <Row wrap gutter={[4, 4]}>
+                                        {solution.diagrams.map((diagram) => (
+                                        <Col 
+                                            className="pick-solution-modal preview" 
+                                            style={{ width: '50px' }} 
+                                            key={diagram.id}>
+                                            <PreviewImage heightPercent={100} title={diagram.name} poster={diagram.image} />
+                                        </Col>)
+                                        )
                                         }
                                     </Row>
                                 </Image.PreviewGroup>

@@ -19,6 +19,7 @@ import STEPS, { RoutePathStep } from 'shared/route-steps';
 import UsersPage from 'pages/users-page/UsersPage';
 import ChangePasswordPage from 'pages/change-password-page/ChangePasswordPage';
 import EditProfilePage from 'pages/edit-profile/EditProfilePage';
+import AllAssignmentsPage from 'pages/all-assignments/AllAssignmentsPage';
 
 
 
@@ -43,6 +44,10 @@ export default [
     },
     {
         path: `${paths.EDIT_ASSIGNMENT}/:id?`,
+        component: EditAssignmentPage
+    },
+    {
+        path: paths.CREATE_ASSIGNMENT,
         component: EditAssignmentPage
     },
     {
@@ -108,6 +113,10 @@ export default [
     {
         path: paths.EDIT_PROFILE,
         component: EditProfilePage
+    },
+    {
+        path: paths.ALL_ASSIGNMENTS,
+        component: AllAssignmentsPage
     }
 ] as {
     secure?: boolean, 

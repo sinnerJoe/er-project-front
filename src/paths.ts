@@ -5,6 +5,7 @@ export default {
     EDIT_DIAGRAM: '/edit-diagram',
     STUDENT_ASSIGNMENTS: '/assignments',
     EDIT_ASSIGNMENT: '/edit-assignment',
+    CREATE_ASSIGNMENT: '/create-assignment',
     PROFESSOR_ASSIGNMENTS: '/professor-assignments',
     REGISTER: '/register',
     LOGIN: '/login',
@@ -17,5 +18,6 @@ export default {
     GROUPS: '/groups',
     USERS: '/users',
     CHANGE_PASSWORD: '/change-password',
-    EDIT_PROFILE: '/edit-profile'
+    EDIT_PROFILE: '/edit-profile',
+    ALL_ASSIGNMENTS: '/all-assignments'
 };

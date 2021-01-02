@@ -1,5 +1,5 @@
 import { PlannedAssignment, ServerAssignment } from 'interfaces/Assignment';
-import React, {useState, useRef, useCallback, useMemo} from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import moment, { Moment } from 'moment';
 import { PartialBy } from 'interfaces/helpers';
 import { Plan } from 'interfaces/Plan';
@@ -22,7 +22,7 @@ export interface SentPlannedAssignment {
 
 export interface PlanEditorProps {
     initialState?: Plan,
-    onSave: (name: string, assignments: {added: SentPlannedAssignment[], removed: IdIndex[], modified: {startDate: string, endDate: string}[]}) => void,
+    onSave: (name: string, assignments: { added: SentPlannedAssignment[], removed: IdIndex[], modified: { startDate: string, endDate: string }[] }) => void,
 };
 
 const defaultState: Plan = {
@@ -31,7 +31,7 @@ const defaultState: Plan = {
     plannedAssignments: []
 }
 
-export default function PlanEditor({initialState: propsState, onSave}: PlanEditorProps) {
+export default function PlanEditor({ initialState: propsState, onSave }: PlanEditorProps) {
 
     const editing = useMemo(() => !propsState, []);
 
@@ -43,24 +43,24 @@ export default function PlanEditor({initialState: propsState, onSave}: PlanEdito
         onSave(data.name, prepareAssignments(initialState.plannedAssignments, data.plannedAssignments));
     }
     return (
-        <Form 
-        form={form} 
-        initialValues={initialState} 
-        className="full-width" 
-        layout="vertical"
-        name="plan-form" 
-        onFinish={handleSendData}>
-            <Form.Item label="Title" name="name" rules={[{required: true}]} >
+        <Form
+            form={form}
+            initialValues={initialState}
+            className="full-width"
+            layout="vertical"
+            name="plan-form"
+            onFinish={handleSendData}>
+            <Form.Item label="Title" name="name" rules={[{ required: true }]} >
                 <Input type="text" />
             </Form.Item>
-                <h3 className="bold mb-4">Planned Assignments</h3>
+            <h3 className="bold mb-4">Planned Assignments</h3>
             <Form.Item name="plannedAssignments" noStyle>
                 <PlannedAssignmentsList mode={PlannedAssignmentMode.Edit} />
             </Form.Item>
             <Form.Item>
                 <Row justify="end" className="mt-4">
                     <Button size="large" type="primary" htmlType="submit">
-                        {editing? "Create Plan": "Apply Changes"}
+                        {editing ? "Create Plan" : "Apply Changes"}
                     </Button>
                 </Row>
             </Form.Item>
@@ -71,10 +71,10 @@ export default function PlanEditor({initialState: propsState, onSave}: PlanEdito
 function prepareAssignments(oldAssignments: PlannedAssignment[], newAssignments: PlannedAssignment[]) {
     const getId = (a: PlannedAssignment) => a.id;
     const oldIds = oldAssignments.map(getId);
-    const newIds = newAssignments.map(getId) 
+    const newIds = newAssignments.map(getId)
     const modified = newAssignments.filter((assign) => {
         const oldAssignment = oldAssignments.find(v => v.id === assign.id);
-        if(!oldAssignment) {
+        if (!oldAssignment) {
             return false;
         }
         return !(oldAssignment as any).startDate.isSame(assign.startDate) || !(oldAssignment as any).endDate.isSame(assign.endDate);

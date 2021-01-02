@@ -25,8 +25,8 @@ export default function UsersPage(props: UsersPageProps) {
 
     let content = null;
 
-    if(!loading) {
-        content = <UserSummaryTable onChange={() => request(year)} users={users} /> 
+    if(true) {
+        content = <UserSummaryTable loading={loading} onChange={() => request(year)} users={users} /> 
     }
 
     return (

@@ -156,12 +156,14 @@ type Props = {
     students: EvaluatedStudent[],
     startDate: string | Moment,
     endDate: string | Moment,
-    onRefreshData: () => void
+    onRefreshData: () => void,
+    loading: boolean
 }
 
-export default function SubmissionTable({students, onRefreshData, startDate, endDate}: Props) {
+export default function SubmissionTable({students, loading, onRefreshData, startDate, endDate}: Props) {
     return (
         <Table 
+        loading={loading}
         expandable={{
             rowExpandable: (student: EvaluatedStudent) => !!student.solution,
             expandedRowRender: (student: EvaluatedStudent) => {

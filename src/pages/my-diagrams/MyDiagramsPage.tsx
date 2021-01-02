@@ -12,6 +12,7 @@ import paths from 'paths'
 import CreateSolutionModal from 'components/modals/create-solution-modal/CreateSolutionModal'
 import { useModal } from 'components/modals/modal-hooks'
 import { getOwnSolutions } from 'shared/endpoints'
+import FloatingPlus from 'components/floating-plus/FloatingPlus';
 
 export default function MyDiagramsPage(props: any) {
   const [solutions, setSolutions] = useState<Solution[]>([]);
@@ -26,12 +27,8 @@ export default function MyDiagramsPage(props: any) {
   useEffect(fetchSolutions, [...Object.values(props)])
   const [modal, openModal] = useModal(CreateSolutionModal, {});
   return (
-    <PageContent>
+    <PageContent spaceTop>
       {modal}
-      <SearchBox 
-        onChange={()=>{}} 
-        onButtonClick={openModal} 
-        buttonLabel="Create New Solution" />
       <Space direction="vertical" size="large" className="full-width">
         { !loading && solutions.map((solution) => (
             <UploadedDiagram 
@@ -50,6 +47,9 @@ export default function MyDiagramsPage(props: any) {
         { loading && Array.from({length: 5}).map((v, k) => <Skeleton />)
         }
       </Space>
+      <FloatingPlus 
+        link={paths.NEW_DIAGRAM}
+      />
     </PageContent>
   )
 }

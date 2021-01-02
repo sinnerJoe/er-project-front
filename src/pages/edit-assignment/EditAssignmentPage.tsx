@@ -34,7 +34,6 @@ const layout = {
 }
 
 export default function EditAssignmentPage(props: any) {
-    const location = useLocation();
     const history = useHistory();
     const [form] = Form.useForm();
 
@@ -54,7 +53,7 @@ export default function EditAssignmentPage(props: any) {
                           ?  updateAssignment(Number(assignmentId), assignmentData) 
                           :  createAssignment(assignmentData);
             promise.then(response => {
-                history.push(paths.PROFESSOR_ASSIGNMENTS);
+                history.push(paths.ALL_ASSIGNMENTS);
             });
         },
         [assignmentId],
@@ -77,7 +76,7 @@ export default function EditAssignmentPage(props: any) {
                         </Form.Item>
                         <Form.Item>
                             <Row justify="end" >
-                                <Link className="mr-2" to={paths.PROFESSOR_ASSIGNMENTS}>
+                                <Link className="mr-2" to={paths.ALL_ASSIGNMENTS}>
                                     <Button type="ghost">
                                         Back
                                     </Button>

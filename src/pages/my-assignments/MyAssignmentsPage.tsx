@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Button, Space } from 'antd'
+import { Button, Skeleton, Space } from 'antd'
 import PageContent from 'components/page-content/PageContent'
 import SearchBox from 'components/searchbox/SearchBox'
 import Assignment from 'components/assignment/Assignment'
@@ -18,14 +18,14 @@ export default function MyAssignmentsPage(props: any) {
   return (
     <PageContent spaceTop>
       <Space direction="vertical" size="large" className="full-width">
-        {
-          assignments.map((assignment) => (
+        { !loading && assignments.map((assignment) => (
             <Assignment
               onSubmit={submitSolution} 
               {...assignment}
               />
           ))
         }
+        { loading && new Array(5).fill(<Skeleton active />)}
       </Space>
     </PageContent>
   )

@@ -11,14 +11,16 @@ import RoleSwitcher from './RoleSwitcher';
 
 export interface UserSummaryTableProps {
     users: UserSummary[],
-    onChange: () => void
+    onChange: () => void,
+    loading: boolean
 };
 
-export default function UserSummaryTable({users, onChange}: UserSummaryTableProps) {
+export default function UserSummaryTable({users, onChange, loading}: UserSummaryTableProps) {
 
     const expandedRowRender =  (user: UserSummary) => <EvaluationSummary user={user} />
     return (
         <Table
+            loading={loading}
             expandable={{
                 expandedRowRender,
                 rowExpandable: (user: UserSummary) => !!user.evaluatedSolutions.length

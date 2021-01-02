@@ -63,6 +63,13 @@ export function updateAssignment(id: number, data: { title: string, description:
     return put("assignments/", data, { id });
 }
 
+export function deleteAssignment(id: IdIndex, onResponse?: () => void) {
+    return dispatchNotifications(() => del("assignments/", {}, {id}), [
+        generateSuccessNotification({message: "Assignment successfully deleted."}),
+        generateStdNotification(), 
+    ], onResponse);
+}
+
 export function createAssignment(data: { title: string, description: string }) {
     return post('assignments/', data);
 }
@@ -88,7 +95,7 @@ export function fetchPlan(id: IdIndex): AxiosResponsePromise<Plan> {
 }
 
 export function fetchAllPlans(): AxiosResponsePromise<Plan[]> {
-    return get("plans/");
+    return dispatchNotifications(() => get("plans/"), [generateStdNotification()]);
 }
 
 export function addPlannedAssignments(planId: IdIndex, data: SentPlannedAssignment[]) {
@@ -117,11 +124,11 @@ export function getSubmissionGroups(year: IdIndex): AxiosResponsePromise<{
     name: string,
     uncheckedSubmissionCount: IdIndex
 }[]> {
-    return get("groups/", { year, 'type': 'submissions' });
+    return dispatchNotifications(() => get("groups/", { year, 'type': 'submissions' }), [generateStdNotification()]);
 }
 
 export function getGroups(year: IdIndex): AxiosResponsePromise<CollegeGroup[]> {
-    return get("groups/", { year });
+    return dispatchNotifications(() => get("groups/", { year }), [generateStdNotification()]);
 }
 
 export function createGroup(name: string, year: IdIndex) {
@@ -181,11 +188,11 @@ export function setStudentGroup(userId: IdIndex, groupId: IdIndex | null) {
 }
 
 export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[]> {
-    return get('plans/assignments/');
+    return dispatchNotifications(() => get('plans/assignments/'), [generateStdNotification()]);
 }
 
 export function getPlannedAssignmentsWithAnswers(groupId: IdIndex, plannedAssignmentId?: IdIndex): AxiosResponsePromise<EvaluatedAssignment[]> {
-    return get('plans/assignments/', { groupId, plannedAssignmentId });
+    return dispatchNotifications(() => get('plans/assignments/', { groupId, plannedAssignmentId }), [generateStdNotification()]);
 }
 
 export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
