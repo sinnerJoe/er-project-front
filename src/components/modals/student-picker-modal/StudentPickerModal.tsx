@@ -40,7 +40,7 @@ export default function StudentPickerModal({ onOk, visible, excluded = [], ...re
 
     const excludedIdSet = useMemo(() => new Set(excluded.map(s => s.id)), [excluded]);
 
-    const [executedSearch] = useDebounce(searchQuery, 350);
+    const [executedSearch] = useDebounce(searchQuery, 400);
 
     const studentList = useMemo(() => data.filter(s => !excludedIdSet.has(s.id)
         && search(executedSearch, [s.email, s.firstName || '', s.lastName || '', s?.group?.name || ''])
