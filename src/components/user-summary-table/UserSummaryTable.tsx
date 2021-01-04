@@ -1,5 +1,5 @@
-import { DeleteFilled } from '@ant-design/icons';
-import { Table } from 'antd';
+import { CheckSquareOutlined, CloseSquareOutlined, DeleteFilled } from '@ant-design/icons';
+import { Table, Typography } from 'antd';
 import PromiseButton from 'components/promise-button/PromiseButton';
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import { deleteUser } from 'shared/endpoints';
@@ -10,6 +10,7 @@ import { sortNullable, stringSort, useSearch } from 'shared/sorting';
 import EvaluationSummary from './EvaluationSummary';
 import RoleSwitcher from './RoleSwitcher';
 
+const {Text} = Typography;
 export interface UserSummaryTableProps {
     users: UserSummary[],
     onChange: () => void,
@@ -30,11 +31,24 @@ export default function UserSummaryTable({users, onChange, loading}: UserSummary
             dataSource={users}
             columns={[
                 {
+                    title: "Active",
+                    dataIndex: 'disabled',
+                    key: 'disabled',
+                    className: 'text-center',
+                    render: (v) => {
+                        const style = {fontSize: '20px'};
+                        switch(v) {
+                            case '1': return <Text type="danger">  <CloseSquareOutlined style={style} /></Text>
+                            default: return <Text type="success">  <CheckSquareOutlined style={style} /></Text>
+                        }
+                    }
+                },
+                {
                     title: "Full Name",
                     dataIndex: 'firstName',
                     key: 'firstName',
                     render: (v, u) => extractFullName(u),
-                    ...useSearch('name', extractFullName) as any
+                    ...useSearch('name', extractFullName)
                 },
                 {
                     title: "Email Address",
@@ -53,7 +67,8 @@ export default function UserSummaryTable({users, onChange, loading}: UserSummary
                     render: (v) => v || 'No group',
                     sorter: (u1: UserSummary, u2: UserSummary) => {
                         return sortNullable(u1?.group?.name, u2?.group?.name, stringSort);
-                    }
+                    },
+                    ...useSearch('group', (u: UserSummary) => u?.group?.name || 'No group')
                 },
                 {
                     title: "Role",

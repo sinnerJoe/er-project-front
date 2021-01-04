@@ -21,6 +21,7 @@ import EditProfilePage from 'pages/edit-profile/EditProfilePage';
 import AllAssignmentsPage from 'pages/all-assignments/AllAssignmentsPage';
 import ResetPasswordPage from 'pages/reset-password/ResetPasswordPage';
 import ResetPasswordApplyPage from 'pages/reset-password-apply/ResetPasswordApplyPage';
+import ConfirmAccountPage from 'pages/confirm-account/ConfirmAccountPage';
 
 
 
@@ -130,6 +131,12 @@ export default [
         component: ResetPasswordApplyPage,
         secure: false,
         disableHeader: true
+    },
+    {
+        path: paths.CONFIRM_ACCOUNT,
+        component: ConfirmAccountPage,
+        secure: false,
+        disableHeader: true
     }
 ] as {
     secure?: boolean, 
@@ -137,5 +144,4 @@ export default [
     component: any, 
     disableHeader?: boolean,
     routeSteps?: RoutePathStep[]
-
 }[];

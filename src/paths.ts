@@ -21,5 +21,6 @@ export default {
     EDIT_PROFILE: '/edit-profile',
     ALL_ASSIGNMENTS: '/all-assignments',
     FORGOT_PASSWORD: '/forgot-password',
-    RESET_PASSWORD: '/reset-password'
+    RESET_PASSWORD: '/reset-password',
+    CONFIRM_ACCOUNT: '/confirm'
 };

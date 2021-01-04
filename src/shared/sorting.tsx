@@ -1,6 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space } from 'antd';
 import React, {useEffect, useState, useMemo, useRef} from 'react'
+import { search } from './search';
 
 export function sortNullable<T>(a: T | undefined | null, b: T | undefined | null, sortFunction: (a: T, b: T) => number, prioritize = false) {
     if(a == null && b == null) {
@@ -29,7 +30,7 @@ export function stringSort(a: string | number, b: string | number) {
 }
 
 
-export function useSearch<T>(label: string, dataSelector: (v:T) => string) {
+export function useSearch<T>(label: string, dataSelector: (v:T) => string | string[]) {
 
     const searchInput = useRef<any>(null);
 
@@ -77,9 +78,9 @@ return {
       </div>
     ),
     filterIcon: (filtered: any) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value: string, record: T) => {
-        const v = dataSelector(record);
-        return v ? v.toString().toLowerCase().includes(value.toLowerCase())
+    onFilter: (value: any, record: T) => {
+        const fields = dataSelector(record);
+        return fields ? search(value, fields)
         : false;
     },
     onFilterDropdownVisibleChange: (visible: boolean) => {

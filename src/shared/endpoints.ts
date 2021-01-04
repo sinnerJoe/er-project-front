@@ -13,8 +13,14 @@ import { Role } from "./interfaces/Role";
 import { fromUser, Student, Teacher, User, UserSummary } from "./interfaces/User";
 import { get, post, del, put, fetchBinary, patch } from './request';
 
-export function registerUser(data: User) {
-    return post("users/", fromUser(data), {});
+export function registerUser(data: User, onResponse?: () => void) {
+    return dispatchNotifications(() => post("users/", fromUser(data), {}), [
+        generateStdNotification(), 
+        generateSuccessNotification({
+            message: "Account successfully created",
+            description: "A message with a confirmation link was sent to your email address."
+        })
+    ], onResponse);
 }
 
 export function authenticate(email: string, password: string) {
@@ -228,4 +234,8 @@ export function applyReset(id: string, password: string, onResponse?: () => void
         }),
         generateStdNotification()
     ], onResponse);
+}
+
+export function confirmAccount(id: string) {
+    return post('account-confirmation/', {}, {id});
 }

@@ -28,6 +28,7 @@ export interface EvaluatedStudent extends Student {
 
 export interface UserSummary extends Student {
     evaluatedSolutions: ServerSolution[]
+    disabled: '0' | '1';
 }
 
 const shape = {

@@ -54,27 +54,27 @@ function LoginPage(props: any) {
                     <Form.Item label='Password' name="password">
                         <Password placeholder="***********" />
                     </Form.Item>
-                    <Row gutter={[10, 10]}>
-                    <Col>
-                    <Form.Item>
-                        <Button loading={loading} type="primary" htmlType="submit"> 
-                            Sign In
-                        </Button>
-                    </Form.Item>
-                    </Col>
-                    <Col>
-                        <Link to={{pathname: paths.REGISTER, state: {avoidAuth: true}}}>
-                            <Button  type="ghost">
-                                Sign Up
-                            </Button>
-                        </Link>
-                    </Col>
+                    <Row  className="full-width" justify="end">
                     <Col>
                         <Link to={{pathname: paths.FORGOT_PASSWORD, state: {avoidAuth: true}}}>
                             <Button type="link">
                                 Forgot password?
                             </Button>
                         </Link>
+                    </Col>
+                    <Col className="ml-2">
+                        <Link to={{pathname: paths.REGISTER, state: {avoidAuth: true}}}>
+                            <Button  type="ghost">
+                                Sign Up
+                            </Button>
+                        </Link>
+                    </Col>
+                    <Col className="ml-2">
+                    <Form.Item>
+                        <Button loading={loading} type="primary" htmlType="submit"> 
+                            Sign In
+                        </Button>
+                    </Form.Item>
                     </Col>
                     </Row>
                     {response && <Alert
