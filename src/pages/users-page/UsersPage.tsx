@@ -6,7 +6,7 @@ import UserSummaryTable from 'components/user-summary-table/UserSummaryTable';
 import YearAxis from 'components/year-axis/YearAxis';
 import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import { fetchAllPlans, fetchAllUsers } from 'shared/endpoints';
-import { getCurrentYear, momentifyFields } from 'utils/datetime';
+import { getCurrentYear } from 'utils/datetime';
 import { useLoadingRequest, useQueryStringMaster } from 'utils/hooks';
 
 export interface UsersPageProps {

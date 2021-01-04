@@ -5,7 +5,7 @@ import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import { addPlannedAssignments, createPlan, fetchPlan, removePlannedAssignments, updatePlanName, updatePlannedAssignments } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
-import { momentifyFields } from 'utils/datetime';
+import { normalizePlanDates } from 'utils/datetime';
 import { useLoadingRequest } from 'utils/hooks';
 
 export default function EditPlanPage(props: {}) {
@@ -14,7 +14,11 @@ export default function EditPlanPage(props: {}) {
 
     const {id} = useParams<{id?: string}>();
 
-    useMemo(() => momentifyFields(data), [data]);
+    useMemo(() => {
+        if(data) {
+            normalizePlanDates(data);
+        }
+    }, [data]);
 
 
     useEffect(() => {

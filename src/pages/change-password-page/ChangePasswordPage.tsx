@@ -32,7 +32,7 @@ export default function ChangePasswordPage(props: any) {
                             },
                         ]}
                     >
-                        <Input type="password" />
+                        <Input.Password />
                     </Form.Item>
                     <PasswordRepeat />
                     <Form.Item>

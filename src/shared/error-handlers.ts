@@ -119,8 +119,7 @@ export function generateSuccessNotification(
 ) {
 
     return {
-        capture: [],
-        trigger: notify(config)
+        trigger: notify({ type: "success", ...config })
     }
 }
 

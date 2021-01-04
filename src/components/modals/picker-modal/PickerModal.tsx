@@ -16,7 +16,7 @@ export interface PickerModalProps<T> extends Omit<React.ComponentProps<typeof Mo
     initialSelected: T | null,
 };
 
-export default function PickerModal<T>({ data, initialSelected = null, renderItem, onOk, loading, ...rest }: PickerModalProps<T>) {
+export default function PickerModal<T>({ data, initialSelected = null, renderItem, onOk, loading, visible, ...rest }: PickerModalProps<T>) {
 
     const [selected, setSelected] = useState<T | null>(initialSelected);
 
@@ -26,7 +26,13 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
         if(!!initialSelected) {
             setSelected(initialSelected);
         }
-    }, [initialSelected])
+    }, [initialSelected]);
+
+    useEffect(() => {
+        if(!visible) {
+            setOkLoading(false);
+        }
+    }, [visible])
 
     return (
         <Modal
@@ -48,6 +54,7 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
                 }
             }}
             okButtonProps={{ disabled: !selected, loading: okLoading} }
+            visible={visible}
             {...rest}
         >
 

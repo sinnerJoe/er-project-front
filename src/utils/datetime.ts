@@ -1,3 +1,4 @@
+import { Plan } from 'interfaces/Plan';
 import moment, {Moment} from 'moment';
 import { SERVER_DATE_TIME } from 'shared/constants';
 
@@ -24,18 +25,6 @@ const dateFields = new Set([
     'createdAt'
 ]);
 
-export function momentifyFields(object: any, fields = dateFields): void {
-    if(object == null) return;
-    for(const key of Object.keys(object)) {
-        if(typeof object[key] === 'object') {
-            momentifyFields(object[key], fields);
-        } else if(fields.has(key) && typeof object[key] === 'string') {
-            const m = moment(object[key], SERVER_DATE_TIME);
-            object[key] = m.isValid() ? m : object[key];
-        }
-    }
-}
-
 export function extractEducationalYear(date: Moment): number {
     return moment(date).subtract(9, 'months').get('year')
 }
@@ -61,4 +50,12 @@ export function normalizeDate(date: Moment, year: number): Moment {
         return moment(date).set('day', 28).set('year', year + 1);
     }
     return moment(date).set('year', year);
+}
+
+export function normalizePlanDates (plan: Plan) {
+    const currentYear = getCurrentYear();
+    for(const assignment of plan.plannedAssignments) {
+        assignment.endDate = normalizeDate(moment(assignment.endDate), currentYear);
+        assignment.startDate = normalizeDate(moment(assignment.startDate), currentYear);
+    }
 }

@@ -23,6 +23,8 @@ export default function PasswordRepeat(props: PasswordRepeatProps) {
                 hasFeedback
                 required
                 label="Repeat Password"
+                dependencies={['password']}
+                name="confirm"
                 rules={[
                     {
                         required: true,
@@ -30,11 +32,12 @@ export default function PasswordRepeat(props: PasswordRepeatProps) {
                     },
                     ({ getFieldValue }) => ({
                         validator(rule, value) {
+                            console.log(getFieldValue("password"))
                             if (!value || getFieldValue("password") === value) {
                                 return Promise.resolve();
                             }
                             return Promise.reject('The two passwords that you entered do not match.')
-                        },
+                        }, 
                     })
                 ]}
             >

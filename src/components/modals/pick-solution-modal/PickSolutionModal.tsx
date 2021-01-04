@@ -24,14 +24,14 @@ export default function PickSolutionModal({ visible, initialValue, onOk, ...rest
 
     const selected = useMemo(() => data.find(v => v.id === initialValue?.id) || null, [data]);
 
-
+    const displayedSolutions = useMemo(() => data.filter(solution => !solution.reviewedAt), [data]);
 
     return (
         <PickerModal
             initialSelected={selected}
             title="Submit solution"
             okText="Submit"
-            data={data}
+            data={displayedSolutions}
             loading={loading}
             onOk={(selected) => {
                 return onOk(selected);

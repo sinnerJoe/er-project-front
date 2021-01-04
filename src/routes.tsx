@@ -14,12 +14,13 @@ import CreatePlanPage from 'pages/create-plan-page/CreatePlanPage';
 import PlanListPage from 'pages/plan-list-page/PlanListPage';
 import EditPlanPage from 'pages/edit-plan-page/EditPlanPage';
 import GroupsPage from 'pages/groups/GroupsPage';
-import { DeploymentUnitOutlined } from '@ant-design/icons';
 import STEPS, { RoutePathStep } from 'shared/route-steps';
 import UsersPage from 'pages/users-page/UsersPage';
 import ChangePasswordPage from 'pages/change-password-page/ChangePasswordPage';
 import EditProfilePage from 'pages/edit-profile/EditProfilePage';
 import AllAssignmentsPage from 'pages/all-assignments/AllAssignmentsPage';
+import ResetPasswordPage from 'pages/reset-password/ResetPasswordPage';
+import ResetPasswordApplyPage from 'pages/reset-password-apply/ResetPasswordApplyPage';
 
 
 
@@ -117,6 +118,18 @@ export default [
     {
         path: paths.ALL_ASSIGNMENTS,
         component: AllAssignmentsPage
+    },
+    {
+        path: paths.FORGOT_PASSWORD,
+        component: ResetPasswordPage,
+        secure: false,
+        disableHeader: true
+    },
+    {
+        path: paths.RESET_PASSWORD,
+        component: ResetPasswordApplyPage,
+        secure: false,
+        disableHeader: true
     }
 ] as {
     secure?: boolean, 

@@ -19,5 +19,7 @@ export default {
     USERS: '/users',
     CHANGE_PASSWORD: '/change-password',
     EDIT_PROFILE: '/edit-profile',
-    ALL_ASSIGNMENTS: '/all-assignments'
+    ALL_ASSIGNMENTS: '/all-assignments',
+    FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password'
 };

@@ -69,6 +69,13 @@ function LoginPage(props: any) {
                             </Button>
                         </Link>
                     </Col>
+                    <Col>
+                        <Link to={{pathname: paths.FORGOT_PASSWORD, state: {avoidAuth: true}}}>
+                            <Button type="link">
+                                Forgot password?
+                            </Button>
+                        </Link>
+                    </Col>
                     </Row>
                     {response && <Alert
                         message={response.message}

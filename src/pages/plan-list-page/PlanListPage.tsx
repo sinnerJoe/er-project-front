@@ -1,12 +1,13 @@
 import { Skeleton, Space } from 'antd';
 import FloatingPlus from 'components/floating-plus/FloatingPlus';
+import NoData from 'components/no-data/NoData';
 import PageContent from 'components/page-content/PageContent';
 import PlanDisplay from 'components/plan-editor/PlanDisplay';
 import SearchBox from 'components/searchbox/SearchBox';
 import paths from 'paths';
 import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
 import { fetchAllPlans } from 'shared/endpoints';
-import { momentifyFields } from 'utils/datetime';
+import { normalizePlanDates } from 'utils/datetime';
 import { useLoadingRequest } from 'utils/hooks';
 
 export interface PlanListPageProps {
@@ -23,7 +24,18 @@ export default function PlanListPage(props: PlanListPageProps) {
 
     let content = null;
 
-    useMemo(() => momentifyFields(data), [data]);
+    useMemo(() => {
+        data.forEach(normalizePlanDates);
+    }, [data]);
+
+    if(!loading && !data.length) {
+        return (
+            <div>
+                <NoData description="There are no educational plans found."/>
+                <FloatingPlus link={paths.CREATE_PLAN} />
+            </div>
+        )
+    }
 
     if(!loading) {
         content = data.map((plan) => 
@@ -34,7 +46,7 @@ export default function PlanListPage(props: PlanListPageProps) {
     }
 
     return (
-        <PageContent>
+        <PageContent spaceTop>
             <Space direction="vertical" size="large" className="full-width">
                 {content}
             </Space>

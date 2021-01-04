@@ -56,7 +56,7 @@ export async function getImageBase64(url: string) {
 }
 
 export function fetchAssignment(id: number): AxiosResponsePromise<ServerAssignment> {
-    return get("assignments/", { id });
+    return dispatchNotifications(() => get("assignments/", { id }), [generateStdNotification()]);
 }
 
 export function updateAssignment(id: number, data: { title: string, description: string }) {
@@ -64,9 +64,9 @@ export function updateAssignment(id: number, data: { title: string, description:
 }
 
 export function deleteAssignment(id: IdIndex, onResponse?: () => void) {
-    return dispatchNotifications(() => del("assignments/", {}, {id}), [
-        generateSuccessNotification({message: "Assignment successfully deleted."}),
-        generateStdNotification(), 
+    return dispatchNotifications(() => del("assignments/", {}, { id }), [
+        generateSuccessNotification({ message: "Assignment successfully deleted." }),
+        generateStdNotification(),
     ], onResponse);
 }
 
@@ -75,7 +75,7 @@ export function createAssignment(data: { title: string, description: string }) {
 }
 
 export function fetchAllAssignments(): AxiosResponsePromise<ServerAssignment[]> {
-    return get("assignments/");
+    return dispatchNotifications(() => get("assignments/"), [generateStdNotification()]);
 }
 
 export function fetchAllGroups() {
@@ -147,12 +147,12 @@ export function getStudents(): AxiosResponsePromise<Student[]> {
     return get("users/", { role: 'student' });
 }
 
-export function fetchOwnData(): AxiosResponsePromise<User> {
+export function fetchOwnData(): AxiosResponsePromise<Student> {
     return get("users/");
 }
 
 export function fetchAllUsers(registrationYear?: IdIndex): AxiosResponsePromise<UserSummary[]> {
-    return get("users/", { year: registrationYear });
+    return dispatchNotifications(() => get("users/", { year: registrationYear }), [generateStdNotification()]);
 }
 
 export function deleteUser(id: IdIndex) {
@@ -195,14 +195,37 @@ export function getPlannedAssignmentsWithAnswers(groupId: IdIndex, plannedAssign
     return dispatchNotifications(() => get('plans/assignments/', { groupId, plannedAssignmentId }), [generateStdNotification()]);
 }
 
-export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
-    return patch('solutions/', { plannedAssignmentId }, { id: solutionId, target: 'submit' });
+export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex, onResolve?: () => void) {
+    return dispatchNotifications(() => patch('solutions/', { plannedAssignmentId }, { id: solutionId, target: 'submit' }),
+        [generateStdNotification()], onResolve);
 }
 
-export function unsubmitSolution(solutionId: IdIndex) {
-    return patch('solutions/', {}, { id: solutionId, target: 'unsubmit' });
+export function unsubmitSolution(solutionId: IdIndex, onResolve?: () => void) {
+    return dispatchNotifications(() => patch('solutions/', {}, { id: solutionId, target: 'unsubmit' }),
+        [generateStdNotification(), generateSuccessNotification()],
+        onResolve);
 }
 
 export function assignMark(solutionId: IdIndex, mark: IdIndex | null) {
     return patch('solutions/', { mark }, { id: solutionId, target: 'mark' });
+}
+
+export function requestReset(email: string, onResponse?: () => void) {
+    return dispatchNotifications(() => post('reset-password/', { email }), [
+        generateSuccessNotification({
+            message: "Email has been sent",
+            description: "Check your email inbox for the link to password reset page."
+        }),
+        generateStdNotification()
+    ], onResponse);
+}
+
+export function applyReset(id: string, password: string, onResponse?: () => void) {
+    return dispatchNotifications(() => put('reset-password/', { password }, { id }), [
+        generateSuccessNotification({
+            message: "Password successfully saved",
+            description: "Try to authenticate using your new password."
+        }),
+        generateStdNotification()
+    ], onResponse);
 }

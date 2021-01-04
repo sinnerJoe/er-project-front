@@ -22,7 +22,7 @@ export interface SentPlannedAssignment {
 
 export interface PlanEditorProps {
     initialState?: Plan,
-    onSave: (name: string, assignments: { added: SentPlannedAssignment[], removed: IdIndex[], modified: { startDate: string, endDate: string }[] }) => void,
+    onSave: (name: string, assignments: { added: SentPlannedAssignment[], removed: IdIndex[], modified: { startDate: string, endDate: string }[] }) => Promise<unknown>,
 };
 
 const defaultState: Plan = {
@@ -39,8 +39,11 @@ export default function PlanEditor({ initialState: propsState, onSave }: PlanEdi
 
     const [form] = Form.useForm()
 
+    const [loading, setLoading] = useState(false);
+
     const handleSendData = (data: any) => {
-        onSave(data.name, prepareAssignments(initialState.plannedAssignments, data.plannedAssignments));
+        setLoading(true);
+        onSave(data.name, prepareAssignments(initialState.plannedAssignments, data.plannedAssignments)).then(() => setLoading(false));
     }
     return (
         <Form
@@ -59,7 +62,7 @@ export default function PlanEditor({ initialState: propsState, onSave }: PlanEdi
             </Form.Item>
             <Form.Item>
                 <Row justify="end" className="mt-4">
-                    <Button size="large" type="primary" htmlType="submit">
+                    <Button size="large" type="primary" htmlType="submit" loading={loading}>
                         {editing ? "Create Plan" : "Apply Changes"}
                     </Button>
                 </Row>
