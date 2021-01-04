@@ -9,6 +9,7 @@ import PickerListSkeleton from './PickerListSkeleton';
 export type StandardOverridenProps = 'onOk' | 'data' | 'loading' | 'initialSelected' | 'renderItem' | 'title';
 
 export interface PickerModalProps<T> extends Omit<React.ComponentProps<typeof Modal>, 'onOk'> {
+    controls?: React.ReactNode,
     data: T[],
     renderItem: (itemData: T) => React.ReactNode,
     loading: boolean,
@@ -16,7 +17,14 @@ export interface PickerModalProps<T> extends Omit<React.ComponentProps<typeof Mo
     initialSelected: T | null,
 };
 
-export default function PickerModal<T>({ data, initialSelected = null, renderItem, onOk, loading, visible, ...rest }: PickerModalProps<T>) {
+export default function PickerModal<T>({ 
+    controls = null,
+    initialSelected = null, 
+    data, 
+    renderItem, 
+    onOk, 
+    loading, 
+    visible, ...rest }: PickerModalProps<T>) {
 
     const [selected, setSelected] = useState<T | null>(initialSelected);
 
@@ -27,6 +35,12 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
             setSelected(initialSelected);
         }
     }, [initialSelected]);
+
+    useEffect(() => {
+        if(!!selected && !data.includes(selected)) {
+            setSelected(null);
+        }
+    }, [data])
 
     useEffect(() => {
         if(!visible) {
@@ -58,6 +72,7 @@ export default function PickerModal<T>({ data, initialSelected = null, renderIte
             {...rest}
         >
 
+        {controls}
 
         { !loading && (<div className="modal-picker">
                 {data.map(v => {

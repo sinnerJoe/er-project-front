@@ -143,8 +143,8 @@ export function getTeachers(groupYear: IdIndex): AxiosResponsePromise<Teacher[]>
     return get("users/", { role: 'teacher', year: groupYear });
 }
 
-export function getStudents(): AxiosResponsePromise<Student[]> {
-    return get("users/", { role: 'student' });
+export function getStudents(year?: IdIndex): AxiosResponsePromise<Student[]> {
+    return get("users/", { role: 'student', fromYear: year });
 }
 
 export function fetchOwnData(): AxiosResponsePromise<Student> {
