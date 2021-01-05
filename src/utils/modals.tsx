@@ -19,20 +19,18 @@ export const openConfirmPromise = ({onOk, onCancel, ...rest}: ConfirmModalProps 
                     if(potentialPromise) {
                         potentialPromise.then(resolve);
                     } else {
-                        resolve();
+                        resolve(undefined);
                     }
                     close();
                 } else {
-                    resolve();
+                    resolve(undefined);
                 }
             },
-            onCancel: (close) => {
-                reject();
+            onCancel: () => {
                 if(onCancel) {
-                    onCancel(close);
+                    onCancel();
                 }
-
-                close();    
+                reject();
             }
         })
     })

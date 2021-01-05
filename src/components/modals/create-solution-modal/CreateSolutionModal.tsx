@@ -3,6 +3,7 @@ import {Input, Modal, Select} from 'antd'
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import paths from 'paths';
+import { SaveFilled } from '@ant-design/icons';
 
 export interface CreateSolutionModalProps {
     onCancel?: () => void;
@@ -27,12 +28,12 @@ export default function CreateSolutionModal({onCancel = _.noop, visible, onOk}:C
 
     return (
         <Modal 
-            title="Create Solution"
-            okText="Start editimg"
+            title="Save As"
+            okText="Save"
             onOk={handleOk}
             visible={visible}
             onCancel={onCancel || _.noop}
-            okButtonProps={{disabled: title.trim().length === 0}}
+            okButtonProps={{disabled: title.trim().length === 0, icon: <SaveFilled />}}
             closable>
                 <label>
                     Title

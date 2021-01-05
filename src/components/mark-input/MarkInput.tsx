@@ -20,10 +20,10 @@ export default function MarkInput(props: Props) {
             content={
             <MarkPicker 
                 onSubmit={(mark: IdIndex | null = null) => {
-                    return assignMark(props.solutionId, mark).then(() => {
+                    return assignMark(props.solutionId, mark, () => {
                         setVisible(false);
                         props.onChange();
-                    }).catch(_.noop);
+                    });
                 }}
             mark={props.mark}/>}
             trigger="click"

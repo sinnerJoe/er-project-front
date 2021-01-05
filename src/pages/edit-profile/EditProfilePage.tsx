@@ -1,13 +1,15 @@
 import { SaveFilled } from '@ant-design/icons';
-import {Alert, Button, Divider, Form, Input, Row, Typography} from 'antd'
+import { Alert, Button, Divider, Form, Input, Row, Typography } from 'antd'
 import CenteredForm from 'components/centered-form/CenteredForm';
 import PageContent from 'components/page-content/PageContent';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { changeName, fetchOwnData } from 'shared/endpoints';
+import { composableLabels, labels } from 'shared/strings';
+import { emptySpace } from 'shared/validators';
 import { useLoadingRequest } from 'utils/hooks';
 import DeleteUserButton from './DeleteUserButton';
 
-const {Text} = Typography;
+const { Text } = Typography;
 export interface EditProfilePageProps {
 
 };
@@ -22,13 +24,13 @@ export default function EditProfilePage(props: EditProfilePageProps) {
         submitName(values.firstName, values.lastName).catch(() => {}).then(() => setSent(true));
     }
 
-    const [fetchData, data, loading, getErr] = useLoadingRequest(fetchOwnData, null, {initialLoading: true});
+    const [fetchData, data, loading, getErr] = useLoadingRequest(fetchOwnData, null, { initialLoading: true });
 
     useEffect(() => {
         fetchData();
     }, []);
 
-    if(data === null) {
+    if (data === null) {
         return false;
     }
 
@@ -37,17 +39,25 @@ export default function EditProfilePage(props: EditProfilePageProps) {
             <CenteredForm width={350} height={300}>
                 <Form initialValues={data} onFinish={onSubmit} layout="vertical">
                     <Form.Item label="Group">
-                        <Input disabled value={data.group?.name || 'No group'}/>
+                        <Input disabled value={data.group?.name || 'No group'} />
                     </Form.Item>
                     <Form.Item
                         label="First Name"
                         name="firstName"
+                        rules={[{
+                            validator: emptySpace,
+                            message: composableLabels.fieldRequired(labels.firstName)
+                        }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
                         label="Last Name"
                         name="lastName"
+                        rules={[{
+                            validator: emptySpace,
+                            message: composableLabels.fieldRequired(labels.firstName)
+                        }]}
                     >
                         <Input />
                     </Form.Item>

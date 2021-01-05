@@ -10,23 +10,26 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { AssignmentModel } from 'interfaces/Assignment';
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
-import { deleteSolution } from 'shared/endpoints';
+import { changeSolutionTitle, deleteSolution } from 'shared/endpoints';
 import SubmittedMark from 'components/submitted-mark/SubmittedMark';
 import { IMG_FALLBACK } from 'shared/constants';
 import PreviewImage from 'components/preview-image/PreviewImage';
+import PromiseButton from 'components/promise-button/PromiseButton';
+import { openConfirmPromise } from 'utils/modals';
+import EditableField from 'components/editable-field/EditableField';
 
 const { Title, Text } = Typography;
 
 
 
-type Props = { onDelete: Function } & Solution;
+type Props = { onRefresh: () => void } & Solution;
 
 export default function UploadedDiagram({
     reviewedAt,
     mark,
     reviewer,
     title,
-    onDelete = () => { },
+    onRefresh,
     tabs = [],
     updatedOn = new Date().toISOString(),
     id,
@@ -39,27 +42,43 @@ export default function UploadedDiagram({
 
     const deleteButton = (
         <span>
-
-        <Button
-            icon={<DeleteFilled />}
-            disabled={reviewed}
-            onClick={() => {
-                if (typeof id !== 'undefined') {
-                    deleteSolution(id).then(onDelete as any)
-                }
-            }}
-            className="standard-button" type="primary" danger>
-            Delete
-        </Button>
+            <PromiseButton
+                icon={<DeleteFilled />}
+                disabled={reviewed}
+                onClick={() => {
+                    if (id != null) {
+                        return openConfirmPromise({
+                            onOk: () => {
+                                return deleteSolution(id).then(onRefresh);
+                            },
+                            content: (
+                                <span>
+                                    Are you sure you want to remove the solution <Text strong>{title}</Text>? 
+                                    <div className="text-center mt-2">
+                                        <Text strong type="danger">This change is irreversible!</Text>
+                                    </div>
+                                </span>
+                            )
+                        })
+                    }
+                }}
+                className="standard-button" type="primary" danger>
+                Delete
+            </PromiseButton>
         </span>
     )
 
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
-            <Col className="meta-info" md={10} lg={8}>
-                <Title className="mb-5" level={4}>
-                    {title}
-                </Title>
+            <Col className="meta-info pt-1" md={10} lg={8}>
+                    <Title className="mb-5" level={4}>
+                <EditableField initialValue={title} 
+                    onSave={(newTitle) => changeSolutionTitle(id, newTitle, onRefresh)}>
+                        <span>
+                            {title}
+                        </span>
+                </EditableField>
+                    </Title>
                 <InfoLabel text="Diagrams">
                     <ul itemType=''>
                         {tabs.map((tab, key) => (

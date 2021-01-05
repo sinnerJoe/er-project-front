@@ -7,15 +7,19 @@ import {getMarkClass} from './mark-helpers';
 import './mark-view.scss';
 
 export interface MarkViewProps extends HTMLAttributes<HTMLSpanElement> {
-    mark?: IdIndex
+    mark?: React.ReactNode,
+    containerClass?: string,
+    iconClass?: string
 }
 
-export default function MarkView({mark, className, onClick, ...rest}: MarkViewProps) {
+export default function MarkView({mark, className, onClick, containerClass="", iconClass=getMarkClass(1), ...rest}: MarkViewProps) {
     const renderedMark = mark || 'N/A';
 
+    const markClass = ['string', 'number'].includes(typeof mark) ? getMarkClass(mark as any) : iconClass;
+
     return (
-        <span onClick={onClick} className="mark-input" {...rest}>
-            <span className={ `mark-icon ${getMarkClass(mark)} ${className}` }>
+        <span onClick={onClick} className={ `mark-input ${containerClass}` } {...rest}>
+            <span className={ `mark-icon ${markClass} ${className}` }>
                 {renderedMark}
             </span>
         </span>

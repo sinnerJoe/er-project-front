@@ -1,0 +1,12 @@
+.editable-aura {
+    padding: 4px 8px;
+    border-radius: 10px;
+    background-color: var(--bg-editable);
+    transition: background-color 0.2s;
+    &:hover {
+        background-color: var(--bg-editable-hover);
+    }
+    .icon {
+        font-size: 14px;
+    }
+}

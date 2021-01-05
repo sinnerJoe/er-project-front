@@ -212,8 +212,21 @@ export function unsubmitSolution(solutionId: IdIndex, onResolve?: () => void) {
         onResolve);
 }
 
-export function assignMark(solutionId: IdIndex, mark: IdIndex | null) {
-    return patch('solutions/', { mark }, { id: solutionId, target: 'mark' });
+export function assignMark(solutionId: IdIndex, mark: IdIndex | null, onResponse: () => void) {
+    return dispatchNotifications(() => patch('solutions/', { mark }, { id: solutionId, target: 'mark' }), [
+        generateStdNotification(),
+        generateSuccessNotification({description: mark ? "Mark assigned successfully.": "Mark removed successfully."})
+    ], onResponse);
+}
+
+export function changeSolutionTitle(solutionId: IdIndex, title: string, onResponse?: () => void) {
+    return dispatchNotifications(
+        () => patch('solutions/', { title }, { id: solutionId, target: 'title' }), 
+        [
+            generateSuccessNotification(),
+            generateStdNotification()
+        ], 
+        onResponse);
 }
 
 export function requestReset(email: string, onResponse?: () => void) {

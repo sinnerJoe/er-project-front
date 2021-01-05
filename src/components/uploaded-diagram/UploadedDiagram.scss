@@ -9,6 +9,8 @@
     }
     .standard-button {
         width: 120px;
+        box-sizing: border-box;
+        padding-right: 50px;
     }
 
     .slick-dots.black-dots {

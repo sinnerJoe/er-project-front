@@ -4,7 +4,7 @@ import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { IdIndex } from 'shared/interfaces/Id';
 import AddGroupTag from './AddGroupTag';
 import GroupTag from './GroupTag';
-import { Badge } from 'antd';
+import { Badge, Row } from 'antd';
 
 export interface GroupListProps {
     onSelect: (groupId: IdIndex) => void,
@@ -29,7 +29,7 @@ export default function GroupList({
 }: GroupListProps) {
 
     return (
-        <div className={`group-list ${className}`}>
+        <Row className={`group-list ${className}`} align="middle" >
             { groups.map((group, index) => {
                 const tag = (
                     <GroupTag
@@ -57,6 +57,6 @@ export default function GroupList({
             })
             }
             {onCreate && <AddGroupTag onCreate={onCreate} />}
-        </div>
+        </Row>
     )
 }

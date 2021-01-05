@@ -1,0 +1,33 @@
+.removable-mark .mark-input{
+    &.normal, &.hovered {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: opacity 0.3s;
+    }
+
+    &.hovered {
+        opacity: 0;
+        .center {
+            position: relative;
+            bottom: -1px;
+        }
+    }
+
+}
+
+.removable-mark {
+    height: 40px;
+    border-radius: 50%;
+    width: 40px;
+    position: relative;
+    display: inline-block;
+    &:hover .mark-input{
+        &.normal {
+            opacity: 0;
+        }
+        &.hovered {
+            opacity: 1;
+        }
+    }
+}

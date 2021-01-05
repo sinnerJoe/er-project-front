@@ -119,7 +119,7 @@ export function generateSuccessNotification(
 ) {
 
     return {
-        trigger: notify({ type: "success", ...config })
+        trigger: notify({ type: "success", message: "Request succeeded",...config })
     }
 }
 

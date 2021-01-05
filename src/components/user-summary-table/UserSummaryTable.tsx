@@ -1,25 +1,26 @@
 import { CheckSquareOutlined, CloseSquareOutlined, DeleteFilled } from '@ant-design/icons';
 import { Table, Typography } from 'antd';
 import PromiseButton from 'components/promise-button/PromiseButton';
-import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { deleteUser } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 import { Role } from 'shared/interfaces/Role';
 import { UserSummary } from 'shared/interfaces/User';
 import { sortNullable, stringSort, useSearch } from 'shared/sorting';
+import { openConfirmPromise } from 'utils/modals';
 import EvaluationSummary from './EvaluationSummary';
 import RoleSwitcher from './RoleSwitcher';
 
-const {Text} = Typography;
+const { Text } = Typography;
 export interface UserSummaryTableProps {
     users: UserSummary[],
     onChange: () => void,
     loading: boolean
 };
 const extractFullName = (user: UserSummary) => `${user.firstName} ${user.lastName}`
-export default function UserSummaryTable({users, onChange, loading}: UserSummaryTableProps) {
+export default function UserSummaryTable({ users, onChange, loading }: UserSummaryTableProps) {
 
-    const expandedRowRender =  (user: UserSummary) => <EvaluationSummary user={user} />
+    const expandedRowRender = (user: UserSummary) => <EvaluationSummary onRefresh={onChange} user={user} />
     return (
         <Table
             loading={loading}
@@ -36,12 +37,13 @@ export default function UserSummaryTable({users, onChange, loading}: UserSummary
                     key: 'disabled',
                     className: 'text-center',
                     render: (v) => {
-                        const style = {fontSize: '20px'};
-                        switch(v) {
+                        const style = { fontSize: '20px' };
+                        switch (v) {
                             case '1': return <Text type="danger">  <CloseSquareOutlined style={style} /></Text>
                             default: return <Text type="success">  <CheckSquareOutlined style={style} /></Text>
                         }
-                    }
+                    },
+                    sorter: (u1, u2) => stringSort(u1.disabled, u2.disabled) 
                 },
                 {
                     title: "Full Name",
@@ -79,19 +81,45 @@ export default function UserSummaryTable({users, onChange, loading}: UserSummary
                         return <RoleSwitcher onChange={onChange} role={role} userId={user.id} />
                     },
                     sorter: (u1, u2) => stringSort(u1.role, u2.role)
-                }, 
+                },
                 {
                     dataIndex: 'id',
                     key: 'delete',
-                    render: (id: IdIndex) => (
-                        <PromiseButton 
-                            danger 
+                    render: (id: IdIndex, user) => (
+                        <PromiseButton
+                            danger
                             type="primary"
                             icon={<DeleteFilled />}
                             onClick={() => {
-                                const promise = deleteUser(id);
-                                promise.then(onChange);
-                                return promise;
+                                return openConfirmPromise({
+                                    onOk: () => {
+                                        const promise = deleteUser(id);
+                                        promise.then(onChange);
+                                        return promise;
+                                    },
+                                    content: (
+                                        <React.Fragment>
+                                            <span>
+                                                Are you sure you want to delete the user
+                                                <b className="ml-1">{user.firstName} {user.lastName}</b>?
+                                            </span>
+                                            <div>
+
+                                                <Text strong>
+                                                    The following will be removed FOREVER:
+                                                </Text>
+                                                <ul>
+                                                    <li>User's personal data.</li>
+                                                    <li>All of the solutions created by the user.</li>
+                                                    <li>All reviews of those solution.</li>
+                                                </ul>
+                                                <Text strong type="danger">
+                                                    <div className="text-center">This is irreversible!</div>
+                                                </Text>
+                                            </div>
+                                        </React.Fragment>
+                                    )
+                                })
                             }}
                         >
                             Delete

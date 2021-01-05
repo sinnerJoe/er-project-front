@@ -7,14 +7,16 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { UserSummary } from 'shared/interfaces/User';
 import { extractEducationalYear } from 'utils/datetime';
 import { FieldTimeOutlined } from '@ant-design/icons';
+import RemovableMark from 'components/removable-mark/RemovableMark';
 
 const {Text, Title} = Typography;
 
 export interface EvaluationSummaryProps {
-    user: UserSummary
+    user: UserSummary,
+    onRefresh: () => void
 };
 
-export default function EvaluationSummary({ user }: EvaluationSummaryProps) {
+export default function EvaluationSummary({ user, onRefresh }: EvaluationSummaryProps) {
     const categorizedSolutions = useMemo(() => groupSolutionsByYear(user.evaluatedSolutions), [user]);
     const rows = (categorizedSolutions.map(({ solutions, year }) =>
         <Row align="middle">
@@ -38,7 +40,7 @@ export default function EvaluationSummary({ user }: EvaluationSummaryProps) {
                                         </LabeledData>
                                     </div>
                                 }>
-                                    <MarkView mark={solution.mark || undefined} key={solution.id} />
+                                    <RemovableMark onRemove={onRefresh} solutionId={solution.id} mark={solution.mark || undefined} key={solution.id} />
                                 </Popover>
                             )
                         })

@@ -42,7 +42,7 @@ export default function MyDiagramsPage(props: any) {
             reviewer={solution.reviewer}
             mark={solution.mark}
             title={solution.title || ''}
-            onDelete={fetchSolutions}
+            onRefresh={fetchSolutions}
             tabs={solution.tabs || []}
             id={solution.id || 0}
             assignment={solution.assignment}
