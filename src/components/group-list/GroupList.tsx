@@ -4,7 +4,7 @@ import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { IdIndex } from 'shared/interfaces/Id';
 import AddGroupTag from './AddGroupTag';
 import GroupTag from './GroupTag';
-import { Badge, Row } from 'antd';
+import { Badge, Col, Row } from 'antd';
 
 export interface GroupListProps {
     onSelect: (groupId: IdIndex) => void,
@@ -29,7 +29,7 @@ export default function GroupList({
 }: GroupListProps) {
 
     return (
-        <Row className={`group-list ${className}`} align="middle" >
+        <Row className={`group-list ${className}`} wrap gutter={[8,8]} align="middle" >
             { groups.map((group, index) => {
                 const tag = (
                     <GroupTag
@@ -43,16 +43,18 @@ export default function GroupList({
                 );
                 const submissionCount = badgeSelector(group);
                 return (
-                    <Badge
-                        style={{zIndex: groups.length - index - 1}}
-                        size="small"
-                        offset={[-11, 0]}
-                        title={badgeTitleGenerator(submissionCount)}
-                        showZero={false}
-                        key={group.id}
-                        count={submissionCount}>
-                        {tag}
-                    </Badge>
+                    <Col>
+                        <Badge
+                            style={{zIndex: groups.length - index - 1}}
+                            size="small"
+                            offset={[-5, 0]}
+                            title={badgeTitleGenerator(submissionCount)}
+                            showZero={false}
+                            key={group.id}
+                            count={submissionCount}>
+                            {tag}
+                        </Badge>
+                    </Col>
                 )
             })
             }

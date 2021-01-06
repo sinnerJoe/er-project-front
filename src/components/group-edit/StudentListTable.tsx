@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { setStudentGroup } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 import { Student, User } from 'shared/interfaces/User';
+import { useSearch } from 'shared/sorting';
 import { openConfirmPromise } from 'utils/modals';
 
 export interface StudentListTableProps {
@@ -22,11 +23,13 @@ export default function StudentListTable(props: StudentListTableProps) {
             {
                 title: "Name",
                 dataIndex: 'firstName',
-                render: (key, student) => `${student.firstName} ${student.lastName}`
+                render: (key, student) => `${student.firstName} ${student.lastName}`,
+                ...useSearch('name', (v: Student) => `${v.firstName} ${v.lastName}`)
             },
             {
                 title: "Email",
-                dataIndex: 'email'
+                dataIndex: 'email',
+                ...useSearch('email address', (v: Student) => v.email)
             },
             {
                 title: "Registration Date",

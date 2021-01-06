@@ -43,7 +43,9 @@ export function notify<P>(config: NotificationConfig = {}) {
             key,
             duration,
             message,
-            type
+            type,
+            placement: "topLeft",
+            // top: 55 
         });
     }
 }
@@ -57,7 +59,7 @@ interface NotificationEffect<P> {
 
 export function dispatchNotifications<P>(
     request: () => AxiosResponsePromise<P>,
-    chain: NotificationEffect<P>[],
+    chain: NotificationEffect<P>[] = [generateStdNotification(), generateSuccessNotification()],
     onResponse: () => void = _.noop): AxiosResponsePromise<P> {
     return new Promise(async (resolve, reject) => {
         let response: AxiosResponse<SuccessResponse<P>> | undefined = undefined;
@@ -94,6 +96,7 @@ export function dispatchNotifications<P>(
     })
 }
 
+
 const CAPTURE_ALL = [
     HttpResponseCode.BadRequest,
     HttpResponseCode.InternalServerError,
@@ -105,12 +108,14 @@ const CAPTURE_ALL = [
 
 export function generateStdNotification(
     ignoredErrors: HttpResponseCode[] = [],
-    config?: NotificationConfig
+    config?: NotificationConfig,
+    absorb = true
 ) {
 
     return {
         capture: _.difference(CAPTURE_ALL, ignoredErrors),
-        trigger: notify(config)
+        trigger: notify(config),
+        absorb
     }
 }
 
@@ -132,4 +137,16 @@ export const redirectNotFound = {
 
 export function handleGetStdErrors<P> (request: () => AxiosResponsePromise<P>, onResponse?: () => void) {
     return dispatchNotifications(request, [generateStdNotification()], onResponse);
+}
+
+export function dispatchErrors<P>(request: () => AxiosResponsePromise<P>, onResponse?: (() => void ) | false, config?: NotificationConfig, ignoredErrors?: HttpResponseCode[]): () => AxiosResponsePromise<P> {
+    if(onResponse === false) {
+        return () => new Promise((resolve) => dispatchNotifications(request, [generateStdNotification(ignoredErrors, config)], resolve as any));
+    }
+    return () => dispatchNotifications(request, [generateStdNotification(ignoredErrors, config)], onResponse);
+}
+
+
+export function dispatchSuccess<P>(request: () => AxiosResponsePromise<P>, config?: NotificationConfig) {
+    return () => dispatchNotifications(request, [generateSuccessNotification(config)]);
 }

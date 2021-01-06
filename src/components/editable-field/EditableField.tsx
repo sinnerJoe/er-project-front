@@ -78,7 +78,10 @@ export default function EditableField({ children, initialValue, onSave, noStyle=
                 <Col>
                     <Button 
                         disabled={loading} 
-                        onClick={() => setEditing(false)} 
+                        onClick={() => {
+                            setEditing(false);
+                            form.resetFields(['value']);
+                        }} 
                         type="ghost" 
                         danger 
                         icon={<CloseOutlined />} />

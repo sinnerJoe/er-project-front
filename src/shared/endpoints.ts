@@ -5,7 +5,7 @@ import { CollegeGroup } from "interfaces/Group";
 import { Plan } from "interfaces/Plan";
 import { EvaluatedSolution, ServerSolution } from "interfaces/Solution";
 import { Moment } from "moment";
-import { dispatchNotifications, generateStdNotification, generateSuccessNotification, handleGetStdErrors, notify, redirectNotFound } from "./error-handlers";
+import { dispatchErrors, dispatchNotifications, dispatchSuccess, generateStdNotification, generateSuccessNotification, handleGetStdErrors, notify, redirectNotFound } from "./error-handlers";
 import { ExpectedDiagram, ExpectedSolution } from "./expected-data";
 import { IdIndex } from "./interfaces/Id";
 import { ApiResponse, AxiosResponsePromise, HttpResponseCode } from "./interfaces/ResponseType";
@@ -40,15 +40,15 @@ export function createSolution(solutionData: ExpectedSolution, onResponse?: () =
 }
 
 export function getOwnSolutions(): AxiosResponsePromise<ServerSolution[]> {
-    return handleGetStdErrors(() => get("solutions/"));
+    return get("solutions/");
 }
 
 export function fetchSolution(id: number, onResponse?: () => void): AxiosResponsePromise<ServerSolution> {
-    return dispatchNotifications(() => get("solutions/", { id }), [redirectNotFound], onResponse);
+    return get("solutions/", { id }, undefined, [HttpResponseCode.NotFound])
 }
 
 export function updateSolution(id: number, diagrams: ExpectedDiagram[]) {
-    return dispatchNotifications(() => put("solutions/", { diagrams }, { id }), [generateStdNotification(), generateSuccessNotification()]);
+    return dispatchNotifications(() => put("solutions/", { diagrams }, { id }));
 }
 
 export function deleteSolution(id: number) {
@@ -62,7 +62,7 @@ export async function getImageBase64(url: string) {
 }
 
 export function fetchAssignment(id: number): AxiosResponsePromise<ServerAssignment> {
-    return dispatchNotifications(() => get("assignments/", { id }), [generateStdNotification()]);
+    return get("assignments/", { id });
 }
 
 export function updateAssignment(id: number, data: { title: string, description: string }) {
@@ -81,7 +81,7 @@ export function createAssignment(data: { title: string, description: string }) {
 }
 
 export function fetchAllAssignments(): AxiosResponsePromise<ServerAssignment[]> {
-    return dispatchNotifications(() => get("assignments/"), [generateStdNotification()]);
+    return get("assignments/");
 }
 
 export function fetchAllGroups() {
@@ -101,7 +101,7 @@ export function fetchPlan(id: IdIndex): AxiosResponsePromise<Plan> {
 }
 
 export function fetchAllPlans(): AxiosResponsePromise<Plan[]> {
-    return dispatchNotifications(() => get("plans/"), [generateStdNotification()]);
+    return get("plans/");
 }
 
 export function addPlannedAssignments(planId: IdIndex, data: SentPlannedAssignment[]) {
@@ -130,19 +130,19 @@ export function getSubmissionGroups(year: IdIndex): AxiosResponsePromise<{
     name: string,
     uncheckedSubmissionCount: IdIndex
 }[]> {
-    return dispatchNotifications(() => get("groups/", { year, 'type': 'submissions' }), [generateStdNotification()]);
+    return get("groups/", { year, 'type': 'submissions' });
 }
 
 export function getGroups(year: IdIndex): AxiosResponsePromise<CollegeGroup[]> {
-    return dispatchNotifications(() => get("groups/", { year }), [generateStdNotification()]);
+    return get("groups/", { year });
 }
 
 export function createGroup(name: string, year: IdIndex) {
-    return post("groups/", { name, year });
+    return dispatchErrors(dispatchSuccess(() => post("groups/", { name, year })), false)();
 }
 
 export function deleteGroup(id: IdIndex) {
-    return del("groups/", {}, { id });
+    return dispatchErrors(dispatchSuccess(() => del("groups/", {}, { id })), false)();
 }
 
 export function getTeachers(groupYear: IdIndex): AxiosResponsePromise<Teacher[]> {
@@ -158,15 +158,16 @@ export function fetchOwnData(): AxiosResponsePromise<Student> {
 }
 
 export function fetchAllUsers(registrationYear?: IdIndex): AxiosResponsePromise<UserSummary[]> {
-    return dispatchNotifications(() => get("users/", { year: registrationYear }), [generateStdNotification()]);
+    return get("users/", { year: registrationYear });
 }
 
 export function deleteUser(id: IdIndex) {
-    return del("users/", {}, { id });
+    return dispatchNotifications(() => del("users/", {}, { id }), [generateStdNotification(), generateSuccessNotification()]);
 }
 
 export function deleteCurrentUser(password: string) {
-    return del("users/", { password });
+    return dispatchNotifications(() => del("users/", { password }), [
+        generateSuccessNotification({description: "Your account was successfully deleted."}), generateStdNotification()]);
 }
 
 export function setUserRole(id: IdIndex, role: Role) {
@@ -189,27 +190,28 @@ export function setGroupPlan(groupId: IdIndex, planId: IdIndex) {
     return patch('groups/', { planId }, { id: groupId, target: "plan" });
 }
 
+export function copyGroupsToYear(year: IdIndex) {
+    return dispatchErrors(dispatchSuccess(() => post('groups/', {}, {copyTo: year})), false)();
+}
+
 export function setStudentGroup(userId: IdIndex, groupId: IdIndex | null) {
     return patch('users/', { groupId }, { id: userId, target: 'group' });
 }
 
 export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[]> {
-    return dispatchNotifications(() => get('plans/assignments/'), [generateStdNotification()]);
+    return get('plans/assignments/');
 }
 
 export function getPlannedAssignmentsWithAnswers(groupId: IdIndex, plannedAssignmentId?: IdIndex): AxiosResponsePromise<EvaluatedAssignment[]> {
-    return dispatchNotifications(() => get('plans/assignments/', { groupId, plannedAssignmentId }), [generateStdNotification()]);
+    return get('plans/assignments/', { groupId, plannedAssignmentId });
 }
 
-export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex, onResolve?: () => void) {
-    return dispatchNotifications(() => patch('solutions/', { plannedAssignmentId }, { id: solutionId, target: 'submit' }),
-        [generateStdNotification()], onResolve);
+export function submitSolution(solutionId: IdIndex, plannedAssignmentId: IdIndex) {
+    return dispatchErrors(dispatchSuccess(() => patch('solutions/', { plannedAssignmentId }, { id: solutionId, target: 'submit' })), false)();
 }
 
-export function unsubmitSolution(solutionId: IdIndex, onResolve?: () => void) {
-    return dispatchNotifications(() => patch('solutions/', {}, { id: solutionId, target: 'unsubmit' }),
-        [generateStdNotification(), generateSuccessNotification()],
-        onResolve);
+export function unsubmitSolution(solutionId: IdIndex) {
+    return dispatchErrors(dispatchSuccess(() => patch('solutions/', {}, { id: solutionId, target: 'unsubmit' })), false)();
 }
 
 export function assignMark(solutionId: IdIndex, mark: IdIndex | null, onResponse: () => void) {
@@ -221,12 +223,7 @@ export function assignMark(solutionId: IdIndex, mark: IdIndex | null, onResponse
 
 export function changeSolutionTitle(solutionId: IdIndex, title: string, onResponse?: () => void) {
     return dispatchNotifications(
-        () => patch('solutions/', { title }, { id: solutionId, target: 'title' }), 
-        [
-            generateSuccessNotification(),
-            generateStdNotification()
-        ], 
-        onResponse);
+        () => patch('solutions/', { title }, { id: solutionId, target: 'title' }), undefined, onResponse);
 }
 
 export function requestReset(email: string, onResponse?: () => void) {

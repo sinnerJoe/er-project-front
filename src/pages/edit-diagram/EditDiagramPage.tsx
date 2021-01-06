@@ -9,16 +9,22 @@ import { useSelector } from 'react-redux';
 import { StoreData } from 'store';
 import FullScreenLoader from 'components/full-screen-loader/FullScreenLoader';
 import { SolutionLoadingMessage } from 'shared/constants';
+import { redirectNotFound } from 'shared/error-handlers';
 
 const PNG_BASE64_HEADER = 'data:image/png;base64,';
 export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean}) {
     const history = useHistory();
     const [solution, setSolution] = useState<Partial<Solution>>();
     const solutionId = useQueryStringMaster().solId;
+    const unblockHistory = useBlockHistory();
     useEffect(() => {
         fetchSolution(Number(solutionId))
         .then((response) => setSolution(parseSolution(response.data.data)))
         .then(() => setMessage(undefined))
+        .catch(() => {
+            unblockHistory();
+            redirectNotFound.trigger();
+        })
     }, [solutionId]);
 
     const userId = useSelector<StoreData>((state) => state.user.userId)
@@ -27,7 +33,6 @@ export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean})
 
     const [message, setMessage] = useState<SolutionLoadingMessage | undefined>(SolutionLoadingMessage.loadingMessage)
 
-    const unblockHistory = useBlockHistory();
 
     return (
         <React.Fragment>

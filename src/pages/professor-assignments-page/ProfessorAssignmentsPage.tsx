@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react'
-import { Button, Skeleton, Space } from 'antd'
+import { Button, Empty, Skeleton, Space } from 'antd'
 import { BrowserRouter as Router, Route, NavLink, useHistory } from 'react-router-dom'
 import PageContent from 'components/page-content/PageContent'
 import ExtendedAssignment from 'components/extended-assignment/ExtendedAssignment'
@@ -51,7 +51,7 @@ export default function ProfessorAssignmentsPage(props: any) {
     }
   }, [selectedGroupId]);
 
-  let content = <div className="flex-center">No groups with plans assignmed for this year</div>;
+  let content = <div className="flex-center">No groups with assigned plans for this year, or maybe you are not coordinating any of them.</div>;
   if (groups.length || loadingGroups) {
     content = (<React.Fragment> 
       {!loadingGroups ? (
@@ -80,6 +80,9 @@ export default function ProfessorAssignmentsPage(props: any) {
               onRefreshData={() => { fetchGroups(year) }}
             />
           ))
+        }
+        { !loading && !assignments.length &&
+          <Empty description="The is no plan defined for this group" />
         }
         { loading && new Array(4).fill(<Skeleton active/>)}
       </Space>

@@ -15,7 +15,7 @@ export interface MarkViewProps extends HTMLAttributes<HTMLSpanElement> {
 export default function MarkView({mark, className, onClick, containerClass="", iconClass=getMarkClass(1), ...rest}: MarkViewProps) {
     const renderedMark = mark || 'N/A';
 
-    const markClass = ['string', 'number'].includes(typeof mark) ? getMarkClass(mark as any) : iconClass;
+    const markClass = ['string', 'number'].includes(typeof renderedMark) ? getMarkClass(mark as any) : iconClass;
 
     return (
         <span onClick={onClick} className={ `mark-input ${containerClass}` } {...rest}>

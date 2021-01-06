@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { dispatchNotifications, generateStdNotification, notify } from './error-handlers';
+import { dispatchErrors, dispatchNotifications, generateStdNotification, notify } from './error-handlers';
 import { AxiosResponsePromise, HttpResponseCode, SuccessResponse } from './interfaces/ResponseType';
 import browserHistory from 'shared/history';
 import store from 'store';
@@ -57,8 +57,8 @@ function defaultErrorHandler(request: () => AxiosResponsePromise<any>) {
     ]) as AxiosResponsePromise<any>;
 }
 
-export function get(path:string, params?:any, payload?:any) {
-    return defaultErrorHandler(() => request(path, "GET", params, payload));
+export function get(path:string, params?:any, payload?:any, excludedErrors?: HttpResponseCode[]) {
+    return dispatchErrors(() => defaultErrorHandler(() => request(path, "GET", params, payload)), undefined, undefined, excludedErrors)();
 }
 export function post(path:string, payload?: any, params?:any) {
     return defaultErrorHandler(() => request(path, "POST", params, payload));
