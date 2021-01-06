@@ -16,9 +16,9 @@ export interface GroupTagProps extends Omit<React.ComponentProps<typeof Tag>, 'o
 export default function GroupTag({ onClick, className, onClose, children, id, ...rest }: GroupTagProps) {
     const [loading, setLoading] = useState(false);
 
-    let secondaryAction = null;
+    let secondaryAction = <span className="pl-1"></span>;
     if(onClose && !loading) {
-        secondaryAction = <CloseOutlined className="ml-1" onClick={(e) => {
+        secondaryAction = <CloseOutlined className="ml-2" onClick={(e) => {
                 e.stopPropagation();
                 setLoading(true);
                 openConfirmPromise({
