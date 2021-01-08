@@ -24,7 +24,7 @@ export function registerUser(data: User, onResponse?: () => void) {
 }
 
 export function authenticate(email: string, password: string) {
-    return post("auth/", { email, password }, {});
+    return dispatchErrors(() => post("auth/", { email, password }, {}))();
 }
 
 export function fetchSessionUserData() {
@@ -32,7 +32,7 @@ export function fetchSessionUserData() {
 }
 
 export function logoutSession() {
-    return del("auth/");
+    return dispatchErrors(dispatchSuccess(() => del("auth/"), {description: "You successfully logged out."}))();
 }
 
 export function createSolution(solutionData: ExpectedSolution, onResponse?: () => void) {
@@ -44,7 +44,7 @@ export function getOwnSolutions(): AxiosResponsePromise<ServerSolution[]> {
 }
 
 export function fetchSolution(id: number, onResponse?: () => void): AxiosResponsePromise<ServerSolution> {
-    return get("solutions/", { id }, undefined, [HttpResponseCode.NotFound])
+    return dispatchNotifications(() => get("solutions/", { id }, undefined, [HttpResponseCode.NotFound]), [redirectNotFound], onResponse);
 }
 
 export function updateSolution(id: number, diagrams: ExpectedDiagram[]) {
@@ -62,11 +62,13 @@ export async function getImageBase64(url: string) {
 }
 
 export function fetchAssignment(id: number): AxiosResponsePromise<ServerAssignment> {
-    return get("assignments/", { id });
+    return dispatchNotifications(() => get("assignments/", { id }, undefined, [HttpResponseCode.NotFound]), [redirectNotFound]);
 }
 
 export function updateAssignment(id: number, data: { title: string, description: string }) {
-    return put("assignments/", data, { id });
+    return dispatchErrors(dispatchSuccess(() => put("assignments/", data, { id }), {
+        description: `Assignment "${data.title}" successfully updated`
+    }))();
 }
 
 export function deleteAssignment(id: IdIndex, onResponse?: () => void) {
@@ -77,7 +79,7 @@ export function deleteAssignment(id: IdIndex, onResponse?: () => void) {
 }
 
 export function createAssignment(data: { title: string, description: string }) {
-    return post('assignments/', data);
+    return dispatchErrors(dispatchSuccess(() => post('assignments/', data), {description: `Assignment "${data.title}" successfully created.`}))();
 }
 
 export function fetchAllAssignments(): AxiosResponsePromise<ServerAssignment[]> {
@@ -89,15 +91,15 @@ export function fetchAllGroups() {
 }
 
 export function createPlan(name: string): AxiosResponsePromise<{ id: IdIndex }> {
-    return post("plans/", { name });
+    return dispatchErrors(() => post("plans/", { name }))();
 }
 
 export function deletePlan(id: IdIndex) {
-    return del('plans/', undefined, { id });
+    return dispatchErrors(dispatchSuccess(() => del('plans/', undefined, { id })), false)();
 }
 
 export function fetchPlan(id: IdIndex): AxiosResponsePromise<Plan> {
-    return get("plans/", { id });
+    return dispatchNotifications(() => get("plans/", { id }, undefined, [HttpResponseCode.NotFound]), [redirectNotFound]);
 }
 
 export function fetchAllPlans(): AxiosResponsePromise<Plan[]> {
@@ -171,11 +173,13 @@ export function deleteCurrentUser(password: string) {
 }
 
 export function setUserRole(id: IdIndex, role: Role) {
-    return patch("users/", { role }, { id, target: 'role' });
+    return dispatchErrors(dispatchSuccess( () => patch("users/", { role }, { id, target: 'role' }), {
+        description: "Role successfully changed."
+    }), false)();
 }
 
 export function changePassword(oldPassword: string, password: string) {
-    return patch("users/", { oldPassword, password }, { target: 'password' });
+    return dispatchSuccess(() => patch("users/", { oldPassword, password }, { target: 'password' }))();
 }
 
 export function changeName(firstName: string, lastName: string) {
@@ -183,11 +187,11 @@ export function changeName(firstName: string, lastName: string) {
 }
 
 export function setGroupCoordinator(groupId: IdIndex, coordinatorId: IdIndex) {
-    return patch('groups/', { coordinatorId }, { id: groupId, target: "coordinator" });
+    return dispatchErrors(dispatchSuccess(() => patch('groups/', { coordinatorId }, { id: groupId, target: "coordinator" })))();
 }
 
 export function setGroupPlan(groupId: IdIndex, planId: IdIndex) {
-    return patch('groups/', { planId }, { id: groupId, target: "plan" });
+    return dispatchErrors(dispatchSuccess(() => patch('groups/', { planId }, { id: groupId, target: "plan" })))();
 }
 
 export function copyGroupsToYear(year: IdIndex) {
@@ -195,7 +199,9 @@ export function copyGroupsToYear(year: IdIndex) {
 }
 
 export function setStudentGroup(userId: IdIndex, groupId: IdIndex | null) {
-    return patch('users/', { groupId }, { id: userId, target: 'group' });
+    return dispatchErrors(dispatchSuccess(() => patch('users/', { groupId }, { id: userId, target: 'group' }), {
+        description: "Student added to the group."
+    }), false)();
 }
 
 export function getPlannedAssignments(): AxiosResponsePromise<PlannedAssignment[]> {

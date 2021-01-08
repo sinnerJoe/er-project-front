@@ -8,7 +8,7 @@ import { useBlockHistory, useQueryStringMaster } from 'utils/hooks';
 import { useSelector } from 'react-redux';
 import { StoreData } from 'store';
 import FullScreenLoader from 'components/full-screen-loader/FullScreenLoader';
-import { SolutionLoadingMessage } from 'shared/constants';
+import { IMG_FALLBACK, SolutionLoadingMessage } from 'shared/constants';
 import { redirectNotFound } from 'shared/error-handlers';
 
 const PNG_BASE64_HEADER = 'data:image/png;base64,';
@@ -50,8 +50,9 @@ export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean})
                             console.log(solution)
                             const oldImage = (solution as any)?.tabs?.[index]?.poster;
                             if(oldImage) {
-                                image = await getImageBase64(oldImage);
-                                image = PNG_BASE64_HEADER+image
+                                image = await getImageBase64(oldImage)
+                                        .then(img => PNG_BASE64_HEADER+img)
+                                        .catch(() => IMG_FALLBACK);
                             }
                         }
 

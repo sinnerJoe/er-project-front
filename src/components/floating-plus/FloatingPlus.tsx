@@ -1,5 +1,4 @@
 import { PlusCircleFilled } from '@ant-design/icons';
-import { Affix, Button } from 'antd';
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import './FloatingPlus.scss';
@@ -16,10 +15,10 @@ function FloatingPlus({onClick, link}: FloatingPlusProps) {
             </button>
     )
     return (
-        <Affix offsetBottom={50} className="floating-plus">
+        <div className="floating-plus">
             {link && <Link to={link}>{button}</Link>}
             {!link && button}
-        </Affix>
+        </div>
     )
 }
 

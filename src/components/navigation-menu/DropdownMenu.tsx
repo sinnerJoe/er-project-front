@@ -4,6 +4,10 @@ import _ from 'lodash';
 import { useOutsideClickEvent } from 'utils/hooks';
 import { Link } from 'react-router-dom';
 import { link } from 'fs';
+import { useSelector } from 'react-redux';
+import { StoreData } from 'store';
+import { Role } from 'shared/interfaces/Role';
+import routes from 'routes';
 
 const EventContext = React.createContext({ goToMenu: _.noop });
 
@@ -71,24 +75,44 @@ function DropdownMenu({ rightMenus = {}, children, onClose, className="" }: Prop
 
 export { DropdownMenu }
 
-export function DropdownItem(props: { link?: string, children: ReactNode, leftIcon?: ReactNode, rightIcon?: ReactNode, openedMenu?: string, onClick?: () => void }) {
+const ROLE_RESTRICTIONS: Record<string, Role[]> = Object.values(routes).reduce((acc, {path, roles}) => {
+    acc[path] = roles;
+    return acc;
+}, {});
+
+console.log(ROLE_RESTRICTIONS)
+
+export function DropdownItem({link, children, leftIcon, rightIcon, openedMenu, onClick}: { 
+    link?: string, 
+    children: ReactNode, 
+    leftIcon?: ReactNode, 
+    rightIcon?: ReactNode, 
+    openedMenu?: string, 
+    onClick?: () => void, 
+    roles?: Role[] }) {
     const { goToMenu } = useContext(EventContext);
+    const role = useSelector<StoreData, Role>((state) => state.user.role);
+    
+    if(link && ROLE_RESTRICTIONS[link] && !ROLE_RESTRICTIONS[link].includes(role)) {
+        return null;
+    }
+
     const content = (
         <React.Fragment>
-            <span className="icon-button">{props.leftIcon}</span>
-            <span className="ml-2">{props.children}</span>
-            <span className="icon-right">{props.rightIcon}</span>
+            <span className="icon-button">{leftIcon}</span>
+            <span className="ml-2">{children}</span>
+            <span className="icon-right">{rightIcon}</span>
         </React.Fragment>
     );
 
-    if (!props.link)
+    if (!link)
         return (
             <a className="menu-item" onClick={() => {
-               if(props.openedMenu) {
-                   goToMenu(props.openedMenu)
+               if(openedMenu) {
+                   goToMenu(openedMenu)
                 }
-                if (props.onClick) {
-                    props.onClick();
+                if (onClick) {
+                    onClick();
                 }
             }}>
                 { content }
@@ -96,7 +120,7 @@ export function DropdownItem(props: { link?: string, children: ReactNode, leftIc
         )
 
     return (
-        <Link className="menu-item" to={props.link}>
+        <Link className="menu-item" to={link}>
             { content }
         </Link>
     )

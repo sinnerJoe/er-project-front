@@ -45,7 +45,6 @@ export function notify<P>(config: NotificationConfig = {}) {
             message,
             type,
             placement: "topLeft",
-            // top: 55 
         });
     }
 }
@@ -61,24 +60,20 @@ export function dispatchNotifications<P>(
     request: () => AxiosResponsePromise<P>,
     chain: NotificationEffect<P>[] = [generateStdNotification(), generateSuccessNotification()],
     onResponse: () => void = _.noop): AxiosResponsePromise<P> {
-    return new Promise(async (resolve, reject) => {
-        let response: AxiosResponse<SuccessResponse<P>> | undefined = undefined;
-        let error: AxiosResponse<SuccessResponse<P>> | undefined = undefined;
-        try {
-            response = await request();
-        } catch (err) {
-            response = err.response;
-            error = err;
-        }
-
-        if (response) {
-            if (!error) {
-                const effect = chain.find(({ capture }) => !capture)
-                if (effect) {
-                    effect.trigger(response);
-                }
-                resolve(response);
+    return new Promise((resolve, reject) => {
+        request().then(response => {
+            if (!response) {
+                return;
             }
+            const effect = chain.find(({ capture }) => !capture)
+            if (effect) {
+                effect.trigger(response);
+            }
+            resolve(response);
+            onResponse();
+        }).catch((error) => {
+            const response: any = error.response;
+            if (!response) return;
 
             const effect = chain.find(({ capture, captureAllErrors }) => captureAllErrors ||
                 (capture || []).includes(response?.status as HttpResponseCode));
@@ -91,8 +86,9 @@ export function dispatchNotifications<P>(
             } else {
                 reject(error);
             }
-        }
-        onResponse();
+
+            onResponse();
+        })
     })
 }
 
@@ -124,7 +120,7 @@ export function generateSuccessNotification(
 ) {
 
     return {
-        trigger: notify({ type: "success", message: "Request succeeded",...config })
+        trigger: notify({ type: "success", message: "Request succeeded", ...config })
     }
 }
 
@@ -135,13 +131,13 @@ export const redirectNotFound = {
     }
 }
 
-export function handleGetStdErrors<P> (request: () => AxiosResponsePromise<P>, onResponse?: () => void) {
+export function handleGetStdErrors<P>(request: () => AxiosResponsePromise<P>, onResponse?: () => void) {
     return dispatchNotifications(request, [generateStdNotification()], onResponse);
 }
 
-export function dispatchErrors<P>(request: () => AxiosResponsePromise<P>, onResponse?: (() => void ) | false, config?: NotificationConfig, ignoredErrors?: HttpResponseCode[]): () => AxiosResponsePromise<P> {
-    if(onResponse === false) {
-        return () => new Promise((resolve) => dispatchNotifications(request, [generateStdNotification(ignoredErrors, config)], resolve as any));
+export function dispatchErrors<P>(request: () => AxiosResponsePromise<P>, onResponse?: (() => void) | false, config?: NotificationConfig, ignoredErrors?: HttpResponseCode[]): () => AxiosResponsePromise<P> {
+    if (onResponse === false) {
+        return () => new Promise((resolve) => dispatchNotifications(request, [generateStdNotification(ignoredErrors, config)]).then(resolve).catch(err => {}));
     }
     return () => dispatchNotifications(request, [generateStdNotification(ignoredErrors, config)], onResponse);
 }

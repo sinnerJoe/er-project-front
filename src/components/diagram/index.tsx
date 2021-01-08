@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import { mxgraph, mxgraphFactory } from "ts-mxgraph";
 import domtoimage from 'dom-to-image'
+// import domtoimage from 'dom-to-image-more';
 import {Image} from 'image-js';
+import { IMG_FALLBACK } from "shared/constants";
 const { mxGraph, mxGraphModel, mxCell, mxGeometry, mxPoint } = mxgraphFactory({
   mxLoadResources: false,
   mxLoadStylesheets: false,
@@ -21,7 +23,7 @@ const CANVAS_ID = 'capture_canvas';
 
 function capturePoster() {
   const diagramSvg = document.querySelector('.geDiagramContainer > svg') as HTMLElement
-  const fullImage = (domtoimage as any).toPng(diagramSvg);
+  const fullImage = domtoimage.toPng(diagramSvg).catch(() => IMG_FALLBACK);
   // const imageHandler = Image.load(fullImage);
   // console.log(imageHandler.getMatrix())
   return fullImage
