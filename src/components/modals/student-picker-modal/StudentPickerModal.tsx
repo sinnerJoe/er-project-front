@@ -3,7 +3,7 @@ import { Student, User } from 'shared/interfaces/User';
 import { useLoadingRequest } from 'utils/hooks';
 import { getStudents } from 'shared/endpoints';
 import PickerModal, { PickerModalProps, StandardOverridenProps } from '../picker-modal/PickerModal';
-import { Typography, Modal, Row, Col, Input, Select } from 'antd';
+import { Typography, Modal, Row, Col, Input, Select, Tooltip } from 'antd';
 import moment from 'moment';
 import { SERVER_DATE, SERVER_DATE_TIME } from 'shared/constants';
 import { getCurrentYear } from 'utils/datetime';
@@ -50,10 +50,15 @@ export default function StudentPickerModal({ onOk, visible, excluded = [], ...re
     const controls = (
         <Row className="full-width mb-2" justify="space-between">
             <Col span={19}>
-                <Input value={searchQuery} onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} placeholder="Ion Popescu" />
+                <Input
+                    value={searchQuery}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                    placeholder="Ion Popescu, ion@mail.com, A3" />
             </Col>
             <Col>
-                <Select options={yearOptions} value={year} onChange={setYear} />
+                <Tooltip title="Registration year">
+                    <Select options={yearOptions} value={year} onChange={setYear} />
+                </Tooltip>
             </Col>
         </Row>
     )
@@ -70,11 +75,17 @@ export default function StudentPickerModal({ onOk, visible, excluded = [], ...re
             title="Add student"
             controls={controls}
             visible={visible}
-            renderItem={({ id, group, firstName, lastName, createdAt }) => (
+            renderItem={({ id, group, firstName, lastName, createdAt, email }) => (
                 <React.Fragment key={id}>
-                    <div>{`${firstName} ${lastName}`}
-                        <Text className="ml-1" type="secondary">registered on {moment(createdAt, SERVER_DATE_TIME).format(SERVER_DATE)}</Text></div>
-                    <Text type="secondary">
+                    <div><Text strong>{`${firstName} ${lastName}`}</Text>
+                        <Text className="ml-1" type="secondary">({email})</Text></div>
+                    <div>
+
+                        <Text>
+                            Registered on {moment(createdAt, SERVER_DATE_TIME).format(SERVER_DATE)}
+                        </Text>
+                    </div>
+                    <Text>
                         {
                             group ? `Group ${group.name} from ${group.year}`
                                 : 'Not assigned to any group'
