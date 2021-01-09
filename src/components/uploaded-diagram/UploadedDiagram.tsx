@@ -1,52 +1,84 @@
 import React, { ReactNode } from 'react'
-import { Row, Col, Button, Space, Typography } from 'antd'
+import { Row, Col, Button, Space, Typography, Carousel, Image, Popover } from 'antd'
 
 import paths from 'paths';
 import './UploadedDiagram.scss';
-import { LinkOutlined, DeleteFilled, EditFilled, CaretRightOutlined } from '@ant-design/icons';
+import { LinkOutlined, DeleteFilled, EditFilled, CaretRightOutlined, EyeOutlined, EyeFilled } from '@ant-design/icons';
 import InfoLabel from 'components/info-label/InfoLabel';
 import { Solution, SolutionTab } from 'interfaces/Solution';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { AssignmentModel } from 'interfaces/Assignment';
-import { deleteDiagram } from 'actions/diagram';
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
-import { deleteSolution } from 'shared/endpoints';
+import { changeSolutionTitle, deleteSolution } from 'shared/endpoints';
+import SubmittedMark from 'components/submitted-mark/SubmittedMark';
+import { IMG_FALLBACK } from 'shared/constants';
+import PreviewImage from 'components/preview-image/PreviewImage';
+import PromiseButton from 'components/promise-button/PromiseButton';
+import { openConfirmPromise } from 'utils/modals';
+import EditableField from 'components/editable-field/EditableField';
 
-const {Title} = Typography;
+const { Title, Text } = Typography;
 
 
 
-type Props = { onDelete: Function} & Partial<Solution>;
+type Props = { onRefresh: () => void } & Solution;
 
-const testTabs: Partial<SolutionTab>[] = [
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-    {
-        poster: '/images/diagram_image_placeholder.png',
-        title:"First tab"
-    },
-];
+export default function UploadedDiagram({
+    reviewedAt,
+    mark,
+    reviewer,
+    title,
+    onRefresh,
+    tabs = [],
+    updatedOn = new Date().toISOString(),
+    id,
+    assignment
+}: Props) {
 
-const testAssignments: Partial<AssignmentModel>[] = [
-    {
-        title:"Create the schema for UAIC DB."
-    }
-]
+    const renderImagePreview = (poster?: string, index: number = 0) => <PreviewImage poster={poster} key={index} />;
 
-export default function UploadedDiagram({title, onDelete=() => {}, tabs=testTabs, updatedOn=new Date().toISOString(), id, assignments = testAssignments}: Props) {
+    const reviewed = !!reviewedAt;
+
+    const deleteButton = (
+        <span>
+            <PromiseButton
+                icon={<DeleteFilled />}
+                disabled={reviewed}
+                onClick={() => {
+                    if (id != null) {
+                        return openConfirmPromise({
+                            onOk: () => {
+                                return deleteSolution(id).then(onRefresh);
+                            },
+                            content: (
+                                <span>
+                                    Are you sure you want to remove the solution <Text strong>{title}</Text>? 
+                                    <div className="text-center mt-2">
+                                        <Text strong type="danger">This change is irreversible!</Text>
+                                    </div>
+                                </span>
+                            )
+                        })
+                    }
+                }}
+                className="standard-button" type="primary" danger>
+                Delete
+            </PromiseButton>
+        </span>
+    )
+
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
-            <Col className="meta-info">
-                <Title className="mb-5" level={4}>
-                    {title}
-                </Title>
+            <Col className="meta-info pt-1" md={10} lg={8}>
+                    <Title className="mb-5" level={4}>
+                <EditableField initialValue={title} 
+                    onSave={(newTitle) => changeSolutionTitle(id, newTitle, onRefresh)}>
+                        <span>
+                            {title}
+                        </span>
+                </EditableField>
+                    </Title>
                 <InfoLabel text="Diagrams">
                     <ul itemType=''>
                         {tabs.map((tab, key) => (
@@ -55,46 +87,48 @@ export default function UploadedDiagram({title, onDelete=() => {}, tabs=testTabs
                     </ul>
                 </InfoLabel>
                 <InfoLabel text="Last edit">
-                    {moment(updatedOn).format('DD.MM.YYYY HH:mm')}
+                    {updatedOn}
                 </InfoLabel>
-                <InfoLabel text="Submitted to">
-                    {assignments.map((assignment, key) => (
-                        <Link key={key} to={`${paths.EDIT_DIAGRAM}?`}>
-                            <AttachmentLink> 
-                                {assignment.title}
-                            </AttachmentLink>
-                        </Link>
-                    ))}
-                    {
-                        !assignments.length && <i>Nothing</i>
+                {assignment && <InfoLabel text="Submitted to">
+                    <i>{assignment.title}</i>
+                </InfoLabel>}
+                {reviewedAt && (
+                    <InfoLabel text="Review">
+                        <SubmittedMark reviewedAt={reviewedAt || undefined} mark={mark} reviewer={reviewer} />
+                    </InfoLabel>
+                )}
+            </Col>
+            <Col md={8}>
+                <Image.PreviewGroup>
+
+                    {tabs.length > 1 && <Carousel verticalSwiping dotPosition="left" dots={{ className: 'black-dots' }}>
+
+                        {tabs.map(({ poster }, index) => renderImagePreview(poster, index))}
+
+                    </Carousel>
                     }
-                </InfoLabel>
+                    {tabs.length == 1 && renderImagePreview(tabs[0].poster)}
+                </Image.PreviewGroup>
             </Col>
             <Col>
-                <img className="image" src={tabs[0].poster} />
-            </Col>
-            <Col>
-            <Space direction="vertical">
-                
+                <Space direction="vertical">
+
                     <Link to={`${paths.EDIT_DIAGRAM}?solId=${id}`}>
-                        <Button className="standard-button" type="primary">
-                            <Row align="middle"><EditFilled className="mr-2"/> Edit </Row>
+                        <Button icon={!reviewed ? <EditFilled />: <EyeFilled />}  className="standard-button" type="primary">
+                            {!reviewed ? 'Edit' : 'View'}
                         </Button>
                     </Link>
-                
-                
-                        <Button 
-                        onClick={() => {
-                            if(typeof id !== 'undefined') {
-                                deleteSolution(id).then(onDelete as any)
-                            } 
-                        }}
-                        className="standard-button" type="primary" danger>
-                            <Row align="middle"><DeleteFilled className="mr-2"/> Delete </Row>
-                        </Button>
-                
-            </Space>
-                    
+
+                    {!reviewed ? deleteButton : 
+                        <Popover 
+                            trigger="hover" 
+                            content={<Text>Cannot delete reviewed solutions.</Text>}>
+                            {deleteButton}
+                        </Popover>
+                    }
+
+                </Space>
+
             </Col>
         </Row>
     )

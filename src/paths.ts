@@ -5,6 +5,7 @@ export default {
     EDIT_DIAGRAM: '/edit-diagram',
     STUDENT_ASSIGNMENTS: '/assignments',
     EDIT_ASSIGNMENT: '/edit-assignment',
+    CREATE_ASSIGNMENT: '/create-assignment',
     PROFESSOR_ASSIGNMENTS: '/professor-assignments',
     REGISTER: '/register',
     LOGIN: '/login',
@@ -13,5 +14,13 @@ export default {
     NOT_FOUND: '/not-found',
     CREATE_PLAN: '/create-plan',
     EDIT_PLAN: '/edit-plan',
-    PLANS: '/plans'
+    PLANS: '/plans',
+    GROUPS: '/groups',
+    USERS: '/users',
+    CHANGE_PASSWORD: '/change-password',
+    EDIT_PROFILE: '/edit-profile',
+    ALL_ASSIGNMENTS: '/all-assignments',
+    FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password',
+    CONFIRM_ACCOUNT: '/confirm'
 };

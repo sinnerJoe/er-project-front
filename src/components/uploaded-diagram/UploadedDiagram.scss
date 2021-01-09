@@ -9,5 +9,31 @@
     }
     .standard-button {
         width: 120px;
+        box-sizing: border-box;
+        padding-right: 50px;
+    }
+
+    .slick-dots.black-dots {
+        $thickness: 13px;
+        width: $thickness + 4px;
+        border-radius: $thickness;
+        background: white;
+        > li, > li button {
+            background: rgb(122, 122, 122);
+            width: $thickness;
+            height: $thickness;
+            border-radius: 50%;
+
+            &:hover {
+                background: rgb(80, 80, 80);
+            }
+
+        }
+        > li.slick-active, > li.slick-active button {
+            background: black;
+            width: $thickness;
+            height: 24px;
+            border-radius: $thickness;
+        }
     }
 }

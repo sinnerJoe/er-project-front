@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import { mxgraph, mxgraphFactory } from "ts-mxgraph";
 import domtoimage from 'dom-to-image'
+// import domtoimage from 'dom-to-image-more';
 import {Image} from 'image-js';
+import { IMG_FALLBACK } from "shared/constants";
 const { mxGraph, mxGraphModel, mxCell, mxGeometry, mxPoint } = mxgraphFactory({
   mxLoadResources: false,
   mxLoadStylesheets: false,
@@ -21,32 +23,26 @@ const CANVAS_ID = 'capture_canvas';
 
 function capturePoster() {
   const diagramSvg = document.querySelector('.geDiagramContainer > svg') as HTMLElement
-  const fullImage = (domtoimage as any).toPng(diagramSvg);
+  const fullImage = domtoimage.toPng(diagramSvg).catch(() => IMG_FALLBACK);
   // const imageHandler = Image.load(fullImage);
   // console.log(imageHandler.getMatrix())
   return fullImage
 }
 
-function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: string, label: string}[], onSave: (graphData: any) => void }) {
+function initDiagram(element: any, cb: any, config: { 
+  defaultSetup: {
+    schema: string, 
+    diagramType: string
+    label: string}[], 
+    onSave: (graphData: any) => void,
+    viewMode: boolean
+  }) {
   var editorUiInit = EditorUi.prototype.init;
   EditorUi.prototype.init = function () {
     editorUiInit.apply(this, arguments);
     this.actions.get("export").setEnabled(false);
 
     // Updates action states which require a backend
-    if (!Editor.useLocalStorage) {
-      setTimeout(
-        mxUtils.bind(this, function (this: any) {
-          var enabled = true;
-          // this.actions.get("open").setEnabled(enabled || Graph.fileSupport);
-          this.actions.get("import").setEnabled(enabled || Graph.fileSupport);
-          this.actions.get("save").setEnabled(enabled);
-          this.actions.get("saveAs").setEnabled(enabled);
-          this.actions.get("export").setEnabled(enabled);
-        }),
-        0
-      );
-    }
   };
   // Adds required resources (disables loading of fallback properties, this can only
   // be used if we know that all keys are defined in the language specific file)
@@ -68,8 +64,8 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
         [themeIndex]: xhr[1].getDocumentElement(),
       };
       // console.log(config.defaultSetup);
-      const defaultSetup = config.defaultSetup.map(({schema, label})=> 
-              ({label, textSchema: schema }));
+      const defaultSetup = config.defaultSetup.map(({schema, label, diagramType})=> 
+              ({label, diagramType, textSchema: schema}));
 
       const editor = new Editor(urlParams["chrome"] == "0", themes)
       
@@ -96,10 +92,11 @@ function initDiagram(element: any, cb: any, config: { defaultSetup: {schema: str
 
 type Props = {
   defaultSetup: any,
-  onSave: (xmlData: any[]) => void
+  onSave: (xmlData: any[]) => void,
+  viewMode?: boolean;
 }
 
-export default function Diagram({defaultSetup, onSave}: Props) {
+export default function Diagram({defaultSetup, onSave, viewMode=false}: Props) {
 
     const wrapperRef = useRef<Element | null>((null as unknown) as HTMLElement);
     const editorUi = useRef<any>(null);
@@ -108,11 +105,16 @@ export default function Diagram({defaultSetup, onSave}: Props) {
 
     useLayoutEffect(() => {
         initDiagram(wrapperRef.current, (editor:any) => {editorUi.current = editor}, {
-          defaultSetup: defaultSetup.map((({title, diagramXml}: any) => ({label: title, schema: diagramXml}))),
+          defaultSetup: defaultSetup.map((({title, diagramXml, type}: any) => ({
+            label: title, 
+            schema: diagramXml, 
+            diagramType: type
+          }))),
           onSave: (xmlData) => {
             console.log(xmlData);
             onSave(xmlData);
-          } 
+          },
+          viewMode
         });
         return () => {
           if(editorUi.current) {

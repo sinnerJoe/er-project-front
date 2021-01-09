@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ModalProps } from "antd/lib/modal";
+import {Modal} from "antd";
+import { PartialBy } from "interfaces/helpers";
 
 export enum ModalType {
     CreateSolution,
@@ -12,7 +15,7 @@ export enum ModalLevel {
 export interface ModalInstance {
     level: ModalLevel,
     modalType: ModalType, 
-    props?: Object
+    props?: any
 }
 
 export interface ModalSliceData {
@@ -47,6 +50,7 @@ const modalSlice = createSlice({
         }
     }
 })
+
 
 export const {openModal, updateProps, closeModal} = modalSlice.actions;
 

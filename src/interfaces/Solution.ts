@@ -1,11 +1,12 @@
-import { PassThrough } from "stream";
-import { AssignmentModel } from "./Assignment";
-import { Mark } from "./Mark";
+import { Moment } from "moment";
+import { IdIndex } from "shared/interfaces/Id";
+import { Student, Teacher } from "shared/interfaces/User";
+import { AssignmentModel, ServerAssignment } from "./Assignment";
 
 export type SolutionTab = {
     title: string,
     diagramXml?: string,
-    poster?: string
+    poster?: string,
 };
 
 export type Solution = {
@@ -13,15 +14,19 @@ export type Solution = {
     title: string,
     updatedOn: string,
     id: number,
-    assignments: Partial<AssignmentModel>[],
-    mark?: Mark
+    mark?: IdIndex,
+    reviewer?: Teacher,
+    assignment?: ServerAssignment,
+    reviewedAt: string | null,
+    userId: IdIndex
 };
 
 export interface ServerDiagram {
     id: number,
     name: string,
     content: string,
-    image: string
+    image: string,
+    type: string
 }
 export interface ServerSolution {
     id: number,
@@ -31,22 +36,32 @@ export interface ServerSolution {
     createdAt: string,
     updatedAt: string,
     mark: number | null,
-    reviewedBy: number | null,
-    reviewedAt: string | null,
+    reviewedAt?: string | null,
+    reviewer?: Teacher,
+    assignment?: ServerAssignment,
+    submittedAt: string | Moment,
     diagrams: ServerDiagram[]
-
 }
+
+export interface EvaluatedSolution extends Omit<ServerSolution, 'reviewedBy'>{
+    reviewedBy?: Teacher
+}   
 
 export function parseSolution(solution: ServerSolution): Partial<Solution> {
     return {
         id: solution.id,
         title: solution.title,
-        mark: solution.mark ? solution.mark : undefined,
+        userId: solution.userId,
+        mark: solution.mark,
         updatedOn: solution.updatedAt,
+        assignment: solution.assignment,
         tabs: solution.diagrams.map(diagram => ({
           diagramXml: diagram.content,
           poster: diagram.image,
-          title: diagram.name
-        } as SolutionTab))
+          title: diagram.name,
+          type: diagram.type
+        } as SolutionTab)),
+        reviewer: solution.reviewer,
+        reviewedAt: solution.reviewedAt
       } as Partial<Solution>;
 }

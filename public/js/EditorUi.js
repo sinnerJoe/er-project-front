@@ -1007,7 +1007,7 @@ EditorUi.prototype.toolbarHeight = 38;
 /**
  * Specifies the height of the footer. Default is 28.
  */
-EditorUi.prototype.footerHeight = 28;
+EditorUi.prototype.footerHeight = 0;
 
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
@@ -3177,7 +3177,7 @@ EditorUi.prototype.updateActionStates = function()
 
     var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
     this.menus.get('layout').setEnabled(unlocked);
-    this.menus.get('insert').setEnabled(unlocked);
+    // this.menus.get('insert').setEnabled(unlocked);
     this.menus.get('direction').setEnabled(unlocked && vertexSelected);
     this.menus.get('align').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);
@@ -3400,15 +3400,15 @@ EditorUi.prototype.createUi = function()
 	// Creates menubar
 	this.menubar = (this.editor.chromeless) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
-	if(!this.editor.chromeless) {
-		var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
-		let tabData = !this.config.defaultSetup || !this.config.defaultSetup.length ? null : this.config.defaultSetup; 
-		this.tabManager = new TabManager(this, tabBarContainer, tabData);
-		this.tabManager.init();
-		this.container.appendChild(tabBarContainer);
+	// if(!this.editor.chromeless) {
+	var tabBarContainer = this.createDiv(mxConstants.TAB_BAR_CLASS);
+	let tabData = !this.config.defaultSetup || !this.config.defaultSetup.length ? null : this.config.defaultSetup; 
+	this.tabManager = new TabManager(this, tabBarContainer, tabData);
+	this.tabManager.init();
+	this.container.appendChild(tabBarContainer);
 		// this.tabViewBar.addTab('ER Diagram', 0, true);
 		// this.tabViewBar.addTab('ER Diagram', 1);
-	}
+	// }
 
 	if (this.menubar != null)
 	{

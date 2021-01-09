@@ -5,13 +5,13 @@ import { SolutionOutlined } from '@ant-design/icons';
 import ModalManager from 'app/modal-manager/ModalManager';
 import ModalController from 'app/modal-manager/ModalController';
 import { ModalType } from 'store/slices/modals';
+import paths from 'paths';
 
 export default function CreateSolutionButton() {
 
-    const handleClick = useCallback(() => ModalController.open(ModalType.CreateSolution), []);
 
     return  ( 
-            <DropdownItem leftIcon={<SolutionOutlined />} onClick={handleClick}>
+            <DropdownItem leftIcon={<SolutionOutlined />} link={paths.NEW_DIAGRAM}>
                 Solution
             </DropdownItem>
  )

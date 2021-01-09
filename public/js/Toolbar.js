@@ -59,12 +59,12 @@ Toolbar.prototype.init = function()
 	// Takes into account initial compact mode
 	sw -= (screen.height > 740) ? 56 : 0;
 	
-	if (sw >= 700)
-	{
-		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
-		this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 38, 50, -4, -3, 36, -8);
-		this.addSeparator();
-	}
+	// if (sw >= 700)
+	// {
+	// 	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
+	// 	this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 38, 50, -4, -3, 36, -8);
+	// 	this.addSeparator();
+	// }
 	
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
 	viewMenu.showDisabled = true;
@@ -167,10 +167,10 @@ Toolbar.prototype.init = function()
 		this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 44, 50, 0, 0, 22, -4);
 	}
 
-	this.addSeparator();
+	// this.addSeparator();
 
-	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert', null, true);
-	this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
+	// var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert', null, true);
+	// this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
 	
 	if (urlParams['dev'] == '1')
 	{
@@ -537,40 +537,40 @@ Toolbar.prototype.createTextToolbar = function()
 	this.addSeparator();
 	
 	// FIXME: Uses geButton here and geLabel in main menu
-	var insertMenu = this.addMenuFunction('', mxResources.get('insert'), true, mxUtils.bind(this, function(menu)
-	{
-		menu.addItem(mxResources.get('insertLink'), null, mxUtils.bind(this, function()
-		{
-			this.editorUi.actions.get('link').funct();
-		}));
+	// var insertMenu = this.addMenuFunction('', mxResources.get('insert'), true, mxUtils.bind(this, function(menu)
+	// {
+	// 	menu.addItem(mxResources.get('insertLink'), null, mxUtils.bind(this, function()
+	// 	{
+	// 		this.editorUi.actions.get('link').funct();
+	// 	}));
 		
-		menu.addItem(mxResources.get('insertImage'), null, mxUtils.bind(this, function()
-		{
-			this.editorUi.actions.get('image').funct();
-		}));
+	// 	menu.addItem(mxResources.get('insertImage'), null, mxUtils.bind(this, function()
+	// 	{
+	// 		this.editorUi.actions.get('image').funct();
+	// 	}));
 		
-		menu.addItem(mxResources.get('insertHorizontalRule'), null, mxUtils.bind(this, function()
-		{
-			document.execCommand('inserthorizontalrule', false, null);
-		}));
-	}));
+	// 	menu.addItem(mxResources.get('insertHorizontalRule'), null, mxUtils.bind(this, function()
+	// 	{
+	// 		document.execCommand('inserthorizontalrule', false, null);
+	// 	}));
+	// }));
 	
-	insertMenu.style.whiteSpace = 'nowrap';
-	insertMenu.style.overflow = 'hidden';
-	insertMenu.style.position = 'relative';
-	insertMenu.innerHTML = '<div class="geSprite geSprite-plus" style="margin-left:-4px;margin-top:-3px;"></div>' +
-		this.dropdownImageHtml;
-	insertMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
+	// insertMenu.style.whiteSpace = 'nowrap';
+	// insertMenu.style.overflow = 'hidden';
+	// insertMenu.style.position = 'relative';
+	// insertMenu.innerHTML = '<div class="geSprite geSprite-plus" style="margin-left:-4px;margin-top:-3px;"></div>' +
+	// 	this.dropdownImageHtml;
+	// insertMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
 	
-	// Fix for item size in kennedy theme
-	if (EditorUi.compactUi)
-	{
-		insertMenu.getElementsByTagName('img')[0].style.left = '24px';
-		insertMenu.getElementsByTagName('img')[0].style.top = '5px';
-		insertMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
-	}
+	// // Fix for item size in kennedy theme
+	// if (EditorUi.compactUi)
+	// {
+	// 	insertMenu.getElementsByTagName('img')[0].style.left = '24px';
+	// 	insertMenu.getElementsByTagName('img')[0].style.top = '5px';
+	// 	insertMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
+	// }
 	
-	this.addSeparator();
+	// this.addSeparator();
 	
 	// KNOWN: All table stuff does not work with undo/redo
 	// KNOWN: Lost focus after click on submenu with text (not icon) in quirks and IE8. This is because the TD seems

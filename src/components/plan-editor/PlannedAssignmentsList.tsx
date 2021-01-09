@@ -10,6 +10,7 @@ import PickAssignmentModal from './PickAssignmentModal';
 import { IdIndex } from 'shared/interfaces/Id';
 import DateInterval from 'components/date-interval/DateInterval';
 import { ColumnsType } from 'antd/lib/table';
+import { DATE_WITHOUT_YEAR } from 'shared/constants';
 
 const { Text } = Typography;
 
@@ -56,7 +57,6 @@ export default function PlannedAssignmentsList({ onChange = _.noop, value = [], 
             defaultSortOrder: "ascend",
             sortDirections: ['ascend'],
             sorter: (a: PlannedAssignment, b: PlannedAssignment) => {
-                console.log(a,b)
                 if (a.startDate.isAfter(b.startDate)) {
                     return 1;
                 } else if (a.startDate.isSame(b.startDate)) {
@@ -71,7 +71,7 @@ export default function PlannedAssignmentsList({ onChange = _.noop, value = [], 
                         return renderEditableTime(handleChangeInterval, record);
 
                     default:
-                        return <DateInterval start={record.startDate as any} end={record.endDate as any} />
+                        return <DateInterval start={record.startDate as any} end={record.endDate as any} dateFormat={DATE_WITHOUT_YEAR} />
                 }
             },
         },

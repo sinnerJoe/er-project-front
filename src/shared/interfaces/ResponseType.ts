@@ -16,6 +16,16 @@ export enum RequestErrorStatus {
     NotFound="not_found"
 }
 
+export enum HttpResponseCode {
+    NotFound=404,
+    NotAuthenticated=401,
+    NotAuthorized=403,
+    BadRequest=400,
+    InternalServerError=500,
+    InvalidMethod=405,
+    Success=200
+}
+
 export interface ErrorResponse {
     message: string,
     date: string,

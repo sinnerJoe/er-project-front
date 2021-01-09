@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from 'antd';
+import { Col, Empty, Row, Skeleton, Space, Typography } from 'antd';
 import _ from 'lodash';
 import Modal from 'antd/lib/modal/Modal';
 import DirectionIcon from 'components/direction-icon/DirectionIcon';
@@ -8,6 +8,7 @@ import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import { fetchAllAssignments, fetchAssignment } from 'shared/endpoints';
 import { useLoadingRequest } from 'utils/hooks';
 import './PickAssignmentModal.scss';
+import PickerListSkeleton from 'components/modals/picker-modal/PickerListSkeleton';
 const { Text } = Typography;
 
 async function fetchUnpickedAssignments(existingAssignments: ServerAssignment[]) {
@@ -28,7 +29,7 @@ export default function PickAssignmentModal(props: PickAssignmentModalProps) {
 
     const [chosenAssignment, chooseAssignment] = useState<ServerAssignment | null>(null);
 
-    const [request, assignments, loading] = useLoadingRequest(fetchUnpickedAssignments, [], true);
+    const [request, assignments, loading] = useLoadingRequest(fetchUnpickedAssignments, [], {initialLoading: true});
 
     const [expandedAssignment, expand] = useState<ServerAssignment | null>(null);
 
@@ -94,8 +95,8 @@ export default function PickAssignmentModal(props: PickAssignmentModalProps) {
             })
             }
             {/* TODO: Display something in these cases */}
-            {loading ? "Loading data" : ""} 
-            {!loading && assignments.length === 0 ? "No data": ""}
+            {loading && <PickerListSkeleton />}
+            {!loading && assignments.length === 0 && <Empty />}
 
         </Modal>
     )

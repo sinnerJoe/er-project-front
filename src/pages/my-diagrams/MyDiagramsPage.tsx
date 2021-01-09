@@ -1,48 +1,59 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Button, Space } from 'antd'
+import { Button, Skeleton, Space } from 'antd'
 import _ from 'lodash';
-import { BrowserRouter as Router, Route, NavLink, useHistory } from 'react-router-dom'
 import UploadedDiagram from 'components/uploaded-diagram/UploadedDiagram'
 import PageContent from 'components/page-content/PageContent'
 import { parseSolution, Solution, SolutionTab } from 'interfaces/Solution'
-import moment from 'moment'
-import SearchBox from 'components/searchbox/SearchBox'
-import { PlusSquareFilled } from '@ant-design/icons'
 import paths from 'paths'
-import CreateSolutionModal from 'components/modals/create-solution-modal/CreateSolutionModal'
-import { useModal } from 'components/modals/modal-hooks'
 import { getOwnSolutions } from 'shared/endpoints'
+import FloatingPlus from 'components/floating-plus/FloatingPlus';
+import NoData from 'components/no-data/NoData';
 
 export default function MyDiagramsPage(props: any) {
-  const [solutions, setSolutions] = useState<Partial<Solution>[]>([]);
-  const fetchSolutions = useCallback(() => { 
+  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [loading, setLoading] = useState(true);
+  const fetchSolutions = useCallback(() => {
+    setLoading(true);
     getOwnSolutions()
-    .then((response) => response.data.data.map(parseSolution))
-    .then(setSolutions).catch(_.noop);
+      .then((response) => response.data.data.map(parseSolution))
+      .then(setSolutions as any).catch(_.noop)
+      .then(() => setLoading(false));
   }, []);
   useEffect(fetchSolutions, [...Object.values(props)])
-  console.log(solutions)
-  const [modal, openModal] = useModal(CreateSolutionModal, {});
+
+  if (!loading && !solutions.length) {
+    return (
+      <div>
+        <NoData description="You currently have no solutions" />
+        <FloatingPlus
+          link={paths.NEW_DIAGRAM}
+        />
+      </div>
+    )
+  }
+
   return (
-    <PageContent>
-      {modal}
-      <SearchBox 
-        onChange={()=>{}} 
-        onButtonClick={openModal} 
-        buttonLabel="Create New Solution" />
+    <PageContent spaceTop>
       <Space direction="vertical" size="large" className="full-width">
-        {
-          solutions.map((solution) => (
-            <UploadedDiagram 
-              title={solution.title}
-              onDelete={fetchSolutions} 
-              tabs={solution.tabs} 
-              id={solution.id} 
-              assignments={solution.assignments} 
-              updatedOn={solution.updatedOn} />
-          ))
+        {!loading && solutions.map((solution) => (
+          <UploadedDiagram
+            userId={solution.userId}
+            reviewedAt={solution.reviewedAt}
+            reviewer={solution.reviewer}
+            mark={solution.mark}
+            title={solution.title || ''}
+            onRefresh={fetchSolutions}
+            tabs={solution.tabs || []}
+            id={solution.id || 0}
+            assignment={solution.assignment}
+            updatedOn={solution.updatedOn} />
+        ))
         }
+        {loading && Array.from({ length: 5 }).map((v, k) => <Skeleton />)}
       </Space>
+      <FloatingPlus
+        link={paths.NEW_DIAGRAM}
+      />
     </PageContent>
   )
 }

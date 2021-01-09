@@ -13,6 +13,7 @@ import { fetchCurrentUser } from 'store/slices/user';
 import store from 'store';
 import withRequestedUser from 'utils/withRequestedUser';
 import EmptyPage from 'pages/empty-page/EmptyPage';
+import { notify } from 'shared/error-handlers';
 
 const loginRequest = async (email: string, password: string) => {
     const response = await authenticate(email, hashPassword(password));
@@ -24,14 +25,16 @@ const loginRequest = async (email: string, password: string) => {
 
 function LoginPage(props: any) {
     const [form] = Form.useForm();
-    // const [loading, setLoading] = useState(false);
-    // const [response, setResponse] = useState<{status: string, message: string} | null> (null);
     const [authRequest, response, loading] = useLoadingRequest<{message: string, status: string} | null>(loginRequest, null);
     const history = useHistory();
     const onFinish = ({email, password}: any) => {
-        // TODO RECEIVE USER DATA AND REDIRECT ACCORDINGLY TO THE ROLE
-        authRequest(email, password).then(() => {
-            history.replace(paths.PROFESSOR_ASSIGNMENTS);
+        authRequest(email, password).then((response) => {
+            if(response.data.data) {
+                notify({type: "success", message: "Authentication succeeded"})(response);
+                history.replace('');
+            } else {
+                notify({type: "error", message: "Authentication faied"})(response);
+            }
         })
         .catch(_.identity);
     };
@@ -51,20 +54,27 @@ function LoginPage(props: any) {
                     <Form.Item label='Password' name="password">
                         <Password placeholder="***********" />
                     </Form.Item>
-                    <Row gutter={[10, 10]}>
+                    <Row  className="full-width" justify="end">
                     <Col>
-                    <Form.Item>
-                        <Button loading={loading} type="primary" htmlType="submit"> 
-                            Sign In
-                        </Button>
-                    </Form.Item>
+                        <Link to={{pathname: paths.FORGOT_PASSWORD, state: {avoidAuth: true}}}>
+                            <Button type="link">
+                                Forgot password?
+                            </Button>
+                        </Link>
                     </Col>
-                    <Col>
+                    <Col className="ml-2">
                         <Link to={{pathname: paths.REGISTER, state: {avoidAuth: true}}}>
                             <Button  type="ghost">
                                 Sign Up
                             </Button>
                         </Link>
+                    </Col>
+                    <Col className="ml-2">
+                    <Form.Item>
+                        <Button loading={loading} type="primary" htmlType="submit"> 
+                            Sign In
+                        </Button>
+                    </Form.Item>
                     </Col>
                     </Row>
                     {response && <Alert

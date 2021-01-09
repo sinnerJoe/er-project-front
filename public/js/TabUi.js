@@ -14,7 +14,7 @@ TabViewBar.prototype.clear = function () {
 TabViewBar.prototype.renderTabs = function (data) {
     this.clear();
     for (var i = 0; i < data.length; i++) {
-        this.addTab(data[i].label, data[i].id, data[i].focused, data[i].editingLabel)
+        this.addTab(data[i].label, data[i].id, data[i].focused, data[i].editingLabel, data.length > 1)
     }
 }
 
@@ -27,7 +27,7 @@ TabViewBar.prototype.renderDeleteButton = function (parentElement) {
     return closeTabButton;
 }
 
-TabViewBar.prototype.addTab = function (label, id, focused, editingLabel) {
+TabViewBar.prototype.addTab = function (label, id, focused, editingLabel, renderClose) {
     var tabElement = document.createElement('a');
     tabElement.className = [
         mxConstants.TAB_CLASS,
@@ -41,20 +41,23 @@ TabViewBar.prototype.addTab = function (label, id, focused, editingLabel) {
         var input = this.renderRenameInput(label, id);
         tabElement.appendChild(input);
     }
-    var closeTabButton = this.renderDeleteButton(tabElement);
-
+    
     this.container.appendChild(tabElement);
-
-    mxEvent.addListener(closeTabButton, 'click', mxUtils.bind(this, function (evt) {
-        const answer = confirm('Are you sure you want to close the tab? The data within the tab will be lost.');
-        if (answer) {
-            const eventObject = new mxEventObject(mxConstants.CLOSE_TAB_EVENT, 'id', id);
-            tabElement.remove();
-            this.fireEvent(eventObject);
-        }
-        evt.preventDefault();
-        evt.stopPropagation();
-    }));
+    
+    if(renderClose) {
+        var closeTabButton = this.renderDeleteButton(tabElement);
+        
+        mxEvent.addListener(closeTabButton, 'click', mxUtils.bind(this, function (evt) {
+            const answer = confirm('Are you sure you want to close the tab? The data within the tab will be lost.');
+            if (answer) {
+                const eventObject = new mxEventObject(mxConstants.CLOSE_TAB_EVENT, 'id', id);
+                tabElement.remove();
+                this.fireEvent(eventObject);
+            }
+            evt.preventDefault();
+            evt.stopPropagation();
+        }));
+    }
 
 
     if(!editingLabel) {

@@ -19,6 +19,7 @@ Actions.prototype.init = function()
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
+	var viewMode = ui.config.viewMode;
 	var isGraphEnabled = function()
 	{
 		return Action.prototype.isEnabled.apply(this, arguments) && graph.isEnabled();
@@ -47,40 +48,11 @@ Actions.prototype.init = function()
 			ui.tabManager.convertToUml(name)
 		})
 	}, true);
-	this.addAction('import...', function()
-	{
-		window.openNew = false;
-		window.openKey = 'import';
-		
-		// Closes dialog after open
-		window.openFile = new OpenFile(mxUtils.bind(this, function()
-		{
-			ui.hideDialog();
-		}));
-		
-		window.openFile.setConsumer(mxUtils.bind(this, function(xml, filename)
-		{
-			try
-			{
-				var doc = mxUtils.parseXml(xml);
-				editor.graph.setSelectionCells(editor.graph.importGraphModel(doc.documentElement));
-			}
-			catch (e)
-			{
-				mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
-			}
-		}));
-
-		// Removes openFile if dialog is closed
-		ui.showDialog(new OpenDialog(this).container, 320, 220, true, true, function()
-		{
-			window.openFile = null;
-		});
-	}).isEnabled = isGraphEnabled;
-	this.addAction('save', function() { ui.saveFile(false); }, null, null, Editor.ctrlKey + '+S').isEnabled = isGraphEnabled;
-	this.addAction('saveAs...', function() { 
+	var saveAction = this.addAction('save', function() { 
 		ui.tabManager.serializeTabs().then(serializedTabs => ui.config.onSave(serializedTabs));
-	}, null, null, Editor.ctrlKey + '+Shift+S').isEnabled = isGraphEnabled;
+	}, null, null, Editor.ctrlKey + '+S')
+	saveAction.isEnabled = isGraphEnabled;
+	saveAction.setEnabled(!viewMode);
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 296, true, true); });
 	this.addAction('editDiagram...', function()
 	{

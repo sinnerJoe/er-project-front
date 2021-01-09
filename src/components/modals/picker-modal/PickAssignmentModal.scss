@@ -1,0 +1,24 @@
+.modal-picker {
+    display: flex;
+    flex-direction: column;
+
+    .list-entry {
+        transition: max-height 0.2s, background-color 0.3s;
+        box-sizing: border-box;
+        background-color: inherit;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+
+        &.selected-entry {
+            background-color: #e6f7ff;
+        }
+
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+            border-bottom-color: transparent;
+        }
+
+    }
+}

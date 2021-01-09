@@ -1,22 +1,26 @@
 import { Mark } from 'interfaces/Mark'
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
+import { IdIndex } from 'shared/interfaces/Id';
 
 import {getMarkClass} from './mark-helpers';
 
 import './mark-view.scss';
 
-type Props = Partial<Mark> & {
-    onClick?: () => void,
-    className: string
+export interface MarkViewProps extends HTMLAttributes<HTMLSpanElement> {
+    mark?: React.ReactNode,
+    containerClass?: string,
+    iconClass?: string
 }
 
-export default function MarkView(props: Props) {
-    const mark = props.mark || 'N/A';
+export default function MarkView({mark, className, onClick, containerClass="", iconClass=getMarkClass(1), ...rest}: MarkViewProps) {
+    const renderedMark = mark || 'N/A';
+
+    const markClass = ['string', 'number'].includes(typeof renderedMark) ? getMarkClass(mark as any) : iconClass;
 
     return (
-        <span onClick={props.onClick} className="mark-input">
-            <span className={ `mark-icon ${getMarkClass(props.mark)} ${props.className}` }>
-                {mark}
+        <span onClick={onClick} className={ `mark-input ${containerClass}` } {...rest}>
+            <span className={ `mark-icon ${markClass} ${className}` }>
+                {renderedMark}
             </span>
         </span>
     )

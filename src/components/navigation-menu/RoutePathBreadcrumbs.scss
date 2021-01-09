@@ -1,0 +1,19 @@
+.route-path-breadcrumbs {
+    display: flex;
+
+    & > span {
+        display: flex;
+        align-items: center;
+        .ant-breadcrumb-separator {
+            color: var(--text-color);
+        }
+    }
+
+    .path-label {
+        color: var(--text-color);
+    }
+    .route-crumb {
+        display: flex;
+        cursor: pointer;
+    }
+}

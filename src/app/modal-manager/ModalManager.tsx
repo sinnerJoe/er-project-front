@@ -32,13 +32,17 @@ export default function ModalManager(props: {}) {
     return (
         <React.Fragment>
             {
-                orderedModals.map(({ instance: { modalType, props = {} }, key }) => {
+                orderedModals.map(({ instance: { modalType, props: {onOk, ...rest} = {} }, key }) => {
+                    const closeModal = () => ModalController.close(key as any);
                     const ModalComponent = ModalDictionary[modalType];
                     return (
                         <ModalComponent
                             {...props}
                             key={key}
-                            onClose={() => ModalController.close(key as any)}
+                            onOk={(...args: any) => {
+                                onOk(...args);
+                            }}
+                            onCancel={closeModal}
                             visible={true}
                         />
                     )

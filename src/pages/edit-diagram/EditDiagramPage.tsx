@@ -4,64 +4,80 @@ import {fetchSolution, getImageBase64, updateSolution} from 'shared/endpoints';
 import { parseSolution, Solution, SolutionTab } from 'interfaces/Solution';
 import Diagram from 'components/diagram';
 import paths from 'paths';
-import { diagramImage } from 'constant/test-consts';
-import { RequestErrorStatus } from 'shared/interfaces/ResponseType';
+import { useBlockHistory, useQueryStringMaster } from 'utils/hooks';
+import { useSelector } from 'react-redux';
+import { StoreData } from 'store';
+import FullScreenLoader from 'components/full-screen-loader/FullScreenLoader';
+import { IMG_FALLBACK, SolutionLoadingMessage } from 'shared/constants';
+import { redirectNotFound } from 'shared/error-handlers';
 
-export default function EditDiagramPage(props:any) {
-    // const {solutionId} = useParams();
-    const location = useLocation<{solId: string}>();
+const PNG_BASE64_HEADER = 'data:image/png;base64,';
+export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean}) {
     const history = useHistory();
     const [solution, setSolution] = useState<Partial<Solution>>();
-    const solutionId = new URLSearchParams(location.search).get('solId')
+    const solutionId = useQueryStringMaster().solId;
+    const unblockHistory = useBlockHistory();
     useEffect(() => {
         fetchSolution(Number(solutionId))
         .then((response) => setSolution(parseSolution(response.data.data)))
-        .catch(({response}) => {
-            if(response.data.status === RequestErrorStatus.NotFound) {
-                history.replace(paths.NOT_FOUND);
-            }
+        .then(() => setMessage(undefined))
+        .catch(() => {
+            unblockHistory();
+            redirectNotFound.trigger();
         })
     }, [solutionId]);
 
-    if(!solution) {
-        return null;
-    }
+    const userId = useSelector<StoreData>((state) => state.user.userId)
 
-    console.log(solution);
+    const viewMode = viewOnly || !!solution?.reviewer || (solution?.userId != userId);
+
+    const [message, setMessage] = useState<SolutionLoadingMessage | undefined>(SolutionLoadingMessage.loadingMessage)
+
 
     return (
-        <Diagram 
+        <React.Fragment>
+        <FullScreenLoader tip={message} />
+        {solution && <Diagram 
             defaultSetup={solution.tabs} 
+            viewMode={viewMode}
             onSave={async (xmlData) => {
-                console.log("DATA", xmlData);
                 if(solution) {
-                    const diagramPromises = xmlData.map(async ({title, poster, schema}: any, index: number) => {
+                    const diagramPromises = xmlData.map(async ({title, poster, schema, type}: any, index: number) => {
+                        setMessage(SolutionLoadingMessage.sendingMessage);
                         let image = poster;
 
                         if(!poster) {
+                            console.log(solution)
                             const oldImage = (solution as any)?.tabs?.[index]?.poster;
                             if(oldImage) {
-                                image = await getImageBase64(oldImage);
-                            } else {
-                                image = diagramImage;
+                                image = await getImageBase64(oldImage)
+                                        .then(img => PNG_BASE64_HEADER+img)
+                                        .catch(() => IMG_FALLBACK);
                             }
                         }
 
                         return {
                             content: schema, 
                             name: title,
-                            image
+                            image,
+                            type
                         };
                     });
+                    try {
 
-                    const diagrams = await Promise.all(diagramPromises)
-                    
-                    updateSolution(Number(solutionId), diagrams).then(() => {
+                        const diagrams = await Promise.all(diagramPromises)
+                        
+                        await updateSolution(Number(solutionId), diagrams)
+                        unblockHistory();
                         history.push(paths.MY_DIAGRAM);
-                    })
+                    } catch(error) {
+                        setMessage(undefined);
+                    }
                 }
             }}
-        />
+            />
+        }
+        </React.Fragment>
     )
     
 }

@@ -480,14 +480,14 @@ Format.prototype.refresh = function()
 		label.style.backgroundColor = this.inactiveTabBackgroundColor;
 		label.style.borderLeftWidth = '1px';
 		label.style.cursor = 'pointer';
-		label.style.width = (containsLabel) ? '50%' : '33.3%';
-		label.style.width = (containsLabel) ? '50%' : '33.3%';
+		label.style.width = '50%'
+		label.style.width = '50%'
 		var label2 = label.cloneNode(false);
-		var label3 = label2.cloneNode(false);
+		// var label3 = label2.cloneNode(false);
 
 		// Workaround for ignored background in IE
 		label2.style.backgroundColor = this.inactiveTabBackgroundColor;
-		label3.style.backgroundColor = this.inactiveTabBackgroundColor;
+		// label3.style.backgroundColor = this.inactiveTabBackgroundColor;
 		
 		// Style
 		if (containsLabel)
@@ -518,16 +518,16 @@ Format.prototype.refresh = function()
 		this.container.appendChild(textPanel);
 		
 		// Arrange
-		mxUtils.write(label3, mxResources.get('arrange'));
-		div.appendChild(label3);
+		// mxUtils.write(label3, mxResources.get('arrange'));
+		// div.appendChild(label3);
 
-		var arrangePanel = div.cloneNode(false);
-		arrangePanel.style.display = 'none';
-		this.panels.push(new ArrangePanel(this, ui, arrangePanel));
-		this.container.appendChild(arrangePanel);
+		// var arrangePanel = div.cloneNode(false);
+		// arrangePanel.style.display = 'none';
+		// this.panels.push(new ArrangePanel(this, ui, arrangePanel));
+		// this.container.appendChild(arrangePanel);
 		
 		addClickHandler(label2, textPanel, idx++);
-		addClickHandler(label3, arrangePanel, idx++);
+		// addClickHandler(label3, arrangePanel, idx++);
 	}
 };
 
@@ -3428,34 +3428,34 @@ TextFormatPanel.prototype.addFont = function(container)
 			input.value = '120 %';
 		}));
 		
-		var insertPanel = stylePanel.cloneNode(false);
-		insertPanel.style.paddingLeft = '0px';
-		var insertBtns = this.editorUi.toolbar.addItems(['link', 'image'], insertPanel, true);
+		// var insertPanel = stylePanel.cloneNode(false);
+		// insertPanel.style.paddingLeft = '0px';
+		// var insertBtns = this.editorUi.toolbar.addItems(['link', 'image'], insertPanel, true);
 
-		var btns = [
-		        this.editorUi.toolbar.addButton('geSprite-horizontalrule', mxResources.get('insertHorizontalRule'),
-				function()
-				{
-					document.execCommand('inserthorizontalrule', false);
-				}, insertPanel),				
-				this.editorUi.toolbar.addMenuFunctionInContainer(insertPanel, 'geSprite-table', mxResources.get('table'), false, mxUtils.bind(this, function(menu)
-				{
-					this.editorUi.menus.addInsertTableItem(menu);
-				}))];
-		this.styleButtons(insertBtns);
-		this.styleButtons(btns);
+		// var btns = [
+		//         this.editorUi.toolbar.addButton('geSprite-horizontalrule', mxResources.get('insertHorizontalRule'),
+		// 		function()
+		// 		{
+		// 			document.execCommand('inserthorizontalrule', false);
+		// 		}, insertPanel),				
+		// 		this.editorUi.toolbar.addMenuFunctionInContainer(insertPanel, 'geSprite-table', mxResources.get('table'), false, mxUtils.bind(this, function(menu)
+		// 		{
+		// 			this.editorUi.menus.addInsertTableItem(menu);
+		// 		}))];
+		// this.styleButtons(insertBtns);
+		// this.styleButtons(btns);
 		
-		var wrapper2 = this.createPanel();
-		wrapper2.style.paddingTop = '10px';
-		wrapper2.style.paddingBottom = '10px';
-		wrapper2.appendChild(this.createTitle(mxResources.get('insert')));
-		wrapper2.appendChild(insertPanel);
-		container.appendChild(wrapper2);
+		// var wrapper2 = this.createPanel();
+		// wrapper2.style.paddingTop = '10px';
+		// wrapper2.style.paddingBottom = '10px';
+		// wrapper2.appendChild(this.createTitle(mxResources.get('insert')));
+		// wrapper2.appendChild(insertPanel);
+		// container.appendChild(wrapper2);
 		
-		if (mxClient.IS_QUIRKS)
-		{
-			wrapper2.style.height = '70';
-		}
+		// if (mxClient.IS_QUIRKS)
+		// {
+		// 	wrapper2.style.height = '70';
+		// }
 		
 		var tablePanel = stylePanel.cloneNode(false);
 		tablePanel.style.paddingLeft = '0px';
@@ -4188,14 +4188,14 @@ StyleFormatPanel.prototype.init = function()
 		this.container.appendChild(this.addEffects(this.createPanel()));
 	}
 	
-	var opsPanel = this.addEditOps(this.createPanel());
+	// var opsPanel = this.addEditOps(this.createPanel());
 	
-	if (opsPanel.firstChild != null)
-	{
-		mxUtils.br(opsPanel);
-	}
+	// if (opsPanel.firstChild != null)
+	// {
+	// 	mxUtils.br(opsPanel);
+	// }
 	
-	this.container.appendChild(this.addStyleOps(opsPanel));
+	// this.container.appendChild(this.addStyleOps(opsPanel));
 };
 
 /**
@@ -4338,16 +4338,16 @@ StyleFormatPanel.prototype.addEditOps = function(div)
 	
 	if (this.editorUi.editor.graph.getSelectionCount() == 1)
 	{
-		btn = mxUtils.button(mxResources.get('editStyle'), mxUtils.bind(this, function(evt)
-		{
-			this.editorUi.actions.get('editStyle').funct();
-		}));
+		// btn = mxUtils.button(mxResources.get('editStyle'), mxUtils.bind(this, function(evt)
+		// {
+		// 	this.editorUi.actions.get('editStyle').funct();
+		// }));
 		
-		btn.setAttribute('title', mxResources.get('editStyle') + ' (' + this.editorUi.actions.get('editStyle').shortcut + ')');
-		btn.style.width = '202px';
-		btn.style.marginBottom = '2px';
+		// btn.setAttribute('title', mxResources.get('editStyle') + ' (' + this.editorUi.actions.get('editStyle').shortcut + ')');
+		// btn.style.width = '202px';
+		// btn.style.marginBottom = '2px';
 		
-		div.appendChild(btn);
+		// div.appendChild(btn);
 	}
 	
 	if (ss.image)
@@ -5402,17 +5402,17 @@ StyleFormatPanel.prototype.addEffects = function(div)
  */
 StyleFormatPanel.prototype.addStyleOps = function(div)
 {
-	div.style.paddingTop = '10px';
-	div.style.paddingBottom = '10px';
+	// div.style.paddingTop = '10px';
+	// div.style.paddingBottom = '10px';
 	
-	var btn = mxUtils.button(mxResources.get('setAsDefaultStyle'), mxUtils.bind(this, function(evt)
-	{
-		this.editorUi.actions.get('setAsDefaultStyle').funct();
-	}));
+	// var btn = mxUtils.button(mxResources.get('setAsDefaultStyle'), mxUtils.bind(this, function(evt)
+	// {
+	// 	this.editorUi.actions.get('setAsDefaultStyle').funct();
+	// }));
 	
-	btn.setAttribute('title', mxResources.get('setAsDefaultStyle') + ' (' + this.editorUi.actions.get('setAsDefaultStyle').shortcut + ')');
-	btn.style.width = '202px';
-	div.appendChild(btn);
+	// btn.setAttribute('title', mxResources.get('setAsDefaultStyle') + ' (' + this.editorUi.actions.get('setAsDefaultStyle').shortcut + ')');
+	// btn.style.width = '202px';
+	// div.appendChild(btn);
 
 	return div;
 };
@@ -5453,7 +5453,7 @@ DiagramFormatPanel.prototype.init = function()
 	{
 		this.container.appendChild(this.addOptions(this.createPanel()));
 		this.container.appendChild(this.addPaperSize(this.createPanel()));
-		this.container.appendChild(this.addStyleOps(this.createPanel()));
+		// this.container.appendChild(this.addStyleOps(this.createPanel()));
 	}
 };
 

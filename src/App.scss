@@ -102,3 +102,45 @@ $sizes: (
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.inline-flex {
+    display: inline-flex;
+    align-items: center;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.preview-container {
+    .preview-image {
+        object-fit: cover;
+        height: 100%;
+    }
+    width: 100%;
+    .ant-image, .preview {
+        background: var(--diagram-bg);
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.hide-error {
+    .ant-form-item-explain {
+        display: none!important;
+    }
+}
+
+.text-white {
+    color: var(--text-color);
+}
+
+.display-none {
+    display: none;
+}

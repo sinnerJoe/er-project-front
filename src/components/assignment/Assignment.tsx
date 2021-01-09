@@ -1,23 +1,32 @@
-import { clearSubmission, submitSolution } from 'actions/assignments';
 import { Button, Card, Col, Divider, Row, Space, Typography } from 'antd'
 import AttachmentLink from 'components/attachment-link/AttachmentLink';
 import DateInterval from 'components/date-interval/DateInterval';
+import InfoLabel from 'components/info-label/InfoLabel';
+import MarkView from 'components/mark-input/MarkView';
+import { useModal } from 'components/modals/modal-hooks';
 import PickSolutionModal from 'components/modals/pick-solution-modal/PickSolutionModal';
-import { AssignmentModel } from 'interfaces/Assignment'
-import { Mark } from 'interfaces/Mark'
-import { Solution } from 'interfaces/Solution'
+import MultilineText from 'components/multiline-text/MultilineText';
+import PromiseButton from 'components/promise-button/PromiseButton';
+import SubmittedDate from 'components/submitted-date/SubmittedDate';
+import SubmittedMark from 'components/submitted-mark/SubmittedMark';
+import { AssignmentModel, PlannedAssignment } from 'interfaces/Assignment'
+import { ServerSolution, Solution } from 'interfaces/Solution'
 import _ from 'lodash';
+import { Moment } from 'moment';
 import paths from 'paths';
 import React, { useState } from 'react'
+import { NO_YEAR_HUMAN_READABLE } from 'shared/constants';
+import { submitSolution, unsubmitSolution } from 'shared/endpoints';
 
 const { Text, Link } = Typography;
 
 
 
 function SubmittedSolution(props: {
-    solution?: Partial<Solution>,
+    solution?: ServerSolution,
     assignmentId: number,
-    submittedAt?: string,
+    startDate: string | Moment,
+    endDate: string | Moment
 }) {
     return (
         <Space direction="vertical" size="small" className="full-width">
@@ -43,7 +52,12 @@ function SubmittedSolution(props: {
                                     </AttachmentLink>
                                 </Link>
                                 <Text className="ml-2" type="secondary">
-                                    (Submitted on {props.submittedAt})
+                                    <span className="mr-1">submitted on </span>
+                                    <SubmittedDate
+                                        endDate={props.endDate}
+                                        startDate={props.startDate}
+                                        date={props.solution.submittedAt}
+                                    />
                         </Text>
                             </span>
 
@@ -57,71 +71,67 @@ function SubmittedSolution(props: {
     )
 }
 
-function SubmittedMark(props: Partial<Mark>) {
-    if (props.mark == null) {
-        return null;
-    }
 
-    return (
-        <div>
-            <label>
-                Mark
-            </label>
-            <div>
-                <Text strong>{props.mark}</Text>
-                <Text type="secondary">{`(${props.createdAt || new Date().toISOString()})`}</Text>
-            </div>
-        </div>
-    )
-}
-
-// function PostedDate({postedAt: string}) {
-//     return (
-
-//     )
-// }
-
-type Props = {
-    assignment: Partial<AssignmentModel>,
-    solution?: Partial<Solution>,
-    mark?: Mark,
+export interface AssignmentProps extends PlannedAssignment {
     onSubmit: () => void
 }
 
-export default function Assignment(props: Props) {
+export default function Assignment(props: AssignmentProps) {
 
-    const [showModal, setShowModal] = useState(false);
+
+    const [modalInstance, openModal] = useModal(PickSolutionModal, {
+        initialValue: props.solution || null,
+        onOk: (selectedSolution: ServerSolution) => submitSolution(selectedSolution.id, props.id).then(props.onSubmit),
+    })
+
+    const controlButtons = !props.solution?.reviewedAt ? (
+        <React.Fragment>
+            <Button onClick={openModal}>
+                {props.solution ? 'Change Solution' : 'Submit Solution'}
+            </Button>
+            {props.solution && <PromiseButton danger onClick={() => {
+                const id = props?.solution?.id;
+
+                if (id != null) {
+                    return unsubmitSolution(id).then(props.onSubmit);
+                }
+
+            }}>
+                Unsubmit
+                    </PromiseButton>}
+        </React.Fragment>
+    ) : "Can't change after evaluation";
 
     return (
         <Card title={props.assignment.title}>
             <p>
-                {props.assignment.description}
+                <MultilineText>
+                    {props.assignment.description}
+                </MultilineText>
             </p>
             <SubmittedSolution
+                startDate={props.startDate}
+                endDate={props.endDate}
                 solution={props.solution}
-                submittedAt={props.assignment.submittedAt}
                 assignmentId={props.assignment.id || 0} />
-            <SubmittedMark {...props.mark} />
+            {props.solution?.reviewedAt &&
+                <InfoLabel text="Mark" className="mt-2">
+                    <SubmittedMark
+                        reviewer={props.reviewer}
+                        mark={props.solution?.mark || undefined}
+                        reviewedAt={props.solution?.reviewedAt || undefined} />
+                </InfoLabel>}
             <Row align="middle" className="mt-4">
                 <Col>
-                    <DateInterval start={props.assignment.start || ''} end={props.assignment.end || ''} />
+                    <DateInterval dateFormat={NO_YEAR_HUMAN_READABLE} start={props.startDate as any} end={props.endDate as any} />
                 </Col>
                 <Col className="ml-auto">
                     <Space direction="horizontal" size="small">
-                        <Button onClick={() => setShowModal(true)}>
-                            {props.solution ? 'Change Solution' : 'Submit Solution'}
-                        </Button>
-                        {props.solution && <Button danger onClick={() => clearSubmission(props.assignment.id || 0).then(props.onSubmit)}>
-                            Unsubmit
-                    </Button>}
+                        {modalInstance}
+                        {controlButtons}
                     </Space>
                 </Col>
             </Row>
-            <PickSolutionModal
-                onChoose={(solutionId) => submitSolution(props.assignment.id || 0, solutionId).then(props.onSubmit)}
-                onClose={() => setShowModal(false)}
-                visible={showModal}
-            />
         </Card>
     )
 }

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import logo from './logo.svg';
 import { 
-  BrowserRouter as Router, 
+  Router, 
   Switch, 
   Route, 
   Link,
@@ -19,10 +18,14 @@ import UniversalRoute from 'components/secure-route/UniversalRoute';
 import paths from 'paths';
 import ModalManager from 'app/modal-manager/ModalManager';
 import withRequestedUser from 'utils/withRequestedUser';
+import RouteNotifier from 'components/header/RouteNotifier';
+import browserHistory from 'shared/history';
+import RoleRouteProtector from 'components/role-route-protector/RoleRouteProtector';
+import NotFoundPage from 'pages/not-found/NotFoundPage';
 
 
 function createRoutes() {
-  return routes.map(({path, secure = true, component}) => {
+  return routes.map(({path, secure = true, component, roles}, index) => {
     let Component = component;
     if(secure) {
       Component = withRequestedUser(EmptyPage, component);
@@ -30,6 +33,8 @@ function createRoutes() {
 
     return (
       <Route path={path}>
+        <RoleRouteProtector roles={roles} />
+        <RouteNotifier routeIndex={index} />
         <Component />
       </Route>
     )
@@ -40,7 +45,7 @@ function createRoutes() {
 function App() {
   return (
     <div className="no-scroll window-height">
-      <Router>
+      <Router history={browserHistory}>
       <Header/>
       <ModalManager />
         <Switch>
@@ -48,7 +53,7 @@ function App() {
           <Route path="/" exact={true} >
             <EmptyPage />
           </Route>
-          <Route render={() => <Redirect to={paths.NOT_FOUND} />} />
+          <Route render={() => <NotFoundPage />} />
         </Switch>
       </Router>
     </div>
