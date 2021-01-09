@@ -1007,7 +1007,7 @@ EditorUi.prototype.toolbarHeight = 38;
 /**
  * Specifies the height of the footer. Default is 28.
  */
-EditorUi.prototype.footerHeight = 28;
+EditorUi.prototype.footerHeight = 0;
 
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
@@ -3177,7 +3177,7 @@ EditorUi.prototype.updateActionStates = function()
 
     var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
     this.menus.get('layout').setEnabled(unlocked);
-    this.menus.get('insert').setEnabled(unlocked);
+    // this.menus.get('insert').setEnabled(unlocked);
     this.menus.get('direction').setEnabled(unlocked && vertexSelected);
     this.menus.get('align').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);

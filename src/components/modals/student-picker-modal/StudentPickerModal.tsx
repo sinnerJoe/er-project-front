@@ -80,7 +80,6 @@ export default function StudentPickerModal({ onOk, visible, excluded = [], ...re
                     <div><Text strong>{`${firstName} ${lastName}`}</Text>
                         <Text className="ml-1" type="secondary">({email})</Text></div>
                     <div>
-
                         <Text>
                             Registered on {moment(createdAt, SERVER_DATE_TIME).format(SERVER_DATE)}
                         </Text>

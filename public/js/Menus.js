@@ -21,7 +21,6 @@ Menus = function(editorUi)
  * Sets the default font family.
  */
 Menus.prototype.defaultFont = 'Helvetica';
-
 /**
  * Sets the default font size.
  */
@@ -30,7 +29,7 @@ Menus.prototype.defaultFontSize = '12';
 /**
  * Sets the default font size.
  */
-Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras', 'help'];
+Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange'];
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -437,7 +436,7 @@ Menus.prototype.init = function()
 		this.addSubmenu('distribute', menu, parent);
 		menu.addSeparator(parent);
 		this.addSubmenu('navigation', menu, parent);
-		this.addSubmenu('insert', menu, parent);
+		// this.addSubmenu('insert', menu, parent);
 		this.addSubmenu('layout', menu, parent);
 		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'clearWaypoints', 'autosize'], parent);
 	}))).isEnabled = isGraphEnabled;
@@ -490,14 +489,14 @@ Menus.prototype.init = function()
 		                         'editData', 'editTooltip', 'editStyle', '-', 'edit', '-', 'editLink', 'openLink', '-',
 		                         'selectVertices', 'selectEdges', 'selectAll', 'selectNone', '-', 'lockUnlock']);
 	})));
-	this.put('extras', new Menu(mxUtils.bind(this, function(menu, parent)
-	{
-		this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
-	})));
-	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
-	{
-		this.addMenuItems(menu, ['help', '-', 'about']);
-	})));
+	// this.put('extras', new Menu(mxUtils.bind(this, function(menu, parent)
+	// {
+	// 	this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
+	// })));
+	// this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
+	// {
+	// 	this.addMenuItems(menu, ['help', '-', 'about']);
+	// })));
 };
 
 /**
