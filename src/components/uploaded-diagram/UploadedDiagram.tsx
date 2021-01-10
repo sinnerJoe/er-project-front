@@ -70,7 +70,7 @@ export default function UploadedDiagram({
 
     return (
         <Row justify="space-between" align="middle" className="uploaded-diagram">
-            <Col className="meta-info pt-1" md={10} lg={8}>
+            <Col className="meta-info pt-1" span={8}>
                     <Title className="mb-5" level={4}>
                 <EditableField initialValue={title} 
                     onSave={(newTitle) => changeSolutionTitle(id, newTitle, onRefresh)}>
@@ -98,7 +98,7 @@ export default function UploadedDiagram({
                     </InfoLabel>
                 )}
             </Col>
-            <Col md={8}>
+            <Col span={8}>
                 <Image.PreviewGroup>
 
                     {tabs.length > 1 && <Carousel verticalSwiping dotPosition="left" dots={{ className: 'black-dots' }}>

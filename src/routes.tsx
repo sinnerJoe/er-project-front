@@ -68,7 +68,7 @@ export default [
         routeSteps: [
             STEPS.ASSIGNMENTS,
             {
-                title: 'Create',
+                title: 'Edit',
                 to: paths.EDIT_ASSIGNMENT
             }
         ],
@@ -80,7 +80,7 @@ export default [
         routeSteps: [
             STEPS.ASSIGNMENTS,
             {
-                title: 'Edit',
+                title: 'Create',
                 to: paths.CREATE_ASSIGNMENT
             }
         ],

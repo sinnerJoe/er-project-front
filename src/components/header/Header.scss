@@ -5,3 +5,22 @@
     height: 3em;
     z-index: 2;
 }
+
+.user-short-email {
+    display: none;
+}
+
+@media(max-width: 600px) {
+    .user-email {
+        display: none;
+    }
+    .user-short-email {
+        display: block;
+    }
+}
+
+@media(max-width: 450px) {
+    .user-short-email {
+        display: none
+    }
+}

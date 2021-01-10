@@ -35,7 +35,7 @@ export default function EditProfilePage(props: EditProfilePageProps) {
     }
 
     return (
-        <PageContent>
+        <PageContent minWidth={360}>
             <CenteredForm width={350} height={300}>
                 <Form initialValues={data} onFinish={onSubmit} layout="vertical">
                     <Form.Item label="Group">

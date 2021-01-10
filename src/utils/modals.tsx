@@ -1,9 +1,10 @@
 import React from 'react';
-import { ExclamationOutlined } from '@ant-design/icons';
-import {Modal} from 'antd';
+import { ExclamationCircleOutlined, ExclamationOutlined } from '@ant-design/icons';
+import {Modal, Typography} from 'antd';
 import { ModalFuncProps, ModalProps } from 'antd/lib/modal';
 import { PartialBy } from 'interfaces/helpers';
 
+const {Title} = Typography;
 export interface ConfirmModalProps extends Omit<ModalFuncProps, 'onOk'> {
     onOk?: () => Promise<unknown> | void
 } 
@@ -11,7 +12,12 @@ export interface ConfirmModalProps extends Omit<ModalFuncProps, 'onOk'> {
 export const openConfirmPromise = ({onOk, onCancel, ...rest}: ConfirmModalProps = {}) => {
     return new Promise((resolve, reject) => {
         Modal.confirm({
-            icon: <ExclamationOutlined />,
+            icon: <Title 
+                level={1} 
+                type="warning" 
+                className="mb-4 text-center">
+                    <ExclamationCircleOutlined type="success" />
+                </Title>,
             ...rest,
             onOk: (close) => {
                 if(onOk) {

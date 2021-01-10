@@ -30,7 +30,7 @@ export default function UsersPage(props: UsersPageProps) {
     }
 
     return (
-        <PageContent>
+        <PageContent minWidth={1030}>
             <YearAxis />
             <Space direction="vertical" size="large" className="full-width">
                 {content}

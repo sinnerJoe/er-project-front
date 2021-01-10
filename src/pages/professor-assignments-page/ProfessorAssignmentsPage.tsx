@@ -91,7 +91,7 @@ export default function ProfessorAssignmentsPage(props: any) {
 
 
   return (
-    <PageContent>
+    <PageContent minWidth={1086}>
       <YearAxis />
       <div className="mt-10">
         {content}

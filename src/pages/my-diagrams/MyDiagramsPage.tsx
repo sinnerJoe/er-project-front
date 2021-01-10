@@ -33,7 +33,7 @@ export default function MyDiagramsPage(props: any) {
   }
 
   return (
-    <PageContent spaceTop>
+    <PageContent spaceTop minWidth={770}>
       <Space direction="vertical" size="large" className="full-width">
         {!loading && solutions.map((solution) => (
           <UploadedDiagram

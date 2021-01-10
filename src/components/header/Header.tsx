@@ -71,8 +71,11 @@ function Header(props: {}) {
 
     return (
         <NavigationMenu>
-            <Text className="text-white mr-2">
+            <Text className="text-white mr-2 user-email">
                 {user.email}
+            </Text>
+            <Text className="text-white mr-2 user-short-email">
+                {user.email.split('@')[0] || ''}
             </Text>
             <NavItem icon={<MenuOutlined />} destination="" >
                 <DropdownMenu rightMenus={rightMenus}>

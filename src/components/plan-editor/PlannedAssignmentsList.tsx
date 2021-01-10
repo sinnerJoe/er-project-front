@@ -53,7 +53,7 @@ export default function PlannedAssignmentsList({ onChange = _.noop, value = [], 
         },
         {
             title: "Solve Interval",
-            width: 320,
+            width: mode === PlannedAssignmentMode.Edit ? 320: 240,
             defaultSortOrder: "ascend",
             sortDirections: ['ascend'],
             sorter: (a: PlannedAssignment, b: PlannedAssignment) => {

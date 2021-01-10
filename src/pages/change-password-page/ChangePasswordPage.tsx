@@ -18,7 +18,7 @@ export default function ChangePasswordPage(props: any) {
         .catch(() => {}).then(() => setSent(true));
     }
     return (
-        <PageContent>
+        <PageContent minWidth={360}>
             <CenteredForm width={350}>
                 <Form onFinish={onSubmit} layout="vertical">
                     <Form.Item

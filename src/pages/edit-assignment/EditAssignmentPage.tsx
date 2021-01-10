@@ -58,13 +58,9 @@ export default function EditAssignmentPage(props: any) {
         },
         [assignmentId],
     )
-
-    const title = _.isNil(assignmentId) ? "Create new assignment" : "Edit assignment";
-        console.log(form.getFieldValue('description'));
     return (
-        <PageContent>
+        <PageContent spaceTop minWidth={360}>
             <CenteredForm onlyHorizontal={true} width={600}>
-            <Row justify="center" className="mt-4 mb-4"><Title level={3}>{title}</Title></Row>
             <Row justify="center" className="full-width">
                 <Col span="24">
                     <Form {...layout} form={form} className="full-width" name="assignment-form" onFinish={onFinish}>
