@@ -11,6 +11,7 @@ import { addPlannedAssignments } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 import { SERVER_DATE, SERVER_DATE_TIME } from 'shared/constants';
 import { firstSecond, lastSecond } from 'utils/datetime';
+import { emptySpace } from 'shared/validators';
 
 export interface SentPlannedAssignment {
     startDate: string,
@@ -53,7 +54,9 @@ export default function PlanEditor({ initialState: propsState, onSave }: PlanEdi
             layout="vertical"
             name="plan-form"
             onFinish={handleSendData}>
-            <Form.Item label="Title" name="name" rules={[{ required: true }]} >
+            <Form.Item label="Title" name="name" rules={[{ 
+                validator: emptySpace, 
+                message: "Title field is mandatory." }]} >
                 <Input type="text" />
             </Form.Item>
             <h3 className="bold mb-4">Planned Assignments</h3>

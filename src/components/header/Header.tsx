@@ -1,5 +1,18 @@
 import React from 'react'
-import { HomeFilled, DatabaseFilled, UserOutlined, MenuOutlined, SettingFilled, ArrowRightOutlined, RightOutlined, LeftOutlined, FormOutlined, FileTextOutlined, LogoutOutlined, ContainerOutlined, SecurityScanOutlined, SecurityScanFilled, PlusOutlined, SolutionOutlined, AppstoreAddOutlined, LoadingOutlined, DeploymentUnitOutlined } from '@ant-design/icons';
+import { 
+    UserOutlined, 
+    MenuOutlined, 
+    SettingFilled, 
+    RightOutlined, 
+    LeftOutlined, 
+    FormOutlined, 
+    SecurityScanFilled, 
+    PlusOutlined, 
+    SolutionOutlined, 
+    DeploymentUnitOutlined, 
+    CalendarOutlined, 
+    FileProtectOutlined 
+} from '@ant-design/icons';
 import paths from 'paths'
 
 import './Header.scss';
@@ -10,11 +23,9 @@ import { useLocation } from 'react-router-dom';
 import routes from 'routes';
 import LogoutButton from './LogoutButton';
 import CreateSolutionButton from './CreateSolutionButton';
-import RoutePathBreadcrumbs from 'components/navigation-menu/RoutePathBreadcrumbs';
 import { Typography } from 'antd';
 import { useSelector } from 'react-redux';
 import { StoreData } from 'store';
-import { User } from 'shared/interfaces/User';
 import { UserState } from 'store/slices/user';
 
 const {Text} = Typography;
@@ -47,10 +58,10 @@ const rightMenus = {
                 Create New
             </BackButtonItem>
             <CreateSolutionButton />
-            <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.CREATE_ASSIGNMENT}>
+            <DropdownItem leftIcon={<FormOutlined />} link={paths.CREATE_ASSIGNMENT}>
                Assignment 
             </DropdownItem>
-            <DropdownItem leftIcon={<AppstoreAddOutlined />} link={paths.CREATE_PLAN}>
+            <DropdownItem leftIcon={<CalendarOutlined />} link={paths.CREATE_PLAN}>
                Educational Plan 
             </DropdownItem>
 
@@ -70,7 +81,7 @@ function Header(props: {}) {
     }
 
     return (
-        <NavigationMenu>
+        <NavigationMenu key={user.role}>
             <Text className="text-white mr-2 user-email">
                 {user.email}
             </Text>
@@ -91,20 +102,20 @@ function Header(props: {}) {
                     >
                         Create New
                     </DropdownItem>
-                    <DropdownItem leftIcon={<ContainerOutlined />} link={paths.MY_DIAGRAM}>
+                    <DropdownItem leftIcon={<SolutionOutlined />} link={paths.MY_DIAGRAM}>
                         My Solutions
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.STUDENT_ASSIGNMENTS}>
                         My Assignments
                     </DropdownItem>
-                    <DropdownItem leftIcon={<FormOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
+                    <DropdownItem leftIcon={<FileProtectOutlined />} link={paths.PROFESSOR_ASSIGNMENTS}>
                        Assignment Evaluation
                     </DropdownItem>
                     <DropdownItem leftIcon={<FormOutlined />} link={paths.ALL_ASSIGNMENTS}>
                        All Assignments 
                     </DropdownItem>
-                    <DropdownItem leftIcon={<FormOutlined />} link={paths.PLANS}>
-                        Educational Plans 
+                    <DropdownItem leftIcon={<CalendarOutlined />} link={paths.PLANS}>
+                       Educational Plans 
                     </DropdownItem>
                     <DropdownItem leftIcon={<DeploymentUnitOutlined />} link={paths.GROUPS}>
                         Groups
