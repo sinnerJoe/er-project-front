@@ -22,7 +22,6 @@ export function useOutsideClickEvent(ref: any, action: () => void) {
         function handleClickOutside(event: any) {
             if (ref.current && !ref.current.contains(event.target)) {
                 action()
-                console.log("OUT!!!")
             }
         }
 

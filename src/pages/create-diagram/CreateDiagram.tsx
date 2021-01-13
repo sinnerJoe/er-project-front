@@ -23,7 +23,6 @@ export default function CreateDiagram(props: any) {
     <Diagram defaultSetup={[]}
       onSave={(xmlData) => {
         const requestCreateSolution = (title: string) =>  {
-          console.log("USED TITLE", title)
           setMessage(SolutionLoadingMessage.sendingMessage);
           const tabs = xmlData.map(({ title, type, poster = diagramImage, schema }) => ({
             content: schema,

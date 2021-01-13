@@ -12,14 +12,12 @@ TabManager = function (editorUi, container, tabData) {
     root.insert(subRoot);
     const editor = editorUi.editor;
     if (tabData && tabData.length) {
-        console.log("TAB ELEMENTS IN", tabData)
         const initialSchema = tabData[0].textSchema;
         setTimeout(() => {
             editor.graph.model.beginUpdate();
             this.createImportXmlCallback(initialSchema)()
             editor.graph.model.endUpdate();
         }, 0);
-        console.log("INSIDE CONSTRUCTOR", tabData);
         this.tabData = tabData.map((tabElement, index) => ({
             label: tabElement.label,
             id: index,
@@ -44,7 +42,6 @@ TabManager = function (editorUi, container, tabData) {
     }
 
 
-    console.log(this.tabData);
 
     this.focusedTabIndex = 0;
 
@@ -142,11 +139,9 @@ TabManager.prototype.loadTabState = function ({ undoManagerState, modelState }) 
     // graph.stopEditing();
     model.beginUpdate();
     if (modelState.importCells) {
-        console.log("IMPORT CELLS")
         modelState.importCells(graph, model);
         delete modelState.importCells;
     } else {
-        console.log(modelState)
         model.setRoot(modelState.cells[0]);
         model.nextId = modelState.nextId
     }
@@ -187,7 +182,6 @@ TabManager.prototype.cloneSelectedTab = function (label) {
                 nextId: modelState.nextId,
             }
         }
-        console.log(clone.modelState)
         this.tabData.push(clone);
         this.selectTab(this.nextTabId)
         this.nextTabId++;
@@ -216,7 +210,6 @@ TabManager.prototype.convertToUml = function (label) {
                 nextId: modelState.nextId,
             }
         }
-        console.log(clone.modelState)
         this.tabData.push(clone);
         this.selectTab(this.nextTabId);
         this.nextTabId++;
@@ -244,7 +237,6 @@ TabManager.prototype.selectTab = function (id) {
             this.updatePalletes();
             this.affectMenuBar(this.getFocusedTab().diagramType)
         }
-        console.log(this.tabData, this.getModel())
     });
 }
 
@@ -288,7 +280,6 @@ TabManager.prototype.listenCloseTab = function () {
 }
 
 TabManager.prototype.blockConvertEntry = function () {
-    console.log(this.editorUi.actions.get('convertToUml'))
 
     this.editorUi.actions.get('convertToUml').setEnabled(false);
 }

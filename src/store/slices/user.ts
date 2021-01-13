@@ -31,7 +31,6 @@ const userSlice = createSlice({
             if(!data){
                 return;
             }
-            console.log(data);
             state.userId = Number(data.userId);
             state.role = Number(data.role);
             state.email = data.email;

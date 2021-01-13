@@ -24,8 +24,6 @@ const CANVAS_ID = 'capture_canvas';
 function capturePoster() {
   const diagramSvg = document.querySelector('.geDiagramContainer > svg') as HTMLElement
   const fullImage = domtoimage.toPng(diagramSvg).catch(() => IMG_FALLBACK);
-  // const imageHandler = Image.load(fullImage);
-  // console.log(imageHandler.getMatrix())
   return fullImage
 }
 
@@ -63,7 +61,6 @@ function initDiagram(element: any, cb: any, config: {
       const themes = {
         [themeIndex]: xhr[1].getDocumentElement(),
       };
-      // console.log(config.defaultSetup);
       const defaultSetup = config.defaultSetup.map(({schema, label, diagramType})=> 
               ({label, diagramType, textSchema: schema}));
 
@@ -101,7 +98,6 @@ export default function Diagram({defaultSetup, onSave, viewMode=false}: Props) {
     const wrapperRef = useRef<Element | null>((null as unknown) as HTMLElement);
     const editorUi = useRef<any>(null);
     const graph = useRef<mxgraph.mxGraph | null>(null);
-    console.log("default setup func", defaultSetup)
 
     useLayoutEffect(() => {
         initDiagram(wrapperRef.current, (editor:any) => {editorUi.current = editor}, {
@@ -111,7 +107,6 @@ export default function Diagram({defaultSetup, onSave, viewMode=false}: Props) {
             diagramType: type
           }))),
           onSave: (xmlData) => {
-            console.log(xmlData);
             onSave(xmlData);
           },
           viewMode

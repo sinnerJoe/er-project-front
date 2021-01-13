@@ -80,7 +80,6 @@ const ROLE_RESTRICTIONS: Record<string, Role[]> = Object.values(routes).reduce((
     return acc;
 }, {});
 
-console.log(ROLE_RESTRICTIONS)
 
 export function DropdownItem({link, children, leftIcon, rightIcon, openedMenu, onClick}: { 
     link?: string, 

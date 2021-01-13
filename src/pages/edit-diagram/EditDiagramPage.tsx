@@ -47,7 +47,6 @@ export default function EditDiagramPage({viewOnly = false}:{viewOnly?: boolean})
                         let image = poster;
 
                         if(!poster) {
-                            console.log(solution)
                             const oldImage = (solution as any)?.tabs?.[index]?.poster;
                             if(oldImage) {
                                 image = await getImageBase64(oldImage)

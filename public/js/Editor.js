@@ -644,7 +644,6 @@ Editor.prototype.createUndoManager = function()
 		this.undoListener.apply(this, arguments);
 	});
 	
-	console.log(graph, 'undo mgr', undoMgr)
 
 	graph.getModel().addListener(mxEvent.UNDO, listener);
 	graph.getView().addListener(mxEvent.UNDO, listener);

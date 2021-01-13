@@ -9,7 +9,6 @@ import NoData from 'components/no-data/NoData'
 
 export default function MyAssignmentsPage(props: any) {
   const [request, assignments, loading] = useLoadingRequest(getPlannedAssignments, []);
-  console.log(assignments)
   useEffect(() => {
     request()
   }, []);

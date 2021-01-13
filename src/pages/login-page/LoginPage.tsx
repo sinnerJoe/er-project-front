@@ -39,14 +39,12 @@ function LoginPage(props: any) {
         .catch(_.identity);
     };
 
-    const onFinishFailed = () => {console.log("ERR")};
-
     return (
         <CenteredForm>
             <FormTitle>
                 Authentication
             </FormTitle>
-            <Form onFinish={onFinish} form={form} onFinishFailed={onFinishFailed} layout="vertical" className="full-width">
+            <Form onFinish={onFinish} form={form} layout="vertical" className="full-width">
                   
                     <Form.Item label='Email Address' name="email">
                         <Input type="email" placeholder="john.doe@info.uaic.ro" />
@@ -79,7 +77,6 @@ function LoginPage(props: any) {
                     </Row>
                     {response && <Alert
                         message={response.message}
-                        // description="Further details about the context of this alert."
                         type={response.status === 'success' ? "success" : "error"}
                     />}
 

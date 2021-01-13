@@ -3927,8 +3927,6 @@ EditorUi.prototype.save = function(name)
 		
 		const rawData = this.editor.getXml();
 		// TODO: here it takes the DATA, extract this data into react
-		var xml = mxUtils.getXml(rawData);
-		console.log(xml)
 		this.config.onSave(rawData);
 		// try
 		// {

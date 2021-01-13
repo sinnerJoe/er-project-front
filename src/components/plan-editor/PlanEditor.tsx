@@ -1,13 +1,10 @@
 import { PlannedAssignment, ServerAssignment } from 'interfaces/Assignment';
 import React, { useState, useRef, useCallback, useMemo } from 'react';
 import moment, { Moment } from 'moment';
-import { PartialBy } from 'interfaces/helpers';
 import { Plan } from 'interfaces/Plan';
-import { FormInstance, useForm } from 'antd/lib/form/Form';
 import { Button, Form, Input, Row } from 'antd';
 import PlannedAssignmentsList, { PlannedAssignmentMode } from './PlannedAssignmentsList';
 import { filterAdded, filterRemoved } from './helpers';
-import { addPlannedAssignments } from 'shared/endpoints';
 import { IdIndex } from 'shared/interfaces/Id';
 import { SERVER_DATE, SERVER_DATE_TIME } from 'shared/constants';
 import { firstSecond, lastSecond } from 'utils/datetime';

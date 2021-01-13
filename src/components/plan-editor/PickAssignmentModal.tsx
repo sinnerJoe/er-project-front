@@ -13,7 +13,6 @@ const { Text } = Typography;
 
 async function fetchUnpickedAssignments(existingAssignments: ServerAssignment[]) {
     const response = await fetchAllAssignments();
-    console.log(response.data.data, existingAssignments)
     response.data.data = response.data.data.filter(assign => !existingAssignments.find(v => assign.id === v.id));
     return response;
 }

@@ -38,7 +38,6 @@ export default function EditAssignmentPage(props: any) {
     const [form] = Form.useForm();
 
     const { id: assignmentId }  = useParams<{id: string | undefined}>();
-    console.log(assignmentId)
     useEffect(() => {
         if (!_.isNil(assignmentId)) {
             fetchAssignment(Number(assignmentId)).then(
