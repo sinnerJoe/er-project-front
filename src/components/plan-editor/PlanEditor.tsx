@@ -51,7 +51,7 @@ export default function PlanEditor({ initialState: propsState, onSave }: PlanEdi
             layout="vertical"
             name="plan-form"
             onFinish={handleSendData}>
-            <Form.Item label="Title" name="name" rules={[{ 
+            <Form.Item label="Title" name="name" required rules={[{ 
                 validator: emptySpace, 
                 message: "Title field is mandatory." }]} >
                 <Input type="text" />

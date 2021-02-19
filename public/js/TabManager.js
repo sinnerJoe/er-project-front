@@ -264,18 +264,15 @@ TabManager.prototype.listenCloseTab = function () {
     this.tabViewBar.addListener(mxConstants.CLOSE_TAB_EVENT, mxUtils.bind(this, function (_, evt) {
         for (var i in this.tabData)
             if (this.tabData[i].id === evt.getProperty('id')) {
-                if (this.tabData[i].focused) {
-                    const focusedIndex = i == 0 ? 1 : 0;
-                    this.tabData[focusedIndex].focused = true;
-                    this.focusedTabIndex = focusedIndex;
-                }
                 this.tabData.splice(i, 1);
-
+                this.tabData[0].focused = true;
+                this.focusedTabIndex = 0;
                 break;
             }
         this.loadTabState(this.getFocusedTab())
         this.updatePalletes();
         this.tabViewBar.renderTabs(this.tabData);
+        this.affectMenuBar(this.getFocusedTab().diagramType)
     }));
 }
 

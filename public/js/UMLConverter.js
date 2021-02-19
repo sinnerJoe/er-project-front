@@ -35,7 +35,7 @@ function matchEdge(cell) {
 }
 
 function darkenText(text) {
-    return text.replace(/color: *#fafafa/g, "color: #000000")
+    return (text || '').replace(/#(fafafa|ffffff)/ig, "#000000");
 }
 
 function sortCellsByPosition(table1, table2) {
