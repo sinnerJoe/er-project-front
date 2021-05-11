@@ -23,7 +23,7 @@
     "canvg": "^3.0.6",
     "dom-to-image": "^2.6.0",
     "image-js": "^0.28.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "measure-font": "^1.0.0",
     "moment": "^2.29.1",
     "node-sass": "^4.14.1",
